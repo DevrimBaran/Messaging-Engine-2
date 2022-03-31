@@ -1,0 +1,50 @@
+import asyncio
+import time
+import zmq
+from zmq.asyncio import Poller
+
+
+async def startup_push_queue(context, sender_queue):
+    """
+    Starting a push queue of ZMQ and waits for sender_queue events to push messages to the zmq socket.
+    Runs forever.
+
+    :param context:
+    :param sender_queue:
+    :return:
+    """
+    # pylint: disable=E1101
+    socket = context.socket(zmq.PUSH)
+    socket.bind("tcp://127.0.0.1:5555")
+    print("Push queue started")
+    poller = Poller()
+    poller.register(socket, zmq.POLLOUT)
+
+    while True:
+        await sender_queue.get()
+        print("sent msg!")
+        await socket.send_multipart([str(time.time() - 3).encode('ascii')])
+        await asyncio.sleep(1)
+
+
+async def startup_pull_queue(context):
+    """
+    Starting a pull queue of ZMQ and waiting for receive events.
+    Runs forever.
+
+    :param context:
+    :return:
+    """
+    # pylint: disable=E1101
+    socket = context.socket(zmq.PULL)
+    socket.connect("tcp://127.0.0.1:5555")
+    print("Pull queue started")
+    poller = Poller()
+    poller.register(socket, zmq.POLLIN)
+
+    while True:
+        events = await poller.poll()
+        if socket in dict(events):
+            print("recving", events)
+            msg = await socket.recv_multipart()
+            print('recvd', msg)

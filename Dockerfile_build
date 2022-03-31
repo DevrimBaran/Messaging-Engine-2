@@ -1,0 +1,12 @@
+FROM python:3.9-slim-buster
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY requirements.txt /usr/src/app
+COPY Makefile /usr/src/app
+
+RUN apt-get update; apt-get install -y --no-install-recommends bash gcc make autoconf libc6-dev; \
+    python -m pip install -r /usr/src/app/requirements.txt ;\
+    make setup ; apt-get purge -y gcc autoconf libc6-dev ; apt-get clean
+
+ENV PATH="/root/.local/bin:${PATH}"

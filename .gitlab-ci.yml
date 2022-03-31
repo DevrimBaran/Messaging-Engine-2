@@ -1,0 +1,19 @@
+stages:
+  - build
+  - test
+
+test-project-job:
+  stage: test
+  image: emschu.de/fp-build-image
+  tags:
+    - linux
+  script:
+    - make test
+
+lint-project-job:
+  stage: test
+  image: emschu.de/fp-build-image
+  tags:
+    - linux
+  script:
+    - make lint
