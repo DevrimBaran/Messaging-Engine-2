@@ -22,4 +22,3 @@ async def pime_run():
                  sender_task(send_queue)])
     await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
     db.disconnect(connection)
-
