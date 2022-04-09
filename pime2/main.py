@@ -1,8 +1,8 @@
 import asyncio
-import pime2.database as db
 
 from zmq.asyncio import Context
 
+import pime2.database as db
 from pime2.coap_server import startup_server
 from pime2.demo import sender_task
 from pime2.zmq import startup_pull_queue, startup_push_queue
