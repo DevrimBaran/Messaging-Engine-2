@@ -1,4 +1,5 @@
 import sqlite3
+import logging
 from sqlite3 import Error
 
 
@@ -11,10 +12,9 @@ def create_connection(db_file):
     connection = None
     try:
         connection = sqlite3.connect(db_file)
-        print("Successfully connected to database", db_file)
-    except Error as err:
-        print("An error occurred while connecting to the database:")
-        print(err)
+        logging.info(f"Successfully connected to database: {db_file}")
+    except Error:
+        logging.exception("An error occurred while connecting to the database")
 
     return connection
 
@@ -27,24 +27,25 @@ def disconnect(connection):
     """
     if connection:
         connection.close()
-        print("Successfully disconnected from the database")
+        logging.info("Successfully disconnected from the database")
 
 
-def create_default_tables(connection, cursor):
+def create_default_tables(connection):
     """
     This method creates all mandatory tables
     :param connection: connection to the database
-    :param cursor: cursor for the database
     :return:
     """
     sql_create_sensors_table = """CREATE TABLE IF NOT EXISTS sensors (
                                     id integer PRIMARY KEY,
                                     name text NOT NULL );"""
 
+    cursor = connection.cursor()
     try:
         cursor.execute(sql_create_sensors_table)
         connection.commit()
+        logging.info("Successfully created all default tables")
+    except Error:
+        logging.exception("An error occurred while creating default tables")
+    finally:
         cursor.close()
-        print("Successfully created all default tables")
-    except Error as err:
-        print(err)

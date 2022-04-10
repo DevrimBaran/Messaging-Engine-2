@@ -4,17 +4,14 @@ import pime2.database as db
 
 
 class DatabaseTest(unittest.TestCase):
+    connection = None
 
     @classmethod
     def setUpClass(cls):
         cls.connection = db.create_connection("testDatabase.db")
-        cls.cursor = cls.connection.cursor()
-
-    def test_create_connection(self):
-        self.assertTrue(self.cursor)
 
     def test_create_default_tables(self):
-        db.create_default_tables(self.connection, self.cursor)
+        db.create_default_tables(self.connection)
 
         sql_insert_testdata = """INSERT INTO sensors (id, name)
                                     VALUES 
@@ -24,16 +21,18 @@ class DatabaseTest(unittest.TestCase):
 
         sql_select_testdata = """SELECT * FROM sensors"""
 
-        self.cursor.execute(sql_insert_testdata)
-        self.cursor.execute(sql_select_testdata)
+        cursor = self.connection.cursor()
+        cursor.execute(sql_insert_testdata)
+        cursor.execute(sql_select_testdata)
         self.connection.commit()
 
-        result = self.cursor.fetchall()
+        result = cursor.fetchall()
+        cursor.close()
+
         self.assertEqual([(1, 'temperature sensor'), (2, 'hall sensor'), (3, 'buzzer')], result)
 
     @classmethod
     def tearDownClass(cls):
-        cls.cursor.close()
         db.disconnect(cls.connection)
         os.remove("testDatabase.db")
 
