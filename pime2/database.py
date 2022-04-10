@@ -12,7 +12,7 @@ def create_connection(db_file):
     connection = None
     try:
         connection = sqlite3.connect(db_file)
-        logging.info(f"Successfully connected to database: {db_file}")
+        logging.info("Successfully connected to database: %s", db_file)
     except Error:
         logging.exception("An error occurred while connecting to the database")
 
