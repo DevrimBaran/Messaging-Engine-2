@@ -46,6 +46,6 @@ def create_default_tables(connection):
         connection.commit()
         logging.info("Successfully created all default tables")
     except Error:
-        logging.exception("An error occurred while creating default tables")
+        logging.exception("An error occurred while creating the default tables")
     finally:
         cursor.close()
