@@ -31,10 +31,10 @@ This project uses a custom image to run the CI jobs in. The [Dockerfile](Dockerf
 - Use code linting (`make lint`)
 
 ### Git guidelines
-- **Branch name**: Use `feature/PIME-[Issue number]` for features and `fix/PIME-[Issue number]` for bugfixes
+- **Branch name**: Use `feature/PIME-[Issue number] [optional: very short description]` for features and `fix/PIME-[Issue number]` for bugfixes
   
   ```
-  git checkout -b feature/PIME-23
+  git checkout -b feature/PIME-23 database
   
   git checkout -b fix/PIME-25
   ```
