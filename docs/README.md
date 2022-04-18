@@ -7,7 +7,7 @@
 - **Ping Request:** Connecting to "Hello" endpoint
 - **Neighbour Provisioning:** The system gets information about a (new) PIME2-neighbour-instance
 - **Operation Provisioning:** The system gets information about the operation(s) it should work with
-- **Message Sending:** The system receives a message with (arbitrary) payload
+- **[Message Sending](./concepts/Messaging.md):** The system receives a message with (arbitrary) payload
 - **System Health Metrics:** The system provides information about its state
 
 ## Concepts
