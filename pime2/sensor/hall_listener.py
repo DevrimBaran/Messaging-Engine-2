@@ -1,5 +1,4 @@
 import RPi.GPIO as GPIO
-from time import sleep
 from pime2.log import pime_logger
 import time
 

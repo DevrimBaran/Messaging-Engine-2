@@ -1,7 +1,7 @@
+from pime2.log import pime_logger
 import time
 import board
 import adafruit_dht
-from pime2.log import pime_logger
 
 #Set input pin for Sensor and set pulseio to False so that pin still can be used after shutdown of program
 dhtDevice = adafruit_dht.DHT22(board.D12, use_pulseio=False)
