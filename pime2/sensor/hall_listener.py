@@ -1,5 +1,5 @@
 import time
-import RPi.GPIO as GPIO
+from RPi import GPIO
 from pime2.log import pime_logger
 
 #Set input Pin
@@ -13,7 +13,7 @@ GPIO.setup(SENSOR, GPIO.IN)
 #Start listening
 try:
     while True:
-        if (GPIO.input(SENSOR) == GPIO.HIGH):
+        if GPIO.input(SENSOR) == GPIO.HIGH:
             pime_logger.logging.info("No Magnetic field detected")
             time.sleep(2.0)
         else:
