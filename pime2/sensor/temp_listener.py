@@ -1,3 +1,4 @@
+# pylint: disable=consider-using-f-string
 import time
 import board
 import adafruit_dht
@@ -20,10 +21,6 @@ try:
             pime_logger.logging.error(error.args[0])
             time.sleep(2.0)
             continue
-        except Exception as error:
-            dhtDevice.exit()
-            pime_logger.logging.exception('Exception occured, ending sensor listening')
-            break
 except KeyboardInterrupt:
     #Ending sensor listening with ctrl+c
     pime_logger.logging.info('Ending sensor listening')
