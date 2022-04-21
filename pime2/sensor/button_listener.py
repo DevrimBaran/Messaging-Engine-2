@@ -34,7 +34,7 @@ async def return_button_listening():
     except KeyboardInterrupt:
         # Ending sensor listening with ctrl+c
         pime2_logger.logging.info('Ending sensor listening')
-        if is_button_one_up == False:
+        if is_button_one_up is False:
             print('button one not up')
-    BUTTON_LISTENING = is_button_one_up, is_button_two_up
-    return BUTTON_LISTENING
+    button_listening = is_button_one_up, is_button_two_up
+    return button_listening

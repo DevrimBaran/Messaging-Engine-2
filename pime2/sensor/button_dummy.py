@@ -5,14 +5,14 @@ def button_dummy():
     """
     Button sensor dummy
     """
-    n = random.randint(0, 1)
-    m = random.randint(0, 1)
-    if n == 1:
-        BUTTON_ONE_UP = False
+    button_one_dummy = random.randint(0, 1)
+    button_two_dummy = random.randint(0, 1)
+    if button_one_dummy == 1:
+        button_one_up = False
     else:
-        BUTTON_ONE_UP = True
-    if m == 1:
-        BUTTON_TWO_UP = False
+        button_one_up = True
+    if button_two_dummy == 1:
+        button_two_up = False
     else:
-        BUTTON_TWO_UP = True
-    return BUTTON_ONE_UP, BUTTON_TWO_UP
+        button_two_up = True
+    return button_one_up, button_two_up

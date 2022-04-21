@@ -23,6 +23,7 @@ async def return_temp():
                     break
                 else:
                     pime2_logger.logging.error("Failed to get reading. Try again!")
+                    continue
             except RuntimeError as error:
                 pime2_logger.logging.error(error.args[0])
                 temperature = error.args[0]

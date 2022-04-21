@@ -1,7 +1,7 @@
-def vibration_dummy(on):
+def vibration_dummy(var_on):
     """
     vibration dummy
     """
-    if on == 1:
+    if var_on == 1:
         return True
     return False
