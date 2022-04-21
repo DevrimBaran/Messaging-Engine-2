@@ -1,3 +1,4 @@
+# pylint: no-else-break
 from RPi import GPIO
 from pime2.log import pime2_logger
 
