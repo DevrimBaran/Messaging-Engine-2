@@ -1,7 +1,7 @@
 import logging
 import sys
 
-#Setting up logger (ERROR, WARNING, CRITICAL, DEBUG, INFO) so it writes to file std.log and to console
+# Setting up logger (ERROR, WARNING, CRITICAL, DEBUG, INFO) so it writes to file std.log and to console
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG,
                     handlers=[
