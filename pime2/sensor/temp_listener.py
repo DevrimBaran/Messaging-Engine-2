@@ -27,4 +27,3 @@ async def return_temp():
         #Ending sensor listening with ctrl+c
         pime2_logger.logging.info('Ending sensor listening')
     return temperature
-#print(temperature)
