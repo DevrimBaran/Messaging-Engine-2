@@ -1,6 +1,4 @@
-# pylint: disable=consider-using-f-string
-# pylint: disable=broad-except
-# pylint: no-else-break
+# pylint: disable-all
 import board
 import adafruit_dht
 from pime2.log import pime2_logger

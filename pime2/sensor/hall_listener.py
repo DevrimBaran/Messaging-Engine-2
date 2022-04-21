@@ -1,4 +1,4 @@
-# pylint: no-else-break
+# pylint: disable-all
 from RPi import GPIO
 from pime2.log import pime2_logger
 

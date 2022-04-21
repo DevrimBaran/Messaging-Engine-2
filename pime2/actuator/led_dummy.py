@@ -1,4 +1,4 @@
-# pylint: inconsistent-return-statements
+# pylint: disable-all
 
 
 def actuator_dummy(green, red):
