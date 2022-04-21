@@ -1,4 +1,4 @@
-# pylint: disable=W
+# pylint: disable-all
 
 
 def actuator_dummy(green, red):

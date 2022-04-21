@@ -1,4 +1,4 @@
-# pylint: disable=W
+# pylint: disable-all
 import board
 import adafruit_dht
 from pime2.log import pime2_logger
