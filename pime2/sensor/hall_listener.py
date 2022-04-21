@@ -1,19 +1,23 @@
 from RPi import GPIO
 from pime2.log import pime2_logger
 
-#Set input Pin
+# Set input Pin
 SENSOR = 18
 
-#Initialising GPIO
+# Initialising GPIO
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(SENSOR, GPIO.IN)
 
-#Start listening
+
+# Start listening
 async def return_is_magnetic():
+    """
+    Start sensor listening
+    """
     try:
         while True:
-            if (GPIO.input(SENSOR) == GPIO.HIGH):
+            if GPIO.input(SENSOR) == GPIO.HIGH:
                 pime2_logger.logging.info("No Magnetic field detected")
                 magnet = False
                 break
@@ -22,6 +26,6 @@ async def return_is_magnetic():
                 magnet = True
                 break
     except KeyboardInterrupt:
-        #Ending sensor listening with ctrl+c
+        # Ending sensor listening with ctrl+c
         pime2_logger.logging.info('Ending sensor listening')
     return magnet

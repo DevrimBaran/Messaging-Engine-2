@@ -4,11 +4,15 @@ import board
 import adafruit_dht
 from pime2.log import pime2_logger
 
-#Set input pin for Sensor and set pulseio to False so that pin still can be used after shutdown of program
+# Set input pin for Sensor and set pulseio to False so that pin still can be used after shutdown of program
 dhtDevice = adafruit_dht.DHT22(board.D12, use_pulseio=False)
 
-#Start listening
+
+# Start listening
 async def return_temp():
+    """
+    Start sensor listening
+    """
     try:
         while True:
             try:
@@ -24,6 +28,6 @@ async def return_temp():
                 temperature = error.args[0]
                 break
     except KeyboardInterrupt:
-        #Ending sensor listening with ctrl+c
+        # Ending sensor listening with ctrl+c
         pime2_logger.logging.info('Ending sensor listening')
     return temperature

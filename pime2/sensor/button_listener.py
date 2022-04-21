@@ -1,18 +1,21 @@
 from RPi import GPIO
 from pime2.log import pime2_logger
 
-#Initialising buttons on pins
+# Initialising buttons on pins
 BUTTON1 = 13
 BUTTON2 = 14
 
-#Initialising GPIO
+# Initialising GPIO
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(BUTTON1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(BUTTON2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-#Start listening
+
 async def return_button_listening():
+    """
+    Start sensor listening
+    """
     try:
         while True:
             if GPIO.input(BUTTON1) == GPIO.HIGH:
@@ -29,7 +32,7 @@ async def return_button_listening():
                 is_button_two_up = False
             break
     except KeyboardInterrupt:
-        #Ending sensor listening with ctrl+c
+        # Ending sensor listening with ctrl+c
         pime2_logger.logging.info('Ending sensor listening')
         if is_button_one_up == False:
             print('button one not up')

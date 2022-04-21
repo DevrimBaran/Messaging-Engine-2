@@ -1,5 +1,7 @@
-#led dummy
 def actuator_dummy(green, red):
+    """
+    led dummy
+    """
     if green == 1 and red == 0:
         green_led = True
         red_led = False
