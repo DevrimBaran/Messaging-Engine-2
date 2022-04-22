@@ -14,8 +14,8 @@ def create_connection(db_file):
         connection = sqlite3.connect(db_file)
         logging.info("Successfully connected to database: %s", db_file)
     except Error:
-        logging.exception("An error occurred while connecting to the database")
-
+        logging.exception("An error occurred while connecting to the database. \n Pime will now shutdown safely.")
+        exit(1)
     return connection
 
 
