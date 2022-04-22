@@ -1,6 +1,8 @@
+import sys
 import sqlite3
 import logging
 from sqlite3 import Error
+
 
 
 def create_connection(db_file):
@@ -15,7 +17,7 @@ def create_connection(db_file):
         logging.info("Successfully connected to database: %s", db_file)
     except Error:
         logging.exception("An error occurred while connecting to the database. \n Pime will now shutdown safely.")
-        exit(1)
+        sys.exit(1)
     return connection
 
 
