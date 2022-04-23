@@ -11,7 +11,6 @@ async def is_magnetic():
     sensor = 18
 
     # Initialising GPIO
-    GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(sensor, GPIO.IN)
     if GPIO.input(sensor) == GPIO.HIGH:

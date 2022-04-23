@@ -11,7 +11,6 @@ async def return_button_listening():
     button2 = 14
 
     # Initialising GPIO
-    GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(button1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(button2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
