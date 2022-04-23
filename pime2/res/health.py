@@ -1,7 +1,7 @@
 import json
+import os
 import aiocoap
 import psutil
-import os
 from aiocoap import resource
 
 
