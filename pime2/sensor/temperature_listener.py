@@ -1,4 +1,3 @@
-# pylint: disable-all
 import board
 import adafruit_dht
 import logging
@@ -17,9 +16,8 @@ async def return_temperature():
                 logging.info("Temp:{0:0.1f}°C".format(temp_c))
                 temperature = temp_c
                 break
-            else:
-                logging.error("Failed to get reading. Try again!")
-                continue
+            logging.error("Failed to get reading. Try again!")
+            continue
         except RuntimeError as error:
             logging.error(error.args[0])
             temperature = error.args[0]

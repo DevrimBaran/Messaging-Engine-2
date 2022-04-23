@@ -1,5 +1,5 @@
-from RPi import GPIO
 import logging
+from RPi import GPIO
 
 
 async def return_button_listening():

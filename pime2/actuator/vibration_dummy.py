@@ -1,4 +1,4 @@
-from pime2.log.pime2_logger import pime2_logger
+import logging
 
 
 def vibration_dummy(var_on):
