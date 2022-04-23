@@ -10,7 +10,7 @@ def led_dummy(green, red):
         red_led = False
         logging.info("Green led is on")
         return green_led, red_led
-    elif green == 0 and red == 1:
+    if green == 0 and red == 1:
         green_led = False
         red_led = True
         logging.info("Red led is on")
