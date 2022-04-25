@@ -91,7 +91,8 @@ There is an operation for each `NetworkEvent` listed [here](./Network%20Events.m
   "payload": "string, to be defined for each operation/action type, Base64 encoded",
   "rescheduling_number": "uint",
   "src_device_id": "uuid",
-  "src_created_at": "string,datetime ISO 8601"
+  "src_created_at": "string,datetime ISO 8601",
+  "last_hops: string[]
 }
 ```
 
