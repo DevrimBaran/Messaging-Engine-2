@@ -13,5 +13,6 @@ build
 .classpath
 .settings
 Thumbs.db
+pime_database.db
 
 docs/diagrams/plantuml*.jar
