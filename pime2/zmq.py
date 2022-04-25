@@ -1,7 +1,7 @@
-import asyncio
-import time
 import zmq
 from zmq.asyncio import Poller
+
+from pime2.receive_queue import get_receive_queue
 
 
 async def startup_push_queue(context, sender_queue):
@@ -20,11 +20,12 @@ async def startup_push_queue(context, sender_queue):
     poller = Poller()
     poller.register(socket, zmq.POLLOUT)
 
+    receive_queue = get_receive_queue()
     while True:
-        await sender_queue.get()
-        print("sent msg!")
-        await socket.send_multipart([str(time.time() - 3).encode('ascii')])
-        await asyncio.sleep(1)
+        result = await receive_queue.get()
+        print(f"sent msg: {result}")
+        await socket.send_multipart([str(result).encode('ascii')])
+        receive_queue.task_done()
 
 
 async def startup_pull_queue(context):
