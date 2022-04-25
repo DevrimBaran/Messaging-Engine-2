@@ -10,7 +10,7 @@ from pime2.main import pime_run
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG,
                     handlers=[
-                        logging.FileHandler("../messaging-engine-2/pime2/log/std.log"),
+                        logging.FileHandler("../messaging-engine-2/std.log"),
                         logging.StreamHandler(sys.stdout)])
 logging.getLogger("coap-server").setLevel(logging.DEBUG)
 
