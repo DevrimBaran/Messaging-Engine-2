@@ -2,7 +2,7 @@ import asyncio
 import logging
 from typing import List
 
-from pime2.main import get_receive_queue
+from pime2.main import get_push_queue
 from pime2.types.sensor import Sensor
 
 
@@ -16,7 +16,7 @@ async def single_sensor_read(sensor: Sensor):
     sensor_result = sensor.read()
     logging.info(f"Read sensor data: {str(sensor_result)}")
     # TODO: define object to exchange here
-    await get_receive_queue().put({f"sensor_result: {str(sensor_result)}"})
+    await get_push_queue().put({f"sensor_result: {str(sensor_result)}"})
 
 
 async def listen_sensor(sensor: Sensor):
@@ -33,7 +33,7 @@ async def listen_sensor(sensor: Sensor):
         )
 
 
-async def sensor_listener(sensors: List[Sensor]):
+async def startup_sensor_listener(sensors: List[Sensor]):
     """
     start asyncio tasks and wait for them to complete.
     Should be called in main asyncio run().

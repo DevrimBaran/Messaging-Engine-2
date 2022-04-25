@@ -1,7 +1,7 @@
 import zmq
 from zmq.asyncio import Poller
 
-from pime2.receive_queue import get_receive_queue
+from pime2.push_queue import get_push_queue
 
 
 async def startup_push_queue(context, sender_queue):
@@ -20,7 +20,7 @@ async def startup_push_queue(context, sender_queue):
     poller = Poller()
     poller.register(socket, zmq.POLLOUT)
 
-    receive_queue = get_receive_queue()
+    receive_queue = get_push_queue()
     while True:
         result = await receive_queue.get()
         print(f"sent msg: {result}")
