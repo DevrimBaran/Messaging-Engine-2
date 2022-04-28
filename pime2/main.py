@@ -6,7 +6,7 @@ from zmq.asyncio import Context
 from pime2.coap_server import startup_server
 from pime2.push_queue import get_push_queue, init_push_queue
 from pime2.sensor_listener import startup_sensor_listener
-from pime2.types.sensor import Sensor
+from pime2.sensor.sensor import Sensor
 from pime2.zmq import startup_pull_queue, startup_push_queue
 
 

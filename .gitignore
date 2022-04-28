@@ -13,5 +13,6 @@ build
 .classpath
 .settings
 Thumbs.db
+me2.log
 
 docs/diagrams/plantuml*.jar

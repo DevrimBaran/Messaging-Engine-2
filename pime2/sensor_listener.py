@@ -3,7 +3,7 @@ import logging
 from typing import List
 
 from pime2.main import get_push_queue
-from pime2.types.sensor import Sensor
+from pime2.sensor.sensor import Sensor
 
 
 async def single_sensor_read(sensor: Sensor):
