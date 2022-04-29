@@ -1,11 +1,14 @@
 import logging
 import random
 
-#from RPi import GPIO
-from pime2.sensor.sensor import TwoPinSensor, SensorType, TwoPinSensorReadOutput, TwoPinOperatorArguments
+from pime2.sensor.sensor import TwoPinSensor, SensorType, TwoPinOperatorArguments
+from pime2.gpio_sensor_actuator.read_output import TwoPinSensorReadOutput
 
 
 class ButtonSensor(TwoPinSensor):
+    """
+    A simple button Sensor with two buttons
+    """
     def __init__(self, input_arguments: TwoPinOperatorArguments):
         super().__init__(SensorType.BUTTON, input_arguments)
         self.button_1 = input_arguments.input_pin_1
@@ -47,12 +50,13 @@ class ButtonSensor(TwoPinSensor):
         return TwoPinSensorReadOutput(button_one_up, button_two_up)
 
     def open(self):
-        if self.args.is_test_mode is True:
+        if self.args.is_test_mode is False:
             from RPi import GPIO
+            # Initialising GPIO
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(self.button_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.button_2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     def close(self):
-        # Müsste GPIO.cleanup() auf pi testen um jegliche Fehler zu vermeiden. Funktioniert aber auch ohne.
+        # Need to test GPIO.cleanup() on pi to avoid errors. Works also without cleanup.
         pass
