@@ -10,6 +10,7 @@ class TemperatureSensor(SinglePinSensor):
     """
     A simple temperature sensor
     """
+
     def __init__(self, sensor_type: SensorType, input_arguments: SinglePinOperatorArguments):
         super().__init__(sensor_type.TEMPERATURE, input_arguments)
         self.sensor = input_arguments.input_pin_1
@@ -17,6 +18,7 @@ class TemperatureSensor(SinglePinSensor):
 
     def read(self) -> SinglePinSensorReadOutput:
         if self.args.is_test_mode is False:
+            # start sensor listening
             import board
             import adafruit_dht
             while True:
@@ -33,9 +35,9 @@ class TemperatureSensor(SinglePinSensor):
                     temperature = error.args[0]
                     break
             return SinglePinSensorReadOutput(temperature)
+        # Temperature sensor dummy
         random_temperature = random.randint(-50, 50)
-        # pylint would not accept following log
-        logging.info("Temp: " + str(random_temperature))
+        logging.info(f"Temp: {random_temperature}")
         return SinglePinSensorReadOutput(random_temperature)
 
     def open(self):

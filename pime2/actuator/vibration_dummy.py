@@ -8,6 +8,7 @@ class Vibration(SinglePinActuator):
     """
     A simple vibration motor which vibrates
     """
+
     def __init__(self, input_arguments: SinglePinOperatorArguments):
         super().__init__(input_arguments)
         self.vibration = input_arguments.input_pin_1

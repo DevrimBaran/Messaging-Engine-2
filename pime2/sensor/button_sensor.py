@@ -9,6 +9,7 @@ class ButtonSensor(TwoPinSensor):
     """
     A simple button Sensor with two buttons
     """
+
     def __init__(self, input_arguments: TwoPinOperatorArguments):
         super().__init__(SensorType.BUTTON, input_arguments)
         self.button_1 = input_arguments.input_pin_1

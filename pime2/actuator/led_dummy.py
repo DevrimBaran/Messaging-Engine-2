@@ -8,6 +8,7 @@ class Led(TwoPinActuator):
     """
     A simple led with two colors
     """
+
     def __init__(self, input_arguments: TwoPinOperatorArguments):
         super().__init__(input_arguments)
         self.green_led = input_arguments.input_pin_1

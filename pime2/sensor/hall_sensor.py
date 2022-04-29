@@ -9,6 +9,7 @@ class HallSensor(SinglePinSensor):
     """
     A simple Hall sensor (Hall sensors detect magnets)
     """
+
     def __init__(self, input_arguments: SinglePinOperatorArguments):
         super().__init__(SensorType.HALL, input_arguments)
         self.sensor = input_arguments.input_pin_1

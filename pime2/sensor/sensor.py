@@ -18,6 +18,7 @@ class Sensor(Operator, ABC):
     """
     Abstract class to represent an abstract sensor.
     """
+
     def __init__(self, sensor_type):
         self.sensor_type = sensor_type
 
@@ -27,6 +28,7 @@ class TwoPinSensor(Sensor, ABC):
     Abstract class to represent an abstract two output pin sensor.
     Each two pin sensor implements this class.
     """
+
     def __init__(self, sensor_type: SensorType, input_arguments: TwoPinOperatorArguments):
         super().__init__(sensor_type)
         self.args = input_arguments
@@ -45,6 +47,7 @@ class SinglePinSensor(Sensor, ABC):
     Abstract class to represent an abstract single output pin sensor.
     Each single pin sensor implements this class.
     """
+
     def __init__(self, sensor_type: SensorType, input_arguments: SinglePinOperatorArguments):
         super().__init__(sensor_type)
         self.args = input_arguments
