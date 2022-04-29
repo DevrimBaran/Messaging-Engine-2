@@ -31,7 +31,7 @@ class SinglePinOperatorArguments(ABC):
         self.is_test_mode = is_test_mode
 
 
-class TwoPinOperatorArguments(SinglePinOperatorArguments, ABC):
+class DualPinOperatorArguments(SinglePinOperatorArguments, ABC):
     """
     Abstract class to represent two input pin gpio_sensor_actuator-wide common properties, e.g. two GPIO pins.
     """

@@ -1,15 +1,15 @@
 import logging
 
-from pime2.actuator.actuator import TwoPinActuator
-from pime2.gpio_sensor_actuator.operator import TwoPinOperatorArguments
+from pime2.actuator.actuator import DualPinActuator
+from pime2.gpio_sensor_actuator.operator import DualPinOperatorArguments
 
 
-class Led(TwoPinActuator):
+class Led(DualPinActuator):
     """
     A simple led with two colors
     """
 
-    def __init__(self, input_arguments: TwoPinOperatorArguments):
+    def __init__(self, input_arguments: DualPinOperatorArguments):
         super().__init__(input_arguments)
         self.green_led = input_arguments.input_pin_1
         self.red_led = input_arguments.input_pin_2

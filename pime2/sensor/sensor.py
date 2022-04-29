@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 from enum import Enum
-from pime2.gpio_sensor_actuator.operator import Operator, TwoPinOperatorArguments, SinglePinOperatorArguments
-from pime2.gpio_sensor_actuator.read_output import SinglePinSensorReadOutput, TwoPinSensorReadOutput
+from pime2.gpio_sensor_actuator.operator import Operator, DualPinOperatorArguments, SinglePinOperatorArguments
+from pime2.gpio_sensor_actuator.read_output import SinglePinSensorReadOutput, DualPinSensorReadOutput
 
 
 class SensorType(Enum):
@@ -23,18 +23,18 @@ class Sensor(Operator, ABC):
         self.sensor_type = sensor_type
 
 
-class TwoPinSensor(Sensor, ABC):
+class DualPinSensor(Sensor, ABC):
     """
     Abstract class to represent an abstract two output pin sensor.
     Each two pin sensor implements this class.
     """
 
-    def __init__(self, sensor_type: SensorType, input_arguments: TwoPinOperatorArguments):
+    def __init__(self, sensor_type: SensorType, input_arguments: DualPinOperatorArguments):
         super().__init__(sensor_type)
         self.args = input_arguments
 
     @abstractmethod
-    def read(self) -> TwoPinSensorReadOutput:
+    def read(self) -> DualPinSensorReadOutput:
         """
         Read data from sensor and write ot to the output.
         Very time critical.

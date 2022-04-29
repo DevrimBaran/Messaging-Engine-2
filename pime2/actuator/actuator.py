@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from pime2.sensor.sensor import Operator, SinglePinOperatorArguments, TwoPinOperatorArguments
+from pime2.sensor.sensor import Operator, SinglePinOperatorArguments, DualPinOperatorArguments
 
 
 # TODO: this is not final or perfect
@@ -28,14 +28,14 @@ class SinglePinActuator(Operator, ABC):
         """
 
 
-class TwoPinActuator(Operator, ABC):
+class DualPinActuator(Operator, ABC):
     """
     Abstract class to represent an abstract sensor.
     Each actuator implements this class.
 
     """
 
-    def __init__(self, input_arguments: TwoPinOperatorArguments):
+    def __init__(self, input_arguments: DualPinOperatorArguments):
         self.args = input_arguments
 
     @abstractmethod

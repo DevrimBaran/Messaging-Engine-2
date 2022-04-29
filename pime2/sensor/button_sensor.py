@@ -1,22 +1,22 @@
 import logging
 import random
 
-from pime2.sensor.sensor import TwoPinSensor, SensorType, TwoPinOperatorArguments
-from pime2.gpio_sensor_actuator.read_output import TwoPinSensorReadOutput
+from pime2.sensor.sensor import DualPinSensor, SensorType, DualPinOperatorArguments
+from pime2.gpio_sensor_actuator.read_output import DualPinSensorReadOutput
 
 
-class ButtonSensor(TwoPinSensor):
+class ButtonSensor(DualPinSensor):
     """
     A simple button Sensor with two buttons
     """
 
-    def __init__(self, input_arguments: TwoPinOperatorArguments):
+    def __init__(self, input_arguments: DualPinOperatorArguments):
         super().__init__(SensorType.BUTTON, input_arguments)
         self.button_1 = input_arguments.input_pin_1
         self.button_2 = input_arguments.input_pin_2
         self.args = input_arguments
 
-    def read(self) -> TwoPinSensorReadOutput:
+    def read(self) -> DualPinSensorReadOutput:
         if self.args.is_test_mode is False:
             from RPi import GPIO
             # Start sensor listening
@@ -32,7 +32,7 @@ class ButtonSensor(TwoPinSensor):
             if GPIO.input(self.button_2) == GPIO.HIGH:
                 logging.info("Button 2 down")
                 is_button_two_up = False
-            return TwoPinSensorReadOutput(is_button_one_up, is_button_two_up)
+            return DualPinSensorReadOutput(is_button_one_up, is_button_two_up)
         # Sensor dummy
         button_one_dummy = random.randint(0, 1)
         button_two_dummy = random.randint(0, 1)
@@ -48,7 +48,7 @@ class ButtonSensor(TwoPinSensor):
         else:
             logging.info("Button 2 up")
             button_two_up = True
-        return TwoPinSensorReadOutput(button_one_up, button_two_up)
+        return DualPinSensorReadOutput(button_one_up, button_two_up)
 
     def open(self):
         if self.args.is_test_mode is False:

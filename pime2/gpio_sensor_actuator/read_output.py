@@ -13,7 +13,7 @@ class SinglePinSensorReadOutput(ABC):
         return f"{{\"result\": \"{self.result}\"}}"
 
 
-class TwoPinSensorReadOutput(ABC):
+class DualPinSensorReadOutput(ABC):
     """
     Abstract class to represent the output of a two output input pin sensor reading process.
     """
