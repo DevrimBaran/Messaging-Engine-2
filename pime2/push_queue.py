@@ -1,3 +1,4 @@
+# pylint: disable=global-statement, global-variable-not-assigned
 import asyncio
 
 # do not use this variable outside this class
