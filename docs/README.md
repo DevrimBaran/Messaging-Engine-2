@@ -1,5 +1,21 @@
 # PIME 2 Documentation
 
+This is a technical documentation about Messaging Engine 2 (ME 2).
+This repository is an artifact of a Forschungsprojekt during summer 2022.
+The main goal of this project is to rewrite "PIME" (ME 1) to a new version and to document
+the existing code and ideas. But there are also some new ideas...
+
+### IoT Messaging Engine World
+
+![IoT ME world image](./diagrams/png/message-engine-world.png)
+Note: ME 2 is located at the end of a chain of other software systems which are out-of-scope
+for this project.
+
+## Content
+
+- [Endpoints](concepts/Endpoints.md)
+- [Network Events](concepts/Network%20Events.md)
+
 ## Processes
 
 - **PIME Deployment:** The whole software is getting rolled out
@@ -7,7 +23,7 @@
 - **Ping Request:** Connecting to "Hello" endpoint
 - **Neighbour Provisioning:** The system gets information about a (new) PIME2-neighbour-instance
 - **Operation Provisioning:** The system gets information about the operation(s) it should work with
-- **Message Sending:** The system receives a message with (arbitrary) payload
+- **[Message Sending](./concepts/Messaging.md):** The system receives a message with (arbitrary) payload
 - **System Health Metrics:** The system provides information about its state
 
 ## Concepts
@@ -15,14 +31,16 @@
 ### Multi-Sensor-Support
 
 ### Messaging
+
 #### (Discrete) Message Payloads
+
 #### Message-Validation (syntactic + semantic)
+
 #### Message Prioritization
 
 ### Neighbour Discovery/Dynamic Network
 
 "Heartbeat"
-
 
 ### Monitoring, Observability
 

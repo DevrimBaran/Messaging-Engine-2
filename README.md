@@ -21,7 +21,8 @@ make setup
 
 This project uses a custom image to run the CI jobs in. The [Dockerfile](Dockerfile_build) can be found here.
 
-## Development guidelines
+## Guidelines
+### Development guidelines
 
 - Use standard-libraries whenever possible
 - Use `asyncio` for I/O operations and task/coroutine management
@@ -29,6 +30,28 @@ This project uses a custom image to run the CI jobs in. The [Dockerfile](Dockerf
 - Development should work across different OS
 - Use code linting (`make lint`)
 
+### Git guidelines
+- **Branch name**: Use `feature/PIME-[Issue number] [optional: very short description]` for features and `fix/PIME-[Issue number]` for bugfixes
+  
+  ```
+  git checkout -b feature/PIME-23 database
+  
+  git checkout -b fix/PIME-25
+  ```
+  
+- **Commit message**: Use `PIME-[Issue number] [your message]`. <br> 
+  Message length should be up to 50 characters. <br>
+  Each commit must belong to an issue number. If there is none, create a new issue!
+
+  ```
+  git commit -m "PIME-23 add new database"
+  
+  git commit -m "PIME-25 fix wrong button color"
+  ```
+  
+### GitLab guidelines
+- **Issues**: Each issue should include an understandable `description` and, if possible, the `acceptance criterias`
+ 
 ## Documentation
 
 The documentation is written using Markdown format for texts and PlantUML for diagrams.
