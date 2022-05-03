@@ -29,9 +29,12 @@ class TemperatureSensor(SinglePinSensor):
     def read(self) -> TemperatureSensorReadOutput:
         if self.args.is_test_mode is False:
             # start sensor listening
-            if self.sensor is None:
-                raise RuntimeError("sensor object is None")
             temperature = -100
+            if self.sensor is None:
+                logging.error(
+                    "Sensor object is None and seems not to be opened. Severe problem with the usage of "
+                    "temperature sensor.")
+                return TemperatureSensorReadOutput(float(temperature))
             try:
                 temp_c = self.sensor.temperature
                 if temp_c is not None:
