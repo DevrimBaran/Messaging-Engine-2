@@ -6,9 +6,18 @@ from pime2.sensor.sensor import SinglePinSensor, SinglePinOperatorArguments, Sen
 from pime2.gpio_sensor_actuator.read_output import SinglePinSensorReadOutput
 
 
+class HallSensorReadOutput(SinglePinSensorReadOutput):
+    """
+    Simple type to wrap a single sensor measurement result
+    """
+
+    def __init__(self, result: bool):
+        super().__init__(result)
+
+
 class HallSensor(SinglePinSensor):
     """
-    A simple Hall sensor (Hall sensors detect magnets)
+    A simple Hall sensor (detect magnets)
     """
 
     def __init__(self, input_arguments: SinglePinOperatorArguments):
@@ -16,9 +25,9 @@ class HallSensor(SinglePinSensor):
         self.sensor = input_arguments.input_pin_1
         self.args = input_arguments
 
-    def read(self) -> SinglePinSensorReadOutput:
+    def read(self) -> HallSensorReadOutput:
         if self.args.is_test_mode is False:
-            # start sensor listening
+            # start sensor listening - the conditional import is important to support non-raspi development environments
             from RPi import GPIO
             if GPIO.input(self.sensor) == GPIO.HIGH:
                 logging.info("No Magnetic field detected")
@@ -26,7 +35,7 @@ class HallSensor(SinglePinSensor):
             else:
                 logging.info("Magnetic field detected")
                 magnet = True
-            return SinglePinSensorReadOutput(magnet)
+            return HallSensorReadOutput(magnet)
         # hall sensor dummy
         magnet = random.randint(0, 1)
         if magnet == 0:
@@ -35,11 +44,12 @@ class HallSensor(SinglePinSensor):
         else:
             logging.info("Magnet detected")
             magnet = True
-        return SinglePinSensorReadOutput(magnet)
+        return HallSensorReadOutput(magnet)
 
     def open(self):
         if self.args.is_test_mode is False:
             # start sensor listening
+            # pylint-disable: import-outside-toplevel
             from RPi import GPIO
 
             # Initialising GPIO
@@ -47,5 +57,5 @@ class HallSensor(SinglePinSensor):
             GPIO.setup(self.sensor, GPIO.IN)
 
     def close(self):
-        # Need to test GPIO.cleanup() on pi to avoid errors. Works also without cleanup.
+        # TODO: Need to test GPIO.cleanup() on pi to avoid errors. Works also without cleanup.
         pass

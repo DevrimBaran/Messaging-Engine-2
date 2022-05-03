@@ -19,11 +19,11 @@ class Led(DualPinActuator):
         pass
 
     def open(self):
-        # Will be done in Issue PIME-27 Anbindung der Aktuatoren über GPIO
+        # TODO: Will be done in Issue PIME-27 Anbindung der Aktuatoren über GPIO
         pass
 
     def close(self):
-        # Will be done in Issue PIME-27 Anbindung der Aktuatoren über GPIO
+        # TODO: Will be done in Issue PIME-27 Anbindung der Aktuatoren über GPIO
         pass
 
 

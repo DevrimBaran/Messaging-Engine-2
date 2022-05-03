@@ -1,9 +1,18 @@
-# pylint: disable=consider-using-f-string, import-outside-toplevel, logging-fstring-interpolation, unused-import
+# pylint: disable=import-outside-toplevel
 import logging
 import random
 
 from pime2.sensor.sensor import SinglePinSensor, SensorType, SinglePinOperatorArguments
 from pime2.gpio_sensor_actuator.read_output import SinglePinSensorReadOutput
+
+
+class TemperatureSensorReadOutput(SinglePinSensorReadOutput):
+    """
+    Simple type for a temperature reading
+    """
+
+    def __init__(self, result: float):
+        super().__init__(result)
 
 
 class TemperatureSensor(SinglePinSensor):
@@ -13,40 +22,44 @@ class TemperatureSensor(SinglePinSensor):
 
     def __init__(self, sensor_type: SensorType, input_arguments: SinglePinOperatorArguments):
         super().__init__(sensor_type.TEMPERATURE, input_arguments)
-        self.sensor = input_arguments.input_pin_1
+        self.sensor_pin: int = input_arguments.input_pin_1
+        self.sensor = None
         self.args = input_arguments
 
-    def read(self) -> SinglePinSensorReadOutput:
+    def read(self) -> TemperatureSensorReadOutput:
         if self.args.is_test_mode is False:
             # start sensor listening
-            import board
-            import adafruit_dht
-            while True:
-                try:
-                    temp_c = self.sensor.temperature
-                    if temp_c is not None:
-                        logging.info("Temp:{0:0.1f}°C".format(temp_c))
-                        temperature = temp_c
-                        break
-                    logging.error("Failed to get reading. Try again!")
-                    continue
-                except RuntimeError as error:
-                    logging.error(error.args[0])
+            if self.sensor is None:
+                raise RuntimeError("sensor object is None")
+            temperature = -100
+            try:
+                temp_c = self.sensor.temperature
+                if temp_c is not None:
+                    # pylint: disable=consider-using-f-string
+                    logging.info("Temp:{0:0.1f}°C".format(temp_c))
+                    temperature = temp_c
+            except RuntimeError as error:
+                if len(error.args) > 0:
+                    logging.error("Problem reading temperature sensor: %s", error.args[0])
                     temperature = error.args[0]
-                    break
-            return SinglePinSensorReadOutput(temperature)
-        # Temperature sensor dummy
-        random_temperature = random.randint(-50, 50)
-        logging.info(f"Temp: {random_temperature}")
-        return SinglePinSensorReadOutput(random_temperature)
+                else:
+                    logging.error("Unknown problem reading temperature sensor")
+            return TemperatureSensorReadOutput(float(temperature))
+        # Temperature sensor dummy logic
+        random_temperature = float(random.randint(-50, 50) + random.random())
+        logging.info("Temp:%.1f°C", random_temperature)
+        return TemperatureSensorReadOutput(random_temperature)
 
     def open(self):
-        if self.args.is_test_mode is True:
+        if self.args.is_test_mode is False:
+            # FIXME: is this (unused) import really needed?
+            # pylint: disable=unused-import
             import board
             import adafruit_dht
-            # Set input pin for Sensor and set pulseio to False so that pin still can be used after shutdown of program
+            # Set input pin for Sensor and set pulseio to False so that the pin still can be used after
+            # shutdown of program
             self.sensor = adafruit_dht.DHT22(board.D12, use_pulseio=False)
 
     def close(self):
-        # Not necassary since use_puseio is set to False
+        # Not necessary since use_pulseio is set to False
         pass

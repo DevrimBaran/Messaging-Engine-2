@@ -6,7 +6,7 @@ from pime2.gpio_sensor_actuator.read_output import SinglePinSensorReadOutput, Du
 
 class SensorType(Enum):
     """
-    Enum to declare which type of sensor is used.
+    Enum to declare which sensor types are supported.
     """
     TEMPERATURE = 1
     BUTTON = 2
@@ -17,6 +17,7 @@ class SensorType(Enum):
 class Sensor(Operator, ABC):
     """
     Abstract class to represent an abstract sensor.
+    You should never inherit directly from this class, use SinglePinSensor, DualPinSensor...
     """
 
     def __init__(self, sensor_type):
@@ -55,7 +56,7 @@ class SinglePinSensor(Sensor, ABC):
     @abstractmethod
     def read(self) -> SinglePinSensorReadOutput:
         """
-        Read data from sensor and write ot to the output.
+        Read data from sensor and write ot to the output - a single time.
         Very time critical.
         :return:
         """

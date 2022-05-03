@@ -2,7 +2,7 @@
 import asyncio
 
 # do not use this variable outside this class
-receive_queue: asyncio.Queue
+RECEIVE_QUEUE: asyncio.Queue
 
 
 def init_push_queue():
@@ -11,8 +11,8 @@ def init_push_queue():
 
     :return:
     """
-    global receive_queue
-    receive_queue = asyncio.Queue()
+    global RECEIVE_QUEUE
+    RECEIVE_QUEUE = asyncio.Queue()
 
 
 def get_push_queue() -> asyncio.Queue:
@@ -21,5 +21,4 @@ def get_push_queue() -> asyncio.Queue:
 
     :return:
     """
-    global receive_queue
-    return receive_queue
+    return RECEIVE_QUEUE

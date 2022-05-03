@@ -4,13 +4,12 @@ from zmq.asyncio import Poller
 from pime2.push_queue import get_push_queue
 
 
-async def startup_push_queue(context, sender_queue):
+async def startup_push_queue(context):
     """
     Starting a push queue of ZMQ and waits for sender_queue events to push messages to the zmq socket.
     Runs forever.
 
     :param context:
-    :param sender_queue:
     :return:
     """
     # pylint: disable=E1101

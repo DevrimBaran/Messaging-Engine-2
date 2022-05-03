@@ -2,7 +2,7 @@ import asyncio
 import logging
 from typing import List
 
-from pime2.main import get_push_queue
+from pime2.push_queue import get_push_queue
 from pime2.sensor.sensor import Sensor
 
 
@@ -14,7 +14,7 @@ async def single_sensor_read(sensor: Sensor):
     :return:
     """
     sensor_result = sensor.read()
-    logging.info(f"Read sensor data: {str(sensor_result)}")
+    logging.info("Read sensor data: %s", str(sensor_result))
     # TODO: define object to exchange here
     await get_push_queue().put({f"sensor_result: {str(sensor_result)}"})
 
@@ -50,7 +50,7 @@ async def startup_sensor_listener(sensors: List[Sensor]):
     try:
         for sensor in sensors:
             task_list.append(asyncio.create_task(listen_sensor(sensor)))
-        logging.info(f"Started {len(task_list)} sensor listening tasks")
+        logging.info("Started %d sensor listening tasks", len(task_list))
 
         # normally wait forever here
         for task in task_list:
