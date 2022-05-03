@@ -42,3 +42,7 @@ format: ## auto-format the code
 .PHONY: test
 test: ## run unit tests
 	python3 -m unittest test/*.py
+
+.PHONY: runtest
+runtest: setup-venv ## run app for 15 secs - if possible
+	source env/bin/activate ; export me_runtest=$$(timeout 10 python3 main.py) ; if [[ $$me_runtest -eq 143 || $$me_runtest -eq 0 ]]; then exit 0; else exit 1; fi

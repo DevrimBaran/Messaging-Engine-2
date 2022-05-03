@@ -17,3 +17,11 @@ lint-project-job:
     - linux
   script:
     - make lint
+
+run-project-job:
+  stage: test
+  image: emschu.de/fp-build-image
+  tags:
+    - linux
+  script:
+    - make runtest
