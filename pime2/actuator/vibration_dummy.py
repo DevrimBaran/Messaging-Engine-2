@@ -1,7 +1,7 @@
 import logging
 
 from pime2.actuator.actuator import SinglePinActuator
-from pime2.gpio_sensor_actuator.operator import SinglePinOperatorArguments
+from pime2.common.operator import SinglePinOperatorArguments
 
 
 class Vibration(SinglePinActuator):

@@ -1,7 +1,7 @@
 import logging
 
 from pime2.actuator.actuator import DualPinActuator
-from pime2.gpio_sensor_actuator.operator import DualPinOperatorArguments
+from pime2.common.operator import DualPinOperatorArguments
 
 
 class Led(DualPinActuator):

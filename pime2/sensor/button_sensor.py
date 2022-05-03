@@ -3,7 +3,7 @@ import logging
 import random
 
 from pime2.sensor.sensor import DualPinSensor, SensorType, DualPinOperatorArguments
-from pime2.gpio_sensor_actuator.read_output import DualPinSensorReadOutput
+from pime2.common.read_output import DualPinSensorReadOutput
 
 
 class ButtonSensorReadOutput(DualPinSensorReadOutput):

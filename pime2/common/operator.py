@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class Operator(ABC):
     """
-    Abstract technical representation of an gpio_sensor_actuator, which is Sensor + Actuator
+    Abstract technical representation of an common, which is Sensor + Actuator
     """
 
     @abstractmethod
@@ -17,14 +17,14 @@ class Operator(ABC):
     @abstractmethod
     def close(self):
         """
-        Method to shut down an gpio_sensor_actuator
+        Method to shut down an common
         :return:
         """
 
 
 class SinglePinOperatorArguments(ABC):
     """
-    Abstract class to represent single input pin gpio_sensor_actuator-wide common properties, e.g. one GPIO pin.
+    Abstract class to represent single input pin common-wide common properties, e.g. one GPIO pin.
     """
 
     def __init__(self, input_pin_1: int, is_test_mode: bool = False):
@@ -34,7 +34,7 @@ class SinglePinOperatorArguments(ABC):
 
 class DualPinOperatorArguments(SinglePinOperatorArguments, ABC):
     """
-    Abstract class to represent two input pin gpio_sensor_actuator-wide common properties, e.g. two GPIO pins.
+    Abstract class to represent two input pin common-wide common properties, e.g. two GPIO pins.
     """
 
     def __init__(self, input_pin_1: int, input_pin_2: int, is_test_mode: bool = False):

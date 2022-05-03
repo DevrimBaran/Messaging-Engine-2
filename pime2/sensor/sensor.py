@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 from enum import Enum
-from pime2.gpio_sensor_actuator.operator import Operator, DualPinOperatorArguments, SinglePinOperatorArguments
-from pime2.gpio_sensor_actuator.read_output import SinglePinSensorReadOutput, DualPinSensorReadOutput
+from pime2.common.operator import Operator, DualPinOperatorArguments, SinglePinOperatorArguments
+from pime2.common.read_output import SinglePinSensorReadOutput, DualPinSensorReadOutput
 
 
 class SensorType(Enum):

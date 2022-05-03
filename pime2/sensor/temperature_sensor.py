@@ -3,7 +3,7 @@ import logging
 import random
 
 from pime2.sensor.sensor import SinglePinSensor, SensorType, SinglePinOperatorArguments
-from pime2.gpio_sensor_actuator.read_output import SinglePinSensorReadOutput
+from pime2.common.read_output import SinglePinSensorReadOutput
 
 
 class TemperatureSensorReadOutput(SinglePinSensorReadOutput):
