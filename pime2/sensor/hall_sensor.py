@@ -18,6 +18,7 @@ class HallSensorReadOutput(SinglePinSensorReadOutput):
 class HallSensor(SinglePinSensor):
     """
     A simple Hall sensor (detect magnets)
+    input_arguments provide a property is_test_mode.
     """
 
     def __init__(self, input_arguments: SinglePinOperatorArguments):

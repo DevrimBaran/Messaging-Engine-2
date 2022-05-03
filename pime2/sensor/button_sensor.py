@@ -17,7 +17,8 @@ class ButtonSensorReadOutput(DualPinSensorReadOutput):
 
 class ButtonSensor(DualPinSensor):
     """
-    A simple button Sensor with two buttons
+    A simple button Sensor with two buttons.
+    input_arguments provide a property is_test_mode.
     """
 
     def __init__(self, input_arguments: DualPinOperatorArguments):

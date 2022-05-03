@@ -10,7 +10,7 @@ class Operator(ABC):
     @abstractmethod
     def open(self):
         """
-        Method to initialize (or test) a sensor during startup. Called only once(?).
+        Method to initialize (or test) a sensor during startup. Called only once or after .close().
         :return:
         """
 

@@ -17,7 +17,8 @@ class TemperatureSensorReadOutput(SinglePinSensorReadOutput):
 
 class TemperatureSensor(SinglePinSensor):
     """
-    A simple temperature sensor
+    A simple temperature sensor.
+    input_arguments provide a property is_test_mode.
     """
 
     def __init__(self, sensor_type: SensorType, input_arguments: SinglePinOperatorArguments):
