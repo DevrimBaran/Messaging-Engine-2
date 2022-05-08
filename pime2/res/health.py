@@ -21,6 +21,7 @@ class Health(resource.Resource):
         pime_version = "0.0.1"
         cpu_core_count = os.cpu_count()
         cpu_usage = psutil.cpu_percent()
+        ram_total = psutil.virtual_memory().total
         ram_availabe = psutil.virtual_memory().available
         ram_used = psutil.virtual_memory().used
         ram_used_percentage = psutil.virtual_memory().percent
@@ -32,6 +33,7 @@ class Health(resource.Resource):
             "version": pime_version,
             "cpu_core_count": cpu_core_count,
             "cpu_usage": cpu_usage,
+            "ram_total" : ram_total,
             "ram_available": ram_availabe,
             "ram_used": ram_used,
             "ram_used_percentage": ram_used_percentage,
