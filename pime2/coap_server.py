@@ -1,4 +1,5 @@
 import asyncio
+import sys
 
 import aiocoap
 from aiocoap import resource
@@ -33,7 +34,10 @@ async def startup_server():
     root.add_resource(['flows'], Flow())
     root.add_resource([''], Default())
 
-    await aiocoap.Context.create_server_context(root)
+    if sys.platform == "win32":
+        await aiocoap.Context.create_server_context(bind=('127.0.0.1', 5683), site=root)
+    else:
+        await aiocoap.Context.create_server_context(root)
 
     print("Started Server")
     # Run forever
