@@ -4,7 +4,6 @@ Entry point of the PIME2 application
 import logging
 import asyncio
 import sys
-from asyncio import WindowsSelectorEventLoopPolicy
 
 from pime2.main import pime_run
 
@@ -17,5 +16,6 @@ logging.getLogger("coap-server").setLevel(logging.DEBUG)
 
 if __name__ == "__main__":
     if sys.platform == "win32":
+        from asyncio import WindowsSelectorEventLoopPolicy
         asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
     asyncio.run(pime_run())
