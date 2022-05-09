@@ -27,7 +27,7 @@ async def startup_push_queue(context):
     receive_queue = get_push_queue()
     while True:
         result = await receive_queue.get()
-        logging.info(f"sent msg: {result}")
+        logging.info("sent msg: %s", result)
         await socket.send_multipart([str(result).encode('ascii')])
         receive_queue.task_done()
 
@@ -54,6 +54,6 @@ async def startup_pull_queue(context):
             received_object = json.loads(msg[0])
             if received_object["message_type"] == MessageType.SENSOR_RESULT.value:
                 logging.debug("detected sensor_read for sensor %s", SensorType(received_object["sensor_type"]))
-            logging.info('received message json:', received_object)
+            logging.info('received message json: %s', received_object)
 
         # TODO: implement message processing engine here
