@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import sys
 
 import aiocoap
@@ -39,6 +40,6 @@ async def startup_server():
     else:
         await aiocoap.Context.create_server_context(root)
 
-    print("Started Server")
+    logging.info("Started Server")
     # Run forever
     await asyncio.get_running_loop().create_future()

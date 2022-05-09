@@ -1,9 +1,11 @@
 import asyncio
+import json
 import logging
 from typing import List
 
+from pime2.message import SensorResult
 from pime2.push_queue import get_push_queue
-from pime2.sensor.sensor import Sensor
+from pime2.sensor.sensor import Sensor, SensorType
 
 
 async def single_sensor_read(sensor: Sensor):
@@ -14,9 +16,9 @@ async def single_sensor_read(sensor: Sensor):
     :return:
     """
     sensor_result = sensor.read()
-    logging.info("Read sensor data: %s", str(sensor_result))
-    # TODO: define object to exchange here
-    await get_push_queue().put({f"sensor_result: {str(sensor_result)}"})
+    logging.info("Read sensor data: %s", sensor_result.__dict__)
+    await get_push_queue().put(
+        json.dumps(SensorResult(sensor.sensor_type.value, sensor_result.__dict__).__dict__))
 
 
 async def listen_sensor(sensor: Sensor):
