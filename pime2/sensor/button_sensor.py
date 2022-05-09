@@ -46,19 +46,19 @@ class ButtonSensor(DualPinSensor):
                 is_button_two_up = True
             return ButtonSensorReadOutput(is_button_one_up, is_button_two_up)
         # Sensor dummy
-        button_one_dummy = bool(random.randint(0, 1))
-        button_two_dummy = bool(random.randint(0, 1))
+        dummy_button_one_up = bool(random.randint(0, 1))
+        dummy_button_two_up = bool(random.randint(0, 1))
 
-        if button_one_dummy is False:
+        if dummy_button_one_up is False:
             logging.info("Button 1 down")
         else:
             logging.info("Button 1 up")
 
-        if button_two_dummy is True:
-            logging.info("Button 2 down")
-        else:
+        if dummy_button_two_up is True:
             logging.info("Button 2 up")
-        return ButtonSensorReadOutput(button_one_dummy, button_two_dummy)
+        else:
+            logging.info("Button 2 down")
+        return ButtonSensorReadOutput(dummy_button_one_up, dummy_button_two_up)
 
     def open(self):
         if self.args.is_test_mode is False:

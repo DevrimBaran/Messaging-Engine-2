@@ -56,7 +56,6 @@ class TemperatureSensor(SinglePinSensor):
 
     def open(self):
         if self.args.is_test_mode is False:
-            # FIXME: is this (unused) import really needed?
             # pylint: disable=unused-import
             import board
             import adafruit_dht
