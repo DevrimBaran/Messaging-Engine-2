@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 from enum import Enum
 from pime2.common.operator import Operator, DualPinOperatorArguments, SinglePinOperatorArguments
-from pime2.common.read_output import SinglePinSensorReadOutput, DualPinSensorReadOutput
+from pime2.common.read_output import SingleSensorResult, DualSensorResult
 
 
 class SensorType(Enum):
@@ -20,7 +20,7 @@ class Sensor(Operator, ABC):
     You should never inherit directly from this class, use SinglePinSensor, DualPinSensor...
     """
 
-    def __init__(self, sensor_type):
+    def __init__(self, sensor_type: SensorType):
         self.sensor_type = sensor_type
 
 
@@ -35,7 +35,7 @@ class DualPinSensor(Sensor, ABC):
         self.args = input_arguments
 
     @abstractmethod
-    def read(self) -> DualPinSensorReadOutput:
+    def read(self) -> DualSensorResult:
         """
         Read data from sensor and write ot to the output.
         Very time critical.
@@ -54,7 +54,7 @@ class SinglePinSensor(Sensor, ABC):
         self.args = input_arguments
 
     @abstractmethod
-    def read(self) -> SinglePinSensorReadOutput:
+    def read(self) -> SingleSensorResult:
         """
         Read data from sensor and write ot to the output - a single time.
         Very time critical.

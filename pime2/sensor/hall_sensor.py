@@ -3,10 +3,10 @@ import logging
 import random
 
 from pime2.sensor.sensor import SinglePinSensor, SinglePinOperatorArguments, SensorType
-from pime2.common.read_output import SinglePinSensorReadOutput
+from pime2.common.read_output import SingleSensorResult
 
 
-class HallSensorReadOutput(SinglePinSensorReadOutput):
+class HallSensorResult(SingleSensorResult):
     """
     Simple type to wrap a single sensor measurement result
     """
@@ -26,7 +26,7 @@ class HallSensor(SinglePinSensor):
         self.sensor = input_arguments.input_pin_1
         self.args = input_arguments
 
-    def read(self) -> HallSensorReadOutput:
+    def read(self) -> HallSensorResult:
         if self.args.is_test_mode is False:
             # start sensor listening - the conditional import is important to support non-raspi development environments
             from RPi import GPIO
@@ -36,7 +36,7 @@ class HallSensor(SinglePinSensor):
             else:
                 logging.info("Magnetic field detected")
                 magnet = True
-            return HallSensorReadOutput(magnet)
+            return HallSensorResult(magnet)
         # hall sensor dummy
         magnet = random.randint(0, 1)
         if magnet == 0:
@@ -45,7 +45,7 @@ class HallSensor(SinglePinSensor):
         else:
             logging.info("Magnet detected")
             magnet = True
-        return HallSensorReadOutput(magnet)
+        return HallSensorResult(magnet)
 
     def open(self):
         if self.args.is_test_mode is False:
