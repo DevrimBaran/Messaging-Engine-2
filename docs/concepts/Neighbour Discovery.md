@@ -8,6 +8,15 @@ Thus each of them has to know if and how to reach the target device.
 
 All of our devices are fully connected
 
+# Initialization
+
+How do we know that a new device has connected?
+- The new device has to send a *hello message* to all the other devices
+
+From where does the new device know to which addresses it has to send a *hello messages*
+- The new device is capable to search after other devices in the same network and to look if they have the respective PIME-port open.
+  Then it will send the *home message' to them.
+
 # Scenarios
 
 1. New device connects
@@ -24,7 +33,7 @@ the Internet of Things)
 2. Publishing *hello messages* from the newly added device to other devices
 3. Sending a multicast message from the newly added device to all other devices
 
--> A combination of 2. and 3. could be good (TBD)
+-> A combination of 2. and 3. could be good
 
 #### Possible Problems through these approaches:
 
@@ -64,17 +73,6 @@ The lost devices will have to search in their database for their own *uuid*. If 
 If there exists an *uuid* they will send it with a hello message and since it was connected with the other devices in the past, they will have saved this *uuid* and change it's status to available. 
 If a message was sent previously and none answer was received, then the sender could send the same message again to the receiver. 
 
-
-
-
-
-# Initialization
-How do we know that a new device has connected?
-- The new device has to send a *hello message* to all the other devices
-
-From where does the new device know to which addresses it has to send a *hello messages*
-- The new device is capable to search after other devices in the same network and to look if they have the respective PIME-port open.
-Then it will send the *home message' to them.
 
 ##IDEAS
 
