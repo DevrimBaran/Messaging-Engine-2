@@ -3,10 +3,10 @@ import logging
 import random
 
 from pime2.sensor.sensor import SinglePinSensor, SensorType, SinglePinOperatorArguments
-from pime2.common.read_output import SinglePinSensorReadOutput
+from pime2.common.read_output import SingleSensorResult
 
 
-class TemperatureSensorReadOutput(SinglePinSensorReadOutput):
+class TemperatureSensorResult(SingleSensorResult):
     """
     Simple type for a temperature reading
     """
@@ -27,7 +27,7 @@ class TemperatureSensor(SinglePinSensor):
         self.sensor = None
         self.args = input_arguments
 
-    def read(self) -> TemperatureSensorReadOutput:
+    def read(self) -> TemperatureSensorResult:
         if self.args.is_test_mode is False:
             # start sensor listening
             temperature = -100
@@ -35,7 +35,7 @@ class TemperatureSensor(SinglePinSensor):
                 logging.error(
                     "Sensor object is None and seems not to be opened. Severe problem with the usage of "
                     "temperature sensor.")
-                return TemperatureSensorReadOutput(float(temperature))
+                return TemperatureSensorResult(float(temperature))
             try:
                 temp_c = self.sensor.temperature
                 if temp_c is not None:
@@ -48,11 +48,11 @@ class TemperatureSensor(SinglePinSensor):
                     temperature = error.args[0]
                 else:
                     logging.error("Unknown problem reading temperature sensor")
-            return TemperatureSensorReadOutput(float(temperature))
+            return TemperatureSensorResult(float(temperature))
         # Temperature sensor dummy logic
         random_temperature = float(random.randint(-50, 50) + random.random())
         logging.info("Temp:%.1f°C", random_temperature)
-        return TemperatureSensorReadOutput(random_temperature)
+        return TemperatureSensorResult(random_temperature)
 
     def open(self):
         if self.args.is_test_mode is False:

@@ -1,7 +1,7 @@
 from abc import ABC
 
 
-class SinglePinSensorReadOutput(ABC):
+class SingleSensorResult(ABC):
     """
     Abstract class to represent the output of a single output pin sensor reading process.
     """
@@ -9,11 +9,8 @@ class SinglePinSensorReadOutput(ABC):
     def __init__(self, result):
         self.result = result
 
-    def __str__(self):
-        return f"{{\"result\": \"{self.result}\"}}"
 
-
-class DualPinSensorReadOutput(ABC):
+class DualSensorResult(ABC):
     """
     Abstract class to represent the output of a two output input pin sensor reading process.
     """
@@ -21,6 +18,3 @@ class DualPinSensorReadOutput(ABC):
     def __init__(self, pin_1_result, pin_2_result):
         self.pin_1_result = pin_1_result
         self.pin_2_result = pin_2_result
-
-    def __str__(self):
-        return f"{{\"Result for input 1\": \"{self.pin_1_result}\", \"Result for input 2\": \"{self.pin_2_result}\" }}"

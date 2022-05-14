@@ -3,10 +3,10 @@ import logging
 import random
 
 from pime2.sensor.sensor import DualPinSensor, SensorType, DualPinOperatorArguments
-from pime2.common.read_output import DualPinSensorReadOutput
+from pime2.common.read_output import DualSensorResult
 
 
-class ButtonSensorReadOutput(DualPinSensorReadOutput):
+class ButtonSensorResult(DualSensorResult):
     """
     Simple type to wrap the result of a button sensor read.
     """
@@ -27,7 +27,7 @@ class ButtonSensor(DualPinSensor):
         self.button_2_pin = input_arguments.input_pin_2
         self.args = input_arguments
 
-    def read(self) -> ButtonSensorReadOutput:
+    def read(self) -> ButtonSensorResult:
         if self.args.is_test_mode is False:
             from RPi import GPIO
             # Start sensor listening
@@ -44,7 +44,7 @@ class ButtonSensor(DualPinSensor):
             else:
                 logging.info("Button 2 down")
                 is_button_two_up = True
-            return ButtonSensorReadOutput(is_button_one_up, is_button_two_up)
+            return ButtonSensorResult(is_button_one_up, is_button_two_up)
         # Sensor dummy
         dummy_button_one_up = bool(random.randint(0, 1))
         dummy_button_two_up = bool(random.randint(0, 1))
@@ -58,7 +58,7 @@ class ButtonSensor(DualPinSensor):
             logging.info("Button 2 up")
         else:
             logging.info("Button 2 down")
-        return ButtonSensorReadOutput(dummy_button_one_up, dummy_button_two_up)
+        return ButtonSensorResult(dummy_button_one_up, dummy_button_two_up)
 
     def open(self):
         if self.args.is_test_mode is False:

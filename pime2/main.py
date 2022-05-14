@@ -27,7 +27,7 @@ async def pime_run():
         zmq_context = Context.instance()
 
         enabled_sensors: List[Sensor] = [
-            # ButtonSensor(DualPinOperatorArguments(12, 13, is_test_mode=True))
+           # ButtonSensor(DualPinOperatorArguments(12, 13, is_test_mode=True))
         ]
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
