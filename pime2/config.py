@@ -21,17 +21,31 @@ class MEConfiguration:
     """
 
     def __init__(self, config_yaml) -> None:
-        self.instance_id = config_yaml['instance_id']
-        self.loglevel = config_yaml['loglevel']
-        self.is_debug = config_yaml['is_debug']
+        if config_yaml is None:
+            raise RuntimeError("Invalid empty configuration given.")
+        if 'instance_id' not in config_yaml or 'loglevel' not in config_yaml:
+            raise RuntimeError("Missing instance_id and/or loglevel in configuration.")
+
+        self.instance_id = str(config_yaml['instance_id']).strip()
+        self.loglevel = str(config_yaml['loglevel']).strip()
+
+        if len(self.instance_id) == 0 or config_yaml['instance_id'] is None:
+            raise RuntimeError("Empty 'instance_id' not allowed in configuration.")
+        if len(self.loglevel) == 0 or config_yaml['loglevel'] is None:
+            raise RuntimeError("Empty 'loglevel' not allowed in configuration.")
+
+        if 'is_debug' in config_yaml:
+            self.is_debug = bool(config_yaml['is_debug'])
+        else:
+            self.is_debug = False
         self.sensors = []
         self.actuators = []
 
-        if 'sensors' in config_yaml:
+        if 'sensors' in config_yaml and config_yaml['sensors'] is not None:
             for sensor_config in config_yaml['sensors']:
                 self.sensors.append(OperatorConfiguration(sensor_config))
 
-        if 'actuators' in config_yaml:
+        if 'actuators' in config_yaml and config_yaml['actuators'] is not None:
             for actuator_config in config_yaml['actuators']:
                 self.actuators.append(OperatorConfiguration(actuator_config))
 
@@ -50,8 +64,8 @@ class OperatorConfiguration:
     """
 
     def __init__(self, operator_object):
-        self.name = str(operator_object['name'])
-        self.type = str(operator_object['type'])
+        self.name = str(operator_object['name']).strip()
+        self.type = str(operator_object['type']).strip()
         self.pin1 = int(operator_object['pin1'])
         self.is_test_mode = False
         if 'is_test_mode' in operator_object and operator_object['is_test_mode'] is True:
@@ -64,19 +78,19 @@ class OperatorConfiguration:
         self.original = operator_object
 
 
-def load_app_config() -> typing.Optional[MEConfiguration]:
+def load_app_config(config_file_path: str) -> typing.Optional[MEConfiguration]:
     """
     internal method to load the yml file and insert it into an instance of MEConfiguration class
     :return:
     """
     try:
-        default_config_file = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), CONFIG_FILE)
+        default_config_file = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), config_file_path)
         if os.path.exists(default_config_file):
             with open(default_config_file, "r", encoding="utf-8") as config_file:
                 app_config_raw = yaml.safe_load(config_file)
                 return MEConfiguration(app_config_raw)
-    except Exception as ex:
-        raise RuntimeError(f"Cannot find configuration file '{CONFIG_FILE}' or cannot load it. {ex}") from ex
+    except RuntimeError as ex:
+        raise RuntimeError(f"Cannot find configuration file '{config_file_path}' or cannot load it. {ex}") from ex
     return None
 
 

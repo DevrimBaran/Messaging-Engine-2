@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
         asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
 
-    config = load_app_config()
+    config = load_app_config(CONFIG_FILE)
 
     # configure logging
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
