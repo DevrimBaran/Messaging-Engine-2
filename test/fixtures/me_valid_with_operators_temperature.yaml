@@ -1,0 +1,6 @@
+instance_id: 12345678
+loglevel: DEBUG
+sensors:
+  - name: "TemperatureSensor"
+    type: temperature
+    pin1: 1

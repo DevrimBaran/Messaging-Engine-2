@@ -1,0 +1,8 @@
+instance_id: 12345678
+loglevel: DEBUG
+sensors:
+  - name: "Testsensor"
+    type: "button"
+    pin1: 1
+    pin2: 2
+    is_test_mode: true

@@ -1,0 +1,3 @@
+instance_id: 12345678
+loglevel: DEBUG
+actuators:

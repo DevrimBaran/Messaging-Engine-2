@@ -64,6 +64,18 @@ class OperatorConfiguration:
     """
 
     def __init__(self, operator_object):
+        if 'name' not in operator_object or 'type' not in operator_object or 'pin1' not in operator_object:
+            raise RuntimeError("Missing at least one mandatory operator property: name, type, pin1")
+
+        if operator_object['name'] is None or operator_object['type'] is None or operator_object['pin1'] is None:
+            raise RuntimeError("Missing at least one mandatory operator property value of: name, type, pin1")
+
+        if not isinstance(operator_object['pin1'], int):
+            raise RuntimeError("Invalid non integer given for gpio pin1.")
+        if 'pin2' in operator_object and operator_object['pin2'] is not None and not isinstance(operator_object['pin2'],
+                                                                                                int):
+            raise RuntimeError("Invalid non integer given for gpio pin2.")
+
         self.name = str(operator_object['name']).strip()
         self.type = str(operator_object['type']).strip()
         self.pin1 = int(operator_object['pin1'])

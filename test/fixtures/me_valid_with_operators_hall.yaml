@@ -1,0 +1,6 @@
+instance_id: 12345678
+loglevel: DEBUG
+sensors:
+  - name: "Testsensor2"
+    type: hall
+    pin1: 1
