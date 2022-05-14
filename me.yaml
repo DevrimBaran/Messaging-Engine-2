@@ -1,0 +1,18 @@
+instance_id: 123456678
+loglevel: DEBUG
+is_debug: false
+sensors:
+  - name: "Button-Sensor"
+    type: button
+    pin1: 12
+    pin2: 13
+    is_test_mode: true
+  - name: "Magnet-Sensor"
+    type: hall
+    pin1: 14
+    is_test_mode: true
+actuators:
+  - name: "LED-Actuator"
+    type: led
+    pin1: 12
+    pin2: 13

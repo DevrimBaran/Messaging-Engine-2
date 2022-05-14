@@ -21,8 +21,8 @@ class TemperatureSensor(SinglePinSensor):
     input_arguments provide a property is_test_mode.
     """
 
-    def __init__(self, input_arguments: SinglePinOperatorArguments):
-        super().__init__(SensorType.TEMPERATURE, input_arguments)
+    def __init__(self, name: str, input_arguments: SinglePinOperatorArguments):
+        super().__init__(name, SensorType.TEMPERATURE, input_arguments)
         self.sensor_pin: int = input_arguments.input_pin_1
         self.sensor = None
         self.args = input_arguments
