@@ -21,8 +21,8 @@ class TemperatureSensor(SinglePinSensor):
     input_arguments provide a property is_test_mode.
     """
 
-    def __init__(self, sensor_type: SensorType, input_arguments: SinglePinOperatorArguments):
-        super().__init__(sensor_type.TEMPERATURE, input_arguments)
+    def __init__(self, input_arguments: SinglePinOperatorArguments):
+        super().__init__(SensorType.TEMPERATURE, input_arguments)
         self.sensor_pin: int = input_arguments.input_pin_1
         self.sensor = None
         self.args = input_arguments
@@ -48,7 +48,12 @@ class TemperatureSensor(SinglePinSensor):
                     temperature = error.args[0]
                 else:
                     logging.error("Unknown problem reading temperature sensor")
-            return TemperatureSensorResult(float(temperature))
+            if isinstance(temperature, float):
+                return TemperatureSensorResult(float(temperature))
+            else:
+                # log any error the sensor returns and return None as result.
+                logging.error(temperature)
+                return TemperatureSensorResult(None)
         # Temperature sensor dummy logic
         random_temperature = float(random.randint(-50, 50) + random.random())
         logging.info("Temp:%.1f°C", random_temperature)

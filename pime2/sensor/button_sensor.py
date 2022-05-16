@@ -65,8 +65,7 @@ class ButtonSensor(DualPinSensor):
             from RPi import GPIO
             # Initialising GPIO
             GPIO.setmode(GPIO.BCM)
-            GPIO.setup(self.button_1_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.setup(self.button_2_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.setup([self.button_1_pin, self.button_2_pin], GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     def close(self):
         # TODO: Need to test GPIO.cleanup() on pi to avoid errors. Works also without cleanup.
