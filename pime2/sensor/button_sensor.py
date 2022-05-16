@@ -41,9 +41,9 @@ class ButtonSensor(DualPinSensor):
 
             if GPIO.input(self.button_2_pin) == GPIO.LOW:
                 logging.info("Button 2 up")
+                is_button_two_up = True
             else:
                 logging.info("Button 2 down")
-                is_button_two_up = True
             return ButtonSensorResult(is_button_one_up, is_button_two_up)
         # Sensor dummy
         dummy_button_one_up = bool(random.randint(0, 1))
