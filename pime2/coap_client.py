@@ -1,39 +1,51 @@
-import asyncio
-from wsgiref.util import request_uri
+import logging
 import aiocoap
 from aiocoap import Message, Context
-import logging
 
-class CoapClient:
+class CoapClient():
+    """
+    Coap Client Implementation
+    """
 
     def __init__(self):
+        """
+        Initialize Coap Client.
+        """
         self.client_context = Context.create_client_context()
         logging.info("Created Client")
 
+
     async def ping(self, destination):
+        """
+        Ping Implementation
+        """
         logging.info("Sending Ping request")
-        code=aiocoap.Code.POST
-        uri='coap://' + destination + '/trigger-hello'
+        code = aiocoap.Code.POST
+        uri = 'coap://' + destination + '/trigger-hello'
         request = Message(code=code, uri=uri)
-        logging.debug("Request:" + "\tcode= " + request.code + "\turi= " + uri )
+        logging.debug("Request: code= %s \turi=  %s", code, uri)
         try:
             response = await self.client_context.request(request).response
-            logging.debug("Response: " + response)
+            logging.debug("Response: %s", response)
         except Exception as exception:
-            logging.error('Ping failed! Exception: ' + exception)
+            logging.error('Ping failed! Exception: %s', exception)
         else:
-            logging.info(' Ping succesful! Response: %s\n%r' % (response.code, response.payload))
+            logging.info('Ping succesful! Response: %s\n%r', response.code, response.payload)
+
 
     async def send_message(self, destination, endpoint, payload):
+        """
+        Send message with an arbitrary payload to a specific destination and endpoint.
+        """
         logging.info("Sending Message request")
-        code=aiocoap.Code.POST
-        uri='coap://' + destination + '/' + endpoint
+        code = aiocoap.Code.POST
+        uri = 'coap://' + destination + '/' + endpoint
         request = Message(code=code, uri=uri, payload=payload)
-        logging.debug("Request: payload= " + payload + "\tcode= " + code + "\turi= " + uri )
+        logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
         try:
             response = await self.client_context.request(request).response
-            logging.debug("Response: " + response)
+            logging.debug("Response: %s", response)
         except Exception as exception:
-            logging.error('Sending Message failed! Exception: ' + exception)
+            logging.error('Sending Message failed! Exception: %s', exception)
         else:
-            logging.info('Message Request succesful: %s\n%r' % (response.code, response.payload))
+            logging.info('Message Request succesful: %s\n%r', response.code, response.payload)
