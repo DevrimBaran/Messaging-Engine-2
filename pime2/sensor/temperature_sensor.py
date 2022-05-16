@@ -50,10 +50,9 @@ class TemperatureSensor(SinglePinSensor):
                     logging.error("Unknown problem reading temperature sensor")
             if isinstance(temperature, float):
                 return TemperatureSensorResult(float(temperature))
-            else:
-                # log any error the sensor returns and return None as result.
-                logging.error(temperature)
-                return TemperatureSensorResult(None)
+            # log any error the sensor returns and return None as result.
+            logging.error(temperature)
+            return TemperatureSensorResult(None)
         # Temperature sensor dummy logic
         random_temperature = float(random.randint(-50, 50) + random.random())
         logging.info("Temp:%.1f°C", random_temperature)
