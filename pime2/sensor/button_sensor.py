@@ -49,10 +49,10 @@ class ButtonSensor(DualPinSensor):
         dummy_button_one_up = bool(random.randint(0, 1))
         dummy_button_two_up = bool(random.randint(0, 1))
 
-        if dummy_button_one_up is False:
-            logging.info("Button 1 down")
-        else:
+        if dummy_button_one_up is True:
             logging.info("Button 1 up")
+        else:
+            logging.info("Button 1 down")
 
         if dummy_button_two_up is True:
             logging.info("Button 2 up")
