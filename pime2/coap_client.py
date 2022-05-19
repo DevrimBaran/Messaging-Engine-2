@@ -1,3 +1,4 @@
+# pylint: disable=W0703
 import logging
 import aiocoap
 from aiocoap import Message, Context
