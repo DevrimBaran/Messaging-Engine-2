@@ -8,11 +8,11 @@ class CoapClient():
     Coap Client Implementation
     """
 
-    def __init__(self):
+    def __init__(self,client_context):
         """
         Initialize Coap Client.
         """
-        self.client_context = Context.create_client_context()
+        self.client_context = client_context
         logging.info("Created Client")
 
 
