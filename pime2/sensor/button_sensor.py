@@ -41,18 +41,18 @@ class ButtonSensor(DualPinSensor):
 
             if GPIO.input(self.button_2_pin) == GPIO.LOW:
                 logging.info("Button 2 up")
+                is_button_two_up = True
             else:
                 logging.info("Button 2 down")
-                is_button_two_up = True
             return ButtonSensorResult(is_button_one_up, is_button_two_up)
         # Sensor dummy
         dummy_button_one_up = bool(random.randint(0, 1))
         dummy_button_two_up = bool(random.randint(0, 1))
 
-        if dummy_button_one_up is False:
-            logging.info("Button 1 down")
-        else:
+        if dummy_button_one_up is True:
             logging.info("Button 1 up")
+        else:
+            logging.info("Button 1 down")
 
         if dummy_button_two_up is True:
             logging.info("Button 2 up")
@@ -65,8 +65,7 @@ class ButtonSensor(DualPinSensor):
             from RPi import GPIO
             # Initialising GPIO
             GPIO.setmode(GPIO.BCM)
-            GPIO.setup(self.button_1_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.setup(self.button_2_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.setup([self.button_1_pin, self.button_2_pin], GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     def close(self):
         # TODO: Need to test GPIO.cleanup() on pi to avoid errors. Works also without cleanup.
