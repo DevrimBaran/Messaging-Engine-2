@@ -1,14 +1,14 @@
 # pylint: disable=W0703
 import logging
 import aiocoap
-from aiocoap import Message, Context
+from aiocoap import Message
 
 class CoapClient():
     """
     Coap Client Implementation
     """
 
-    def __init__(self,client_context):
+    def __init__(self, client_context):
         """
         Initialize Coap Client.
         """
