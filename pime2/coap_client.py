@@ -20,7 +20,7 @@ class CoapClient():
         Ping Implementation
         """
         logging.info("Sending Ping request")
-        code = aiocoap.Code.POST
+        code = aiocoap.Code.GET
         uri = 'coap://' + destination + '/trigger-hello'
         request = Message(code=code, uri=uri)
         logging.debug("Request: code= %s \turi=  %s", code, uri)
