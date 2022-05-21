@@ -22,6 +22,7 @@ async def startup_server():
     :return:
     """
     root = resource.Site()
+    print(root.__str__())
 
     root.add_resource(['.well-known', 'core'],
                       resource.WKCResource(root.get_resources_as_linkheader))
@@ -38,7 +39,7 @@ async def startup_server():
     if sys.platform == "win32":
         await aiocoap.Context.create_server_context(bind=('127.0.0.1', 5683), site=root)
     else:
-        await aiocoap.Context.create_server_context(root)
+        await aiocoap.Context.create_server_context(bind=('127.0.0.1', 5683), site=root)
 
     logging.info("Started Server")
     # Run forever
