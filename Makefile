@@ -18,14 +18,26 @@ help: ## show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 .PHONY: setup
+ifdef OS
+setup: ## setup the project for development
+	python -m pip install --user pylint
+	python -m pip install --user autopep8
+else
 setup: ## setup the project for development
 	python3 -m pip install --user pylint
 	python3 -m pip install --user autopep8
+endif
 
 .PHONY: setup-venv
+ifdef OS
+setup-venv: ## create virtual environment for this project
+	python -m venv env
+	powershell Set-ExecutionPolicy Bypass -Scope Process -Force; ./env/Scripts/activate ; pip install -r .\requirements.txt; Set-ExecutionPolicy Default -Scope Process -Force
+else
 setup-venv: ## create virtual environment for this project
 	python3 -m venv env
-	source ./env/bin/activate ; pip install -r requirements.txt
+	source ./env/bin/activate ; pip install -r requirements-raspi.txt
+endif
 
 .PHONY: diagrams
 diagrams: ## generate plantuml diagrams
@@ -40,9 +52,19 @@ format: ## auto-format the code
 	autopep8 --in-place --aggressive -r main.py pime2
 
 .PHONY: test
+ifdef OS
+test: ## run unit tests
+	python -m unittest test/*.py
+else
 test: ## run unit tests
 	python3 -m unittest test/*.py
+endif
 
 .PHONY: runtest
+ifdef OS
+runtest: setup-venv ## run app for 10 secs - if possible
+	powershell Set-ExecutionPolicy Bypass -Scope Process -Force; .\env\Scripts\activate ; export me_runtest=$(timeout 10 python3 main.py || echo "$$?") ; if [[ $$me_runtest -eq 143 || $$me_runtest -eq 0 ]]; then exit 0; else exit 1; fi ; unset $$me_runtest ; Set-ExecutionPolicy Default -Scope Process -Force
+else
 runtest: setup-venv ## run app for 10 secs - if possible
 	source env/bin/activate ; export me_runtest=$(timeout 10 python3 main.py || echo "$$?") ; if [[ $$me_runtest -eq 143 || $$me_runtest -eq 0 ]]; then exit 0; else exit 1; fi ; unset $$me_runtest
+endif
