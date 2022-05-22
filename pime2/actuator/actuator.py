@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 from pime2.sensor.sensor import Operator, SinglePinOperatorArguments, DualPinOperatorArguments
-from pime2.common.read_output import DualPinCommonResult, SinglePinCommonResult
+from pime2.common.read_output import DualPinCommonResult
 
 
 # TODO: this is not final or perfect

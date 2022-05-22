@@ -1,14 +1,15 @@
 # pylint: disable=import-outside-toplevel
 import logging
+from time import sleep
 
 from pime2.actuator.actuator import SinglePinActuator, ActuatorType
 from pime2.common.operator import SinglePinOperatorArguments
-from time import sleep
 
 
 class Speaker(SinglePinActuator):
     """
-    A simple speaker
+    A simple speaker actuator.
+    input_arguments provide a property is_test_mode.
     """
 
     def __init__(self, input_arguments: SinglePinOperatorArguments):
@@ -17,7 +18,8 @@ class Speaker(SinglePinActuator):
         self.args = input_arguments
         self.speaker_on = False
 
-    def activate(self, sleep_time: float):
+    def activate(self, input_arg: float):
+        sleep_time = input_arg
         self.speaker_on = True
         if self.args.is_test_mode is False:
             from RPi import GPIO
@@ -42,6 +44,10 @@ class Speaker(SinglePinActuator):
             from RPi import GPIO
             GPIO.cleanup(self.speaker)
         self.speaker = False
+        logging.info("Speaker is off")
 
     def is_speaker_on(self):
+        """
+        Getter for the variable speaker_on.
+        """
         return self.speaker_on
