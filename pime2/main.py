@@ -12,6 +12,8 @@ from pime2.sensor.button_sensor import ButtonSensor
 from pime2.sensor.sensor import Sensor
 from pime2.sensor_listener import startup_sensor_listener
 from pime2.zmq import startup_pull_queue, startup_push_queue
+import pime2.coap_client
+from aiocoap import Context as ctx
 
 
 async def pime_run():
@@ -27,10 +29,11 @@ async def pime_run():
         connection = db.create_connection("pime_database.db")
         init_push_queue()
         zmq_context = Context.instance()
-
+        client = pime2.coap_client.CoapClient(await ctx.create_client_context())
         enabled_sensors: List[Sensor] = [
             ButtonSensor(DualPinOperatorArguments(12, 13, is_test_mode=True))
         ]
+        await client.ping(destination="192.168.137.58")
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
                      startup_push_queue(zmq_context),
