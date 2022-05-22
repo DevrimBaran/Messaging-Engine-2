@@ -1,7 +1,7 @@
 from abc import ABC
 
 
-class SingleSensorResult(ABC):
+class SinglePinCommonResult(ABC):
     """
     Abstract class to represent the output of a single output pin sensor reading process.
     """
@@ -10,7 +10,7 @@ class SingleSensorResult(ABC):
         self.result = result
 
 
-class DualSensorResult(ABC):
+class DualPinCommonResult(ABC):
     """
     Abstract class to represent the output of a two output input pin sensor reading process.
     """

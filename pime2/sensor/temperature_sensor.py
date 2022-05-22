@@ -3,10 +3,10 @@ import logging
 import random
 
 from pime2.sensor.sensor import SinglePinSensor, SensorType, SinglePinOperatorArguments
-from pime2.common.read_output import SingleSensorResult
+from pime2.common.read_output import SinglePinCommonResult
 
 
-class TemperatureSensorResult(SingleSensorResult):
+class TemperatureSensorResult(SinglePinCommonResult):
     """
     Simple type for a temperature reading
     """

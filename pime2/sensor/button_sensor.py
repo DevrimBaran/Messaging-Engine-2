@@ -3,10 +3,10 @@ import logging
 import random
 
 from pime2.sensor.sensor import DualPinSensor, SensorType, DualPinOperatorArguments
-from pime2.common.read_output import DualSensorResult
+from pime2.common.read_output import DualPinCommonResult
 
 
-class ButtonSensorResult(DualSensorResult):
+class ButtonSensorResult(DualPinCommonResult):
     """
     Simple type to wrap the result of a button sensor read.
     """

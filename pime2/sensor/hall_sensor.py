@@ -3,10 +3,10 @@ import logging
 import random
 
 from pime2.sensor.sensor import SinglePinSensor, SinglePinOperatorArguments, SensorType
-from pime2.common.read_output import SingleSensorResult
+from pime2.common.read_output import SinglePinCommonResult
 
 
-class HallSensorResult(SingleSensorResult):
+class HallSensorResult(SinglePinCommonResult):
     """
     Simple type to wrap a single sensor measurement result
     """

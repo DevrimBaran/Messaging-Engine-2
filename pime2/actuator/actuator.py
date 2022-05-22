@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from pime2.sensor.sensor import Operator, SinglePinOperatorArguments, DualPinOperatorArguments
+from pime2.common.read_output import DualPinCommonResult, SinglePinCommonResult
 
 
 # TODO: this is not final or perfect
@@ -18,12 +19,11 @@ class SinglePinActuator(Operator, ABC):
         self.args = input_arguments
 
     @abstractmethod
-    def handle(self, trigger_args: any) -> bool:
+    def handle(self, input_arg: any) -> SinglePinCommonResult:
         """
         Process current gpio state of a (single?) pin and control the actuator operation.
-        TODO: input type is tbd
 
-        :param trigger_args:
+        :param input_arg:
         :return: success state - if any
         """
 
@@ -39,11 +39,11 @@ class DualPinActuator(Operator, ABC):
         self.args = input_arguments
 
     @abstractmethod
-    def handle(self, trigger_args: any) -> bool:
+    def handle(self, input_arg_one: any, input_arg_two) -> DualPinCommonResult:
         """
         Process current gpio state of a (single?) pin and control the actuator operation.
-        TODO: input type is tbd
 
-        :param trigger_args:
+        :param input_arg_one:
+        :param input_arg_two:
         :return: success state - if any
         """
