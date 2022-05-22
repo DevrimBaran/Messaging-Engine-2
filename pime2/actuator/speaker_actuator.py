@@ -37,7 +37,6 @@ class Speaker(SinglePinActuator):
             from RPi import GPIO
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(self.speaker, GPIO.OUT)
-            logging.info("")
 
     def close(self):
         if self.args.is_test_mode is True:
