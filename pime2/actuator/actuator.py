@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from enum import Enum
 from pime2.sensor.sensor import Operator, SinglePinOperatorArguments, DualPinOperatorArguments
 from pime2.common.read_output import DualPinCommonResult, SinglePinCommonResult
 
@@ -7,19 +8,37 @@ from pime2.common.read_output import DualPinCommonResult, SinglePinCommonResult
 # TODO: add meaningful properties to these objects
 # TODO implement type of actuator
 
+class ActuatorType(Enum):
+    """
+    Enum to declare which actuator types are supported.
+    """
+    LED = 1
+    SPEAKER = 2
 
-class SinglePinActuator(Operator, ABC):
+
+class Actuator(Operator, ABC):
+    """
+    Abstract class to represent an abstract sensor.
+    You should never inherit directly from this class, use SinglePinSensor, DualPinSensor...
+    """
+
+    def __init__(self, actuator_type: ActuatorType):
+        self.sensor_type = actuator_type
+
+
+class SinglePinActuator(Actuator, ABC):
     """
     Abstract class to represent an abstract sensor.
     Each actuator implements this class.
 
     """
 
-    def __init__(self, input_arguments: SinglePinOperatorArguments):
+    def __init__(self, actuator_type: ActuatorType, input_arguments: SinglePinOperatorArguments):
+        super().__init__(actuator_type)
         self.args = input_arguments
 
     @abstractmethod
-    def handle(self, input_arg: any) -> SinglePinCommonResult:
+    def activate(self, input_arg: any):
         """
         Process current gpio state of a (single?) pin and control the actuator operation.
 
@@ -28,18 +47,19 @@ class SinglePinActuator(Operator, ABC):
         """
 
 
-class DualPinActuator(Operator, ABC):
+class DualPinActuator(Actuator, ABC):
     """
     Abstract class to represent an abstract sensor.
     Each actuator implements this class.
 
     """
 
-    def __init__(self, input_arguments: DualPinOperatorArguments):
+    def __init__(self, actuator_type: ActuatorType, input_arguments: DualPinOperatorArguments):
+        super().__init__(actuator_type)
         self.args = input_arguments
 
     @abstractmethod
-    def handle(self, input_arg_one: any, input_arg_two) -> DualPinCommonResult:
+    def activate(self, input_arg_one: any, input_arg_two: any) -> DualPinCommonResult:
         """
         Process current gpio state of a (single?) pin and control the actuator operation.
 
