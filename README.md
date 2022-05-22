@@ -12,8 +12,15 @@ or [here](https://docs.python.org/3/library/venv.html).
 
 The following commands will set up a local Python development environment for this project:
 
+For Raspberry Pi:
 ```console
 make setup-venv
+make setup
+```
+
+For other devices:
+```console
+make setup-venv-raspi
 make setup
 ```
 
