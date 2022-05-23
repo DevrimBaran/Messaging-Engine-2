@@ -90,20 +90,35 @@ class OperatorConfiguration:
         self.original = operator_object
 
 
+ME_CONF: MEConfiguration
+
+
 def load_app_config(config_file_path: str) -> typing.Optional[MEConfiguration]:
     """
     internal method to load the yml file and insert it into an instance of MEConfiguration class
     :return:
     """
+    # pylint: disable=global-statement
+    global ME_CONF
     try:
         default_config_file = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), config_file_path)
         if os.path.exists(default_config_file):
             with open(default_config_file, "r", encoding="utf-8") as config_file:
                 app_config_raw = yaml.safe_load(config_file)
-                return MEConfiguration(app_config_raw)
+                ME_CONF = MEConfiguration(app_config_raw)
+                return ME_CONF
     except RuntimeError as ex:
         raise RuntimeError(f"Cannot find configuration file '{config_file_path}' or cannot load it. {ex}") from ex
     return None
+
+
+def get_me_conf() -> MEConfiguration:
+    """
+    This method provides the app's properties
+
+    :return:
+    """
+    return ME_CONF
 
 
 def load_sensors(config: MEConfiguration) -> List[Sensor]:

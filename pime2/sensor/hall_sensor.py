@@ -50,7 +50,6 @@ class HallSensor(SinglePinSensor):
     def open(self):
         if self.args.is_test_mode is False:
             # start sensor listening
-            # pylint-disable: import-outside-toplevel
             from RPi import GPIO
 
             # Initialising GPIO
