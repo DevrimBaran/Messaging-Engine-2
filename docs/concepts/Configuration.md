@@ -45,3 +45,10 @@ actuators:
 - **`pin1`** (required, integer)
 - **`pin2`** (required for dual pin operator types, integer)
 - **`is_test_mode`** (required, boolean)
+
+## Python
+
+```python
+pime2.config.get_me_conf()
+```
+
