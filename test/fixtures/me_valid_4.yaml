@@ -2,3 +2,5 @@ instance_id: 12345678
 loglevel: DEBUG
 sensors:
 actuators:
+host: 127.0.0.1
+port: 5683

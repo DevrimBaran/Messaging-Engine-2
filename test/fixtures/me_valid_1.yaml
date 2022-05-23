@@ -1,3 +1,5 @@
 instance_id: 12345678
 loglevel: DEBUG
 is_debug: false
+host: 127.0.0.1
+port: 5683

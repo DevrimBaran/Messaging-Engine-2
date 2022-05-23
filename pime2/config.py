@@ -1,3 +1,4 @@
+import ipaddress
 import logging
 import os
 import pathlib
@@ -23,16 +24,36 @@ class MEConfiguration:
     def __init__(self, config_yaml) -> None:
         if config_yaml is None:
             raise RuntimeError("Invalid empty configuration given.")
-        if 'instance_id' not in config_yaml or 'loglevel' not in config_yaml:
-            raise RuntimeError("Missing instance_id and/or loglevel in configuration.")
+
+        required_elements = [
+            "instance_id",
+            "loglevel",
+            "host",
+            "port",
+        ]
+        for i in required_elements:
+            if i not in config_yaml or config_yaml[i] is None:
+                raise RuntimeError(f"Missing '{i}' in configuration.")
 
         self.instance_id = str(config_yaml['instance_id']).strip()
         self.loglevel = str(config_yaml['loglevel']).strip()
+        self.host = str(config_yaml['host']).strip()
+        self.port = int(str(config_yaml['port']).strip())
 
-        if len(self.instance_id) == 0 or config_yaml['instance_id'] is None:
+        if len(self.instance_id) == 0:
             raise RuntimeError("Empty 'instance_id' not allowed in configuration.")
-        if len(self.loglevel) == 0 or config_yaml['loglevel'] is None:
+        if len(self.loglevel) == 0:
             raise RuntimeError("Empty 'loglevel' not allowed in configuration.")
+        if len(self.host) == 0:
+            raise RuntimeError("Empty 'host' not allowed in configuration.")
+        if self.port <= 0 or self.port >= pow(2, 16) or config_yaml['port'] is None:
+            raise RuntimeError("Empty or invalid 'port' not allowed in configuration.")
+
+        # host needs to be a valid ip
+        try:
+            ipaddress.ip_address(self.host)
+        except ValueError as ex:
+            raise RuntimeError("Invalid ip given in 'host' field") from ex
 
         if 'is_debug' in config_yaml:
             self.is_debug = bool(config_yaml['is_debug'])

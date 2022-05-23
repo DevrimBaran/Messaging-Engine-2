@@ -28,6 +28,11 @@ class TestAppConfiguration(unittest.TestCase):
             './test/fixtures/me_invalid_6.yaml',
             './test/fixtures/me_invalid_7.yaml',
             './test/fixtures/me_invalid_8.yaml',
+            './test/fixtures/me_invalid_9.yaml',
+            './test/fixtures/me_invalid_10.yaml',
+            './test/fixtures/me_invalid_11.yaml',
+            './test/fixtures/me_invalid_12.yaml',
+            './test/fixtures/me_invalid_13.yaml',
         ]
 
     def test_valid_configuration_works(self):
@@ -42,6 +47,8 @@ class TestAppConfiguration(unittest.TestCase):
             self.assertEqual("12345678", config.instance_id)
             self.assertEqual("DEBUG", config.loglevel)
             self.assertEqual(False, config.is_debug)
+            self.assertEqual("127.0.0.1", config.host)
+            self.assertEqual(5683, config.port)
 
             self.assertEqual(0, len(config.sensors))
             self.assertEqual(0, len(config.actuators))
@@ -58,6 +65,8 @@ class TestAppConfiguration(unittest.TestCase):
             self.assertEqual("12345678", config.instance_id)
             self.assertEqual("DEBUG", config.loglevel)
             self.assertEqual(False, config.is_debug)
+            self.assertEqual("127.0.0.1", config.host)
+            self.assertEqual(5683, config.port)
 
             self.assertEqual(1, len(config.sensors))
             self.assertEqual(0, len(config.actuators))

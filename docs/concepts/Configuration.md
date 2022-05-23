@@ -26,6 +26,8 @@ actuators:
 - `instance_id`: (Required) A unique ID of this ME2 instance. Note: ME2 does not work correctly if there are several ME2
   instances
   with the same id in the same network.
+- `host`: (Required) An IP address, the host of the CoAp-Server. Default: `127.0.0.1`
+- `port`: (Required) CoAp-Server port. Default: `5683`
 - `loglevel`: (Required) The loglevel. Possible values
   are [these](https://docs.python.org/3/library/logging.html#logging-levels).
 - `is_debug`: (Optional) Flag to indicate the debug mode of the application
