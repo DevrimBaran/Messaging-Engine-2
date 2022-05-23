@@ -38,13 +38,15 @@ def create_default_tables(connection):
     :param connection: connection to the database
     :return:
     """
-    sql_create_sensors_table = """CREATE TABLE IF NOT EXISTS sensors (
+    sql_create_nodes_table = """CREATE TABLE IF NOT EXISTS nodes (
                                     id integer PRIMARY KEY,
-                                    name text NOT NULL );"""
+                                    name varchar(255) NOT NULL,
+                                    ip varchar(255) NOT NULL,
+                                    port int NOT NULL);"""
 
     cursor = connection.cursor()
     try:
-        cursor.execute(sql_create_sensors_table)
+        cursor.execute(sql_create_nodes_table)
         connection.commit()
         logging.info("Successfully created all default tables")
     except Error:
