@@ -33,6 +33,9 @@ class TestAppConfiguration(unittest.TestCase):
             './test/fixtures/me_invalid_11.yaml',
             './test/fixtures/me_invalid_12.yaml',
             './test/fixtures/me_invalid_13.yaml',
+            './test/fixtures/me_invalid_14.yaml',
+            './test/fixtures/me_invalid_15.yaml',
+            './test/fixtures/me_invalid_16.yaml',
         ]
 
     def test_valid_configuration_works(self):

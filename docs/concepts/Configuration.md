@@ -28,6 +28,7 @@ actuators:
   with the same id in the same network.
 - `host`: (Required) An IP address, the host of the CoAp-Server. Default: `127.0.0.1`
 - `port`: (Required) CoAp-Server port. Default: `5683`
+- `read_interval`: (Required) The interval as float value in seconds sensors are read. Default is 1 Second: `1.0` (Range: 0.3-300)
 - `loglevel`: (Required) The loglevel. Possible values
   are [these](https://docs.python.org/3/library/logging.html#logging-levels).
 - `is_debug`: (Optional) Flag to indicate the debug mode of the application

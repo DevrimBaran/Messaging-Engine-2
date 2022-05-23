@@ -4,3 +4,4 @@ sensors:
 actuators:
 host: 127.0.0.1
 port: 5683
+read_interval: 1.0
