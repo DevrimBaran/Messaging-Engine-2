@@ -29,6 +29,7 @@ make setup
 This project uses a custom image to run the CI jobs in. The [Dockerfile](Dockerfile_build) can be found here.
 
 ## Guidelines
+
 ### Development guidelines
 
 - Use standard-libraries whenever possible
@@ -38,15 +39,17 @@ This project uses a custom image to run the CI jobs in. The [Dockerfile](Dockerf
 - Use code linting (`make lint`)
 
 ### Git guidelines
-- **Branch name**: Use `feature/PIME-[Issue number] [optional: very short description]` for features and `fix/PIME-[Issue number]` for bugfixes
-  
+
+- **Branch name**: Use `feature/PIME-[Issue number] [optional: very short description]` for features
+  and `fix/PIME-[Issue number]` for bugfixes
+
   ```
   git checkout -b feature/PIME-23 database
   
   git checkout -b fix/PIME-25
   ```
-  
-- **Commit message**: Use `PIME-[Issue number] [your message]`. <br> 
+
+- **Commit message**: Use `PIME-[Issue number] [your message]`. <br>
   Message length should be up to 50 characters. <br>
   Each commit must belong to an issue number. If there is none, create a new issue!
 
@@ -55,10 +58,11 @@ This project uses a custom image to run the CI jobs in. The [Dockerfile](Dockerf
   
   git commit -m "PIME-25 fix wrong button color"
   ```
-  
+
 ### GitLab guidelines
+
 - **Issues**: Each issue should include an understandable `description` and, if possible, the `acceptance criterias`
- 
+
 ## Documentation
 
 The documentation is written using Markdown format for texts and PlantUML for diagrams.
@@ -72,6 +76,22 @@ Execute in venv:
 
 ```
 aiocoap-client coap://localhost/health
+```
+
+### Docker-Compose
+
+There is an example scenario running three instances of ME2 in a docker-compose setup for easy testing.
+You can use `ip`, `ping` and `aiocoap-client` command inside the container.
+
+#### Usage
+
+```bash
+# Build Image
+docker-compose build
+docker-compose up
+
+# Get a bash shell in a specific container
+docker exec -ti me2_[first|second|third] bash
 ```
 
 ## Libraries
