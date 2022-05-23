@@ -1,0 +1,10 @@
+instance_id: 123456678
+loglevel: DEBUG
+is_debug: false
+host: 127.0.0.1
+port: 5683
+sensors:
+  - name: "Magnet-Sensor"
+    type: hall
+    pin1: 14
+    is_test_mode: true
