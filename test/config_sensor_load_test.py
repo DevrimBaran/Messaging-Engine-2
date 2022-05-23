@@ -32,7 +32,7 @@ class TestAppConfigurationSensorLoad(unittest.TestCase):
         self.assertEqual("Testsensor2", sensors[0].name)
         self.assertEqual(pime2.sensor.sensor.SensorType.HALL, sensors[0].sensor_type)
 
-    def test_sensor_load_hall(self):
+    def test_sensor_load_temperature(self):
         is_exceptional = False
         try:
             config = pime2.config.load_app_config("./test/fixtures/me_valid_with_operators_temperature.yaml")

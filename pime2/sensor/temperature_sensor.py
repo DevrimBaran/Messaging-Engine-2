@@ -1,6 +1,7 @@
 # pylint: disable=import-outside-toplevel
 import logging
 import random
+import typing
 
 from pime2.sensor.sensor import SinglePinSensor, SensorType, SinglePinOperatorArguments
 from pime2.common.read_output import SingleSensorResult
@@ -11,7 +12,7 @@ class TemperatureSensorResult(SingleSensorResult):
     Simple type for a temperature reading
     """
 
-    def __init__(self, result: float):
+    def __init__(self, result: typing.Optional[float]):
         super().__init__(result)
 
 

@@ -11,6 +11,7 @@ sensors:
     type: hall
     pin1: 14
     is_test_mode: true
+# TODO: actuator support is not yet implemented
 actuators:
   - name: "LED-Actuator"
     type: led
