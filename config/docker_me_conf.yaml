@@ -3,6 +3,7 @@ loglevel: DEBUG
 is_debug: false
 host: 127.0.0.1
 port: 5683
+read_interval: 5.0
 sensors:
   - name: "Button-Sensor"
     type: button
