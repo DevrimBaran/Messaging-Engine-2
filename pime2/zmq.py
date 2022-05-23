@@ -52,8 +52,15 @@ async def startup_pull_queue(context):
         if socket in dict(events):
             msg = await socket.recv_multipart()
             received_object = json.loads(msg[0])
-            if received_object["message_type"] == MessageType.SENSOR_RESULT.value:
-                logging.debug("detected sensor_read for sensor %s", SensorType(received_object["sensor_type"]))
-            logging.info('received message json: %s', received_object)
+            if "message_type" in received_object and received_object["message_type"] is not None:
+                message_type = received_object["message_type"]
+                if message_type == MessageType.SENSOR_RESULT.value:
+                    logging.debug("detected sensor_read for sensor %s", SensorType(received_object["sensor_type"]))
+                elif message_type == MessageType.NODE_CREATE.value:
+                    # TODO store node entry in database
+                    logging.debug("detected node create event with node: %s")
+                logging.info("received message json: %s", received_object)
+            else:
+                logging.error("problem with received message: %s", received_object)
 
         # TODO: implement message processing engine here
