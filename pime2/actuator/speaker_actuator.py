@@ -1,6 +1,6 @@
 # pylint: disable=import-outside-toplevel
 import logging
-from time import sleep
+import time
 
 from pime2.actuator.actuator import SinglePinActuator, ActuatorType
 from pime2.common.operator import SinglePinOperatorArguments
@@ -21,25 +21,33 @@ class Speaker(SinglePinActuator):
     def activate(self, input_arg: float):
         sleep_time = input_arg
         self.speaker_on = True
+        start_time = time.time()
+        elapsed_time = 0
+        while elapsed_time <= 2.0:
+            logging.info("Speaker is on")
+            elapsed_time = time.time() - start_time
         if self.args.is_test_mode is False:
             from RPi import GPIO
             logging.info("Speaker is on")
             # Die Tonhoehe kann mit Variation der Wartezeit (sleep) veraendert werden
             # while true ist noetig, da sonst kein Ton ausgegeben wird.
-            while True:
+            start_time = time.time()
+            elapsed_time = 0
+            while elapsed_time <= 2.0:
                 GPIO.output(self.speaker, True)
-                sleep(sleep_time)
+                time.sleep(sleep_time)
                 GPIO.output(self.speaker, False)
-                sleep(sleep_time)
+                time.sleep(sleep_time)
+                elapsed_time = time.time() - start_time
 
     def open(self):
-        if self.args.is_test_mode is True:
+        if self.args.is_test_mode is False:
             from RPi import GPIO
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(self.speaker, GPIO.OUT)
 
     def close(self):
-        if self.args.is_test_mode is True:
+        if self.args.is_test_mode is False:
             from RPi import GPIO
             GPIO.cleanup(self.speaker)
         self.speaker = False

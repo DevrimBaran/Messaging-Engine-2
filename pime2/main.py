@@ -29,6 +29,10 @@ async def pime_run():
         enabled_sensors: List[Sensor] = [
            # ButtonSensor(DualPinOperatorArguments(12, 13, is_test_mode=True))
         ]
+        # speaker = Speaker(SinglePinOperatorArguments(12, is_test_mode=True))
+
+        # speaker.open()
+        # speaker.activate(0.005)
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
                      startup_push_queue(zmq_context),

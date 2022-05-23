@@ -4,20 +4,20 @@ from abc import ABC, abstractmethod
 
 class Operator(ABC):
     """
-    Abstract technical representation of an common, which is Sensor + Actuator
+    Abstract technical representation of a common, which is Sensor + Actuator
     """
 
     @abstractmethod
     def open(self):
         """
-        Method to initialize (or test) a sensor during startup. Called only once or after .close().
+        Method to initialize (or test) a common during startup. Called only once or after .close().
         :return:
         """
 
     @abstractmethod
     def close(self):
         """
-        Method to shut down an common
+        Method to shut down a common
         :return:
         """
 

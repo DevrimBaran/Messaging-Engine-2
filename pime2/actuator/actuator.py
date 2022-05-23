@@ -1,12 +1,8 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from pime2.sensor.sensor import Operator, SinglePinOperatorArguments, DualPinOperatorArguments
+from pime2.common.operator import Operator, SinglePinOperatorArguments, DualPinOperatorArguments
 from pime2.common.read_output import DualPinCommonResult
 
-
-# TODO: this is not final or perfect
-# TODO: add meaningful properties to these objects
-# TODO implement type of actuator
 
 class ActuatorType(Enum):
     """
@@ -23,7 +19,7 @@ class Actuator(Operator, ABC):
     """
 
     def __init__(self, actuator_type: ActuatorType):
-        self.sensor_type = actuator_type
+        self.actuator_type = actuator_type
 
 
 class SinglePinActuator(Actuator, ABC):
