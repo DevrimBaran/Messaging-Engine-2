@@ -32,17 +32,19 @@
 }
 ```
 
-#### Flow where_spec
+## Flow where_spec
 
-- `*`: all available nodes
+- `*` (default): all available nodes
 - `instance_id`: a specific instance_id
 - `instance_id1,instance_id2,...`: multiple instances
 
 ##### Validation
 
+- Check if `spec` and `ops` have at least 2 elements
 - Check if all operation names are known and defined in `ops`
 - Check if an instance exists for each `where`
 - Check if an instance exists with a [skill](./Skills.md) for all input/process/output operations
+- Check if each flow is executable
 - TBD
 
 ## Example
@@ -51,7 +53,7 @@
 
 ```json
 {
-  "name": "flow_name",
+  "name": "general_temp_log",
   "spec": [
     "sensor_read",
     "log",
@@ -71,6 +73,36 @@
     {
       "name": "actuator_call",
       "output": "exit"
+    }
+  ]
+}
+```
+
+### Magnet Beep
+
+```json
+{
+  "name": "magnet_beep_flow",
+  "spec": [
+    "sensor_read",
+    "log",
+    "beep_call"
+  ],
+  "ops": [
+    {
+      "name": "sensor_read",
+      "input": "sensor_hall",
+      "where": "me2_first"
+    },
+    {
+      "name": "log",
+      "process": "log",
+      "where": "me2_second"
+    },
+    {
+      "name": "beep_call",
+      "output": "actuator_vibration",
+      "where": "me2_third"
     }
   ]
 }
