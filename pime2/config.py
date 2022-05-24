@@ -108,8 +108,8 @@ class OperatorConfiguration:
 
         if not isinstance(operator_object['gpio1'], int):
             raise RuntimeError("Invalid non integer given for gpio1.")
-        if 'gpio2' in operator_object and operator_object['gpio2'] is not None and not isinstance(operator_object['gpio2'],
-                                                                                                int):
+        if 'gpio2' in operator_object and operator_object['gpio2'] is not None and not isinstance(
+                operator_object['gpio2'], int):
             raise RuntimeError("Invalid non integer given for gpio gpio2.")
 
         self.name = str(operator_object['name']).strip()

@@ -5,9 +5,7 @@ import sys
 from zmq.asyncio import Context
 
 import pime2.database as db
-from pime2.actuator.speaker_actuator import Speaker
 from pime2.coap_server import startup_server
-from pime2.common.operator import SingleGpioOperatorArguments
 from pime2.config import MEConfiguration
 from pime2.push_queue import init_push_queue
 from pime2.sensor_listener import startup_sensor_listener
