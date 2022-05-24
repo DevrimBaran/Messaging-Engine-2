@@ -3,6 +3,7 @@ import json
 import logging
 from typing import List
 
+import pime2.config
 from pime2.message import SensorResultMessage
 from pime2.push_queue import get_push_queue
 from pime2.sensor.sensor import Sensor
@@ -28,10 +29,11 @@ async def listen_sensor(sensor: Sensor):
     :param sensor:
     :return:
     """
+    conf = pime2.config.get_me_conf()
     while True:
         await asyncio.gather(
             single_sensor_read(sensor),
-            asyncio.sleep(1.0),
+            asyncio.sleep(conf.read_interval),
         )
 
 
