@@ -21,8 +21,8 @@ class ButtonSensor(DualPinSensor):
     input_arguments provide a property is_test_mode.
     """
 
-    def __init__(self, input_arguments: DualPinOperatorArguments):
-        super().__init__(SensorType.BUTTON, input_arguments)
+    def __init__(self, name: str, input_arguments: DualPinOperatorArguments):
+        super().__init__(name, SensorType.BUTTON, input_arguments)
         self.button_1_pin = input_arguments.input_pin_1
         self.button_2_pin = input_arguments.input_pin_2
         self.args = input_arguments

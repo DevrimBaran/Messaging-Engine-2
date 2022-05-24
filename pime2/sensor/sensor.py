@@ -20,8 +20,9 @@ class Sensor(Operator, ABC):
     You should never inherit directly from this class, use SinglePinSensor, DualPinSensor...
     """
 
-    def __init__(self, sensor_type: SensorType):
+    def __init__(self, sensor_type: SensorType, name: str = "unknown"):
         self.sensor_type = sensor_type
+        self.name = name
 
 
 class DualPinSensor(Sensor, ABC):
@@ -30,8 +31,8 @@ class DualPinSensor(Sensor, ABC):
     Each two pin sensor implements this class.
     """
 
-    def __init__(self, sensor_type: SensorType, input_arguments: DualPinOperatorArguments):
-        super().__init__(sensor_type)
+    def __init__(self, name: str, sensor_type: SensorType, input_arguments: DualPinOperatorArguments):
+        super().__init__(sensor_type, name)
         self.args = input_arguments
 
     @abstractmethod
@@ -49,8 +50,8 @@ class SinglePinSensor(Sensor, ABC):
     Each single pin sensor implements this class.
     """
 
-    def __init__(self, sensor_type: SensorType, input_arguments: SinglePinOperatorArguments):
-        super().__init__(sensor_type)
+    def __init__(self, name: str, sensor_type: SensorType, input_arguments: SinglePinOperatorArguments):
+        super().__init__(sensor_type, name)
         self.args = input_arguments
 
     @abstractmethod

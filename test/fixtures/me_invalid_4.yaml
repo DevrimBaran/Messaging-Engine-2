@@ -1,0 +1,4 @@
+instance_id: 123456
+loglevel: DEBUG
+sensors:
+  - name: "Test"
