@@ -64,8 +64,8 @@ class TemperatureSensor(SinglePinSensor):
             import board
             import adafruit_dht
             # Set input pin for Sensor
-            # shutdown of program
-            self.sensor = adafruit_dht.DHT22(board.D12)
+            result = getattr(board, 'D' + str(self.sensor_pin))
+            self.sensor = adafruit_dht.DHT22(result)
 
     def close(self):
         if self.args.is_test_mode is False:
