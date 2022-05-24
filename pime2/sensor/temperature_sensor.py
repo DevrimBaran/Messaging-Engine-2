@@ -3,11 +3,11 @@ import logging
 import random
 import typing
 
-from pime2.sensor.sensor import SinglePinSensor, SensorType, SinglePinOperatorArguments
-from pime2.common.read_output import SinglePinCommonResult
+from pime2.sensor.sensor import SingleGpioSensor, SensorType, SingleGpioOperatorArguments
+from pime2.common.read_output import SingleGpioCommonResult
 
 
-class TemperatureSensorResult(SinglePinCommonResult):
+class TemperatureSensorResult(SingleGpioCommonResult):
     """
     Simple type for a temperature reading
     """
@@ -16,15 +16,15 @@ class TemperatureSensorResult(SinglePinCommonResult):
         super().__init__(result)
 
 
-class TemperatureSensor(SinglePinSensor):
+class TemperatureSensor(SingleGpioSensor):
     """
     A simple temperature sensor.
     input_arguments provide a property is_test_mode.
     """
 
-    def __init__(self, name: str, input_arguments: SinglePinOperatorArguments):
+    def __init__(self, name: str, input_arguments: SingleGpioOperatorArguments):
         super().__init__(name, SensorType.TEMPERATURE, input_arguments)
-        self.sensor_pin: int = input_arguments.input_pin_1
+        self.sensor_gpio: int = input_arguments.input_gpio_1
         self.sensor = None
         self.args = input_arguments
 
@@ -64,7 +64,7 @@ class TemperatureSensor(SinglePinSensor):
             # pylint: disable=unused-import
             import board
             import adafruit_dht
-            # Set input pin for Sensor and set pulseio to False so that the pin still can be used after
+            # Set input GPIO for Sensor and set pulseio to False so that the GPIO still can be used after
             # shutdown of program
             self.sensor = adafruit_dht.DHT22(board.D12, use_pulseio=False)
 

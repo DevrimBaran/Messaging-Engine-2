@@ -1,20 +1,20 @@
 # pylint: disable=import-outside-toplevel
 import logging
 
-from pime2.actuator.actuator import DualPinActuator, ActuatorType
-from pime2.common.operator import DualPinOperatorArguments
+from pime2.actuator.actuator import DualGpioActuator, ActuatorType
+from pime2.common.operator import DualGpioOperatorArguments
 
 
-class Led(DualPinActuator):
+class Led(DualGpioActuator):
     """
     A simple led actuator with two colors.
     input_arguments provide a property is_test_mode.
     """
 
-    def __init__(self, input_arguments: DualPinOperatorArguments):
-        super().__init__(ActuatorType.LED, input_arguments)
-        self.green_led = input_arguments.input_pin_1
-        self.red_led = input_arguments.input_pin_2
+    def __init__(self, name: str, input_arguments: DualGpioOperatorArguments):
+        super().__init__(name, ActuatorType.LED, input_arguments)
+        self.green_led = input_arguments.input_gpio_1
+        self.red_led = input_arguments.input_gpio_2
         self.args = input_arguments
         self.green_led_on = False
         self.red_led_on = False

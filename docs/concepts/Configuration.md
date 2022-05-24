@@ -12,14 +12,14 @@ is_debug: false
 sensors:
   - name: "Button-Sensor"
     type: button
-    pin1: 12
-    pin2: 13
+    gpio1: 12
+    gpio2: 13
     is_test_mode: true
 actuators:
   - name: "LED-Actuator"
     type: led
-    pin1: 12
-    pin2: 13
+    gpio1: 12
+    gpio2: 13
     is_test_mode: false
 ```
 
@@ -34,10 +34,10 @@ actuators:
 - `is_debug`: (Optional) Flag to indicate the debug mode of the application
 - `sensors`: (Optional) The available sensors of ME2 are configured here. Array of sensor objects. Each sensor object
   has the
-  following mandatory fields: `name, type, pin1` and optionally `is_test_mode`, `pin2` ..
+  following mandatory fields: `name, type, gpio1` and optionally `is_test_mode`, `gpio2` ..
 - `actuators`: (Optional) The available actuators of ME2 are configured here. Array of actuator objects. Each sensor
   object has
-  the following mandatory fields: `name, type, pin1` and optionally `is_test_mode`, `pin2` ..
+  the following mandatory fields: `name, type, gpio1` and optionally `is_test_mode`, `gpio2` ..
 
 ### Operator description in yaml
 
@@ -45,8 +45,8 @@ actuators:
 - **`type`** (required, case-insensitive)
     - For sensors, one of: `TEMPERATURE`, `BUTTON`, `HALL`
     - For actuators: TODO
-- **`pin1`** (required, integer)
-- **`pin2`** (required for dual pin operator types, integer)
+- **`gpio1`** (required, integer)
+- **`gpio2`** (required for dual gpio operator types, integer)
 - **`is_test_mode`** (required, boolean)
 
 ## Python

@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 from enum import Enum
-from pime2.common.operator import Operator, DualPinOperatorArguments, SinglePinOperatorArguments
-from pime2.common.read_output import SinglePinCommonResult, DualPinCommonResult
+from pime2.common.operator import Operator, DualGpioOperatorArguments, SingleGpioOperatorArguments
+from pime2.common.read_output import SingleGpioCommonResult, DualGpioCommonResult
 
 
 class SensorType(Enum):
@@ -17,7 +17,7 @@ class SensorType(Enum):
 class Sensor(Operator, ABC):
     """
     Abstract class to represent an abstract sensor.
-    You should never inherit directly from this class, use SinglePinSensor, DualPinSensor...
+    You should never inherit directly from this class, use SingleGpioSensor, DualGpioSensor...
     """
 
     def __init__(self, sensor_type: SensorType, name: str = "unknown"):
@@ -25,18 +25,18 @@ class Sensor(Operator, ABC):
         self.name = name
 
 
-class DualPinSensor(Sensor, ABC):
+class DualGpioSensor(Sensor, ABC):
     """
     Abstract class to represent an abstract two output pin sensor.
     Each two pin sensor implements this class.
     """
 
-    def __init__(self, name: str, sensor_type: SensorType, input_arguments: DualPinOperatorArguments):
+    def __init__(self, name: str, sensor_type: SensorType, input_arguments: DualGpioOperatorArguments):
         super().__init__(sensor_type, name)
         self.args = input_arguments
 
     @abstractmethod
-    def read(self) -> DualPinCommonResult:
+    def read(self) -> DualGpioCommonResult:
         """
         Read data from sensor and write ot to the output.
         Very time critical.
@@ -44,18 +44,18 @@ class DualPinSensor(Sensor, ABC):
         """
 
 
-class SinglePinSensor(Sensor, ABC):
+class SingleGpioSensor(Sensor, ABC):
     """
     Abstract class to represent an abstract single output pin sensor.
     Each single pin sensor implements this class.
     """
 
-    def __init__(self, name: str, sensor_type: SensorType, input_arguments: SinglePinOperatorArguments):
+    def __init__(self, name: str, sensor_type: SensorType, input_arguments: SingleGpioOperatorArguments):
         super().__init__(sensor_type, name)
         self.args = input_arguments
 
     @abstractmethod
-    def read(self) -> SinglePinCommonResult:
+    def read(self) -> SingleGpioCommonResult:
         """
         Read data from sensor and write ot to the output - a single time.
         Very time critical.

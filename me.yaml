@@ -7,16 +7,20 @@ read_interval: 1.0
 sensors:
   - name: "Button-Sensor"
     type: button
-    pin1: 12
-    pin2: 13
+    gpio1: 12
+    gpio2: 13
     is_test_mode: true
   - name: "Magnet-Sensor"
     type: hall
-    pin1: 14
+    gpio1: 14
     is_test_mode: true
-# TODO: actuator support is not yet implemented
 actuators:
   - name: "LED-Actuator"
     type: led
-    pin1: 12
-    pin2: 13
+    gpio1: 15
+    gpio2: 16
+    is_test_mode: true
+  - name: "Speaker-Actuator"
+    type: speaker
+    gpio1: 17
+    is_test_mode: true

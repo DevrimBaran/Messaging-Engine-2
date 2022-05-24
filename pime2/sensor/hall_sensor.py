@@ -2,11 +2,11 @@
 import logging
 import random
 
-from pime2.sensor.sensor import SinglePinSensor, SinglePinOperatorArguments, SensorType
-from pime2.common.read_output import SinglePinCommonResult
+from pime2.sensor.sensor import SingleGpioSensor, SingleGpioOperatorArguments, SensorType
+from pime2.common.read_output import SingleGpioCommonResult
 
 
-class HallSensorResult(SinglePinCommonResult):
+class HallSensorResult(SingleGpioCommonResult):
     """
     Simple type to wrap a single sensor measurement result
     """
@@ -15,15 +15,15 @@ class HallSensorResult(SinglePinCommonResult):
         super().__init__(result)
 
 
-class HallSensor(SinglePinSensor):
+class HallSensor(SingleGpioSensor):
     """
     A simple Hall sensor (detect magnets)
     input_arguments provide a property is_test_mode.
     """
 
-    def __init__(self, name: str, input_arguments: SinglePinOperatorArguments):
+    def __init__(self, name: str, input_arguments: SingleGpioOperatorArguments):
         super().__init__(name, SensorType.HALL, input_arguments)
-        self.sensor = input_arguments.input_pin_1
+        self.sensor = input_arguments.input_gpio_1
         self.args = input_arguments
 
     def read(self) -> HallSensorResult:

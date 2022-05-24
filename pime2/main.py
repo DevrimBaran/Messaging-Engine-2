@@ -5,7 +5,9 @@ import sys
 from zmq.asyncio import Context
 
 import pime2.database as db
+from pime2.actuator.speaker_actuator import Speaker
 from pime2.coap_server import startup_server
+from pime2.common.operator import SingleGpioOperatorArguments
 from pime2.config import MEConfiguration
 from pime2.push_queue import init_push_queue
 from pime2.sensor_listener import startup_sensor_listener
@@ -34,11 +36,17 @@ async def pime_run(config: MEConfiguration):
             sys.exit(1)
 
         # Example on how to activate actuator
-        # speaker = Speaker(SinglePinOperatorArguments(12, is_test_mode=True))
 
-        # speaker.open()
-        # speaker.activate(0.005)
-        # speaker.close()
+        try:
+            enabled_actuators = config.available_actuators()
+        except RuntimeError as config_error:
+            logging.error("Problem with actuator configuration: '%s'", config_error)
+            sys.exit(1)
+
+        # Example to activate speaker
+        enabled_actuators[1].open()
+        enabled_actuators[1].activate(0.005)
+        enabled_actuators[1].close()
 
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),

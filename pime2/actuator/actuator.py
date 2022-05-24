@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from pime2.common.operator import Operator, SinglePinOperatorArguments, DualPinOperatorArguments
-from pime2.common.read_output import DualPinCommonResult
+from pime2.common.operator import Operator, SingleGpioOperatorArguments, DualGpioOperatorArguments
+from pime2.common.read_output import DualGpioCommonResult
 
 
 class ActuatorType(Enum):
@@ -18,19 +18,20 @@ class Actuator(Operator, ABC):
     You should never inherit directly from this class, use SinglePinSensor, DualPinSensor...
     """
 
-    def __init__(self, actuator_type: ActuatorType):
+    def __init__(self, actuator_type: ActuatorType, name: str = "unknown"):
         self.actuator_type = actuator_type
+        self.name = name
 
 
-class SinglePinActuator(Actuator, ABC):
+class SingleGpioActuator(Actuator, ABC):
     """
     Abstract class to represent an abstract sensor.
     Each actuator implements this class.
 
     """
 
-    def __init__(self, actuator_type: ActuatorType, input_arguments: SinglePinOperatorArguments):
-        super().__init__(actuator_type)
+    def __init__(self, name: str, actuator_type: ActuatorType, input_arguments: SingleGpioOperatorArguments):
+        super().__init__(actuator_type, name)
         self.args = input_arguments
 
     @abstractmethod
@@ -43,19 +44,19 @@ class SinglePinActuator(Actuator, ABC):
         """
 
 
-class DualPinActuator(Actuator, ABC):
+class DualGpioActuator(Actuator, ABC):
     """
     Abstract class to represent an abstract sensor.
     Each actuator implements this class.
 
     """
 
-    def __init__(self, actuator_type: ActuatorType, input_arguments: DualPinOperatorArguments):
-        super().__init__(actuator_type)
+    def __init__(self, name: str, actuator_type: ActuatorType, input_arguments: DualGpioOperatorArguments):
+        super().__init__(actuator_type, name)
         self.args = input_arguments
 
     @abstractmethod
-    def activate(self, input_arg_one: any, input_arg_two: any) -> DualPinCommonResult:
+    def activate(self, input_arg_one: any, input_arg_two: any) -> DualGpioCommonResult:
         """
         Process current gpio state of a (single?) pin and control the actuator operation.
 

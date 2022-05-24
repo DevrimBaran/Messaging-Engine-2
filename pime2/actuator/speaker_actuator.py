@@ -2,19 +2,19 @@
 import logging
 import time
 
-from pime2.actuator.actuator import SinglePinActuator, ActuatorType
-from pime2.common.operator import SinglePinOperatorArguments
+from pime2.actuator.actuator import SingleGpioActuator, ActuatorType
+from pime2.common.operator import SingleGpioOperatorArguments
 
 
-class Speaker(SinglePinActuator):
+class Speaker(SingleGpioActuator):
     """
     A simple speaker actuator.
     input_arguments provide a property is_test_mode.
     """
 
-    def __init__(self, input_arguments: SinglePinOperatorArguments):
-        super().__init__(ActuatorType.SPEAKER, input_arguments)
-        self.speaker = input_arguments.input_pin_1
+    def __init__(self, name: str, input_arguments: SingleGpioOperatorArguments):
+        super().__init__(name, ActuatorType.SPEAKER, input_arguments)
+        self.speaker = input_arguments.input_gpio_1
         self.args = input_arguments
         self.speaker_on = False
 

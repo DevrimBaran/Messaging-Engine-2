@@ -88,11 +88,11 @@ class TestAppConfiguration(unittest.TestCase):
             {},
             {"name": ""},
             {"name": "", "is_test_mode": False},
-            {"name": "", "pin1": ""},
+            {"name": "", "gpio1": ""},
             {"name": "", "type": ""},
             {"type": ""},
-            {"type": "", "pin1": ""},
-            {"pin1": ""}
+            {"type": "", "gpio1": ""},
+            {"gpio1": ""}
         ]
 
         for i in invalid_operators:
