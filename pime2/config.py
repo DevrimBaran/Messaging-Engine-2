@@ -215,6 +215,9 @@ def load_actuators(config: MEConfiguration) -> List[Actuator]:
             logging.info("Using test mode for actuator of type '%s' and name '%s'", actuator_type, actuator.name)
 
         if actuator_type == ActuatorType.LED.name:
+            if actuator.gpio2 == 0 or len(str(actuator.gpio2).strip()) == 0:
+                raise RuntimeError("Empty or invalid port detected in property 'GPIO2'")
+
             active_actuators.append(
                 Led(actuator.name, DualGpioOperatorArguments(actuator.gpio1, actuator.gpio2, actuator.is_test_mode)))
         elif actuator_type == ActuatorType.SPEAKER.name:
