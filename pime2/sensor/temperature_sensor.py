@@ -71,4 +71,3 @@ class TemperatureSensor(SinglePinSensor):
         if self.args.is_test_mode is False:
             import adafruit_dht
             self.sensor.exit()
-        pass
