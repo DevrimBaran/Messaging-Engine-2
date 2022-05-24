@@ -1,12 +1,10 @@
-import json
 import logging
 
 import zmq
 from zmq.asyncio import Poller
 
-from pime2.message import MessageType
+from pime2.router import router_loop
 from pime2.push_queue import get_push_queue
-from pime2.sensor.sensor import SensorType
 
 
 async def startup_push_queue(context):
@@ -51,16 +49,4 @@ async def startup_pull_queue(context):
         events = await poller.poll()
         if socket in dict(events):
             msg = await socket.recv_multipart()
-            received_object = json.loads(msg[0])
-            if "message_type" in received_object and received_object["message_type"] is not None:
-                message_type = received_object["message_type"]
-                if message_type == MessageType.SENSOR_RESULT.value:
-                    logging.debug("detected sensor_read for sensor %s", SensorType(received_object["sensor_type"]))
-                elif message_type == MessageType.NODE_CREATE.value:
-                    # TODO store node entry in database
-                    logging.debug("detected node create event with node: %s")
-                logging.info("received message json: %s", received_object)
-            else:
-                logging.error("problem with received message: %s", received_object)
-
-        # TODO: implement message processing engine here
+            await router_loop(msg)

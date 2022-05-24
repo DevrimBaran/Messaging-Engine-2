@@ -63,3 +63,7 @@ async def startup_sensor_listener(sensors: List[Sensor]):
         # close sensors "finally"
         for sensor in sensors:
             sensor.close()
+
+    if len(task_list) == 0:
+        # Just run forever if there are no sensors
+        await asyncio.get_running_loop().create_future()

@@ -6,7 +6,7 @@ import aiocoap
 from aiocoap import resource
 
 from pime2.message import NodeCreateResultMessage
-from pime2.model.node import NodeEntity
+from pime2.node import NodeEntity
 from pime2.push_queue import get_push_queue
 
 
@@ -30,19 +30,19 @@ class Node(resource.Resource):
         # parse node record from request payload - if possible
         try:
             if len(request.payload) > 2048:
-                return aiocoap.Message(payload=b"INVALID REQUEST")
+                return aiocoap.Message(payload=b"INVALID REQUEST", code=aiocoap.Code.BAD_REQUEST)
             node = json.loads(request.payload)
 
             for i in required_fields:
                 if i not in node or node[i] is None:
-                    return aiocoap.Message(payload=b"INVALID REQUEST, MISSING PROPERTY")
-            node_record = NodeEntity(0, node["name"], node["ip"], node["port"])
+                    return aiocoap.Message(payload=b"INVALID REQUEST, MISSING PROPERTY", code=aiocoap.Code.BAD_REQUEST)
+                # TODO: sanitize input
+            node_record = NodeEntity(node["name"], node["ip"], node["port"])
             await get_push_queue().put(json.dumps(NodeCreateResultMessage(node_record).__dict__))
+            return aiocoap.Message(payload=b"OK", code=aiocoap.Code.CREATED)
         except JSONDecodeError as ex:
             logging.warning("Problem processing request: %s", ex)
-            return aiocoap.Message(payload=b"INVALID REQUEST")
-
-        return aiocoap.Message(payload=b"OK")
+        return aiocoap.Message(payload=b"INVALID REQUEST", code=aiocoap.Code.BAD_REQUEST)
 
     async def render_get(self, request):
         """
@@ -51,4 +51,5 @@ class Node(resource.Resource):
         :param request:
         :return:
         """
+        # TODO: return a list of all nodes we know
         return aiocoap.Message(payload=b"Node")

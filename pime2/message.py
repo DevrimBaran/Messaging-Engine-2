@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from abc import ABC
 from enum import Enum
 
-from pime2.model.node import NodeEntity
+from pime2.node import NodeEntity
 from pime2.sensor.sensor import SensorType
 
 
