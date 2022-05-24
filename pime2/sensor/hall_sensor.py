@@ -61,4 +61,3 @@ class HallSensor(SinglePinSensor):
         if self.args.is_test_mode is False:
             from RPi import GPIO
             GPIO.cleanup(self.sensor)
-        pass

@@ -69,5 +69,6 @@ class TemperatureSensor(SinglePinSensor):
 
     def close(self):
         if self.args.is_test_mode is False:
+            # pylint: disable=unused-import
             import adafruit_dht
             self.sensor.exit()
