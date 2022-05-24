@@ -9,6 +9,9 @@ The configuration file should be placed alongside the central `main.py` of this 
 instance_id: 123456678
 loglevel: INFO
 is_debug: false
+host: 127.0.0.1
+port: 5683
+read_interval: 3.0
 sensors:
   - name: "Button-Sensor"
     type: button
@@ -21,6 +24,7 @@ actuators:
     pin1: 12
     pin2: 13
     is_test_mode: false
+# TODO: actuator support is not yet implemented
 ```
 
 - `instance_id`: (Required) A unique ID of this ME2 instance. Note: ME2 does not work correctly if there are several ME2

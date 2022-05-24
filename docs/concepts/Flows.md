@@ -1,0 +1,96 @@
+# Flows
+
+*Idea*: Use one Flow object specification for ME2 and give it to each instance which acts as described in the flow.
+
+## Flow Type Description
+
+```json
+{
+  "name": "flow_name",
+  "spec": [
+    "FlowOperationName"
+  ],
+  "operations": FlowOperationObject[]
+}
+```
+
+- A flow `name` and operation names in general has to match the following regular expression: `^[a-zA-Z0-9_.-]{3,128}$`
+
+### Flow Operations
+
+- Are of type `input`, `process` and `output`
+- Available (currently supported) values are defined below for each operation type
+- Operation names can be used only one time per `spec`
+
+### Flow Operation Type
+
+```json
+{
+  "name": "flow_name",
+  "[input | process | output]": "operation_name",
+  "where": "where_spec"
+}
+```
+
+#### Flow where_spec
+
+- `*`: all available nodes
+- `instance_id`: a specific instance_id
+- `instance_id1,instance_id2,...`: multiple instances
+
+##### Validation
+
+- Check if all operation names are known and defined in `ops`
+- Check if an instance exists for each `where`
+- Check if an instance exists with a [skill](./Skills.md) for all input/process/output operations
+- TBD
+
+## Example
+
+### General Temperature log
+
+```json
+{
+  "name": "flow_name",
+  "spec": [
+    "sensor_read",
+    "log",
+    "actuator_call"
+  ],
+  "ops": [
+    {
+      "name": "sensor_read",
+      "input": "sensor_temperature",
+      "where": "*"
+    },
+    {
+      "name": "log",
+      "process": "log",
+      "where": "specific_me2_instance"
+    },
+    {
+      "name": "actuator_call",
+      "output": "exit"
+    }
+  ]
+}
+```
+
+## Available Input Operation Names
+
+- `sensor_*`: for all supported sensors
+    - `temperature`
+    - `hall`
+    - `button`
+
+## Available Process Operation Names
+
+- `log`: Log the current message, useful for debugging and testing
+- `cep_intercept`: Log the current message, useful for debugging and testing
+
+## Available Output Operation Names
+
+- `exit`: exit flow without further action (the only case when no `where` is required, see in Example above)
+- `actuator_* <args>`: for all supported actuators
+    - `led`
+    - `vibration`
