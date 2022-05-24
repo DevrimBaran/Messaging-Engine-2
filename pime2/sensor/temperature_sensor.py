@@ -63,10 +63,12 @@ class TemperatureSensor(SinglePinSensor):
             # pylint: disable=unused-import
             import board
             import adafruit_dht
-            # Set input pin for Sensor and set pulseio to False so that the pin still can be used after
+            # Set input pin for Sensor
             # shutdown of program
-            self.sensor = adafruit_dht.DHT22(board.D12, use_pulseio=False)
+            self.sensor = adafruit_dht.DHT22(board.D12)
 
     def close(self):
-        # Not necessary since use_pulseio is set to False
+        if self.args.is_test_mode is False:
+            import adafruit_dht
+            self.sensor.exit()
         pass
