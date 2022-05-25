@@ -10,7 +10,7 @@
   "spec": [
     "FlowOperationName"
   ],
-  "operations": FlowOperationObject[]
+  "ops": FlowOperationObject[]
 }
 ```
 
@@ -43,6 +43,7 @@
 - Check if `spec` and `ops` have at least 2 elements
 - Check if all operation names are known and defined in `ops`
 - Check if an instance exists for each `where`
+- Check if there exists exactly one `input` per `Flow`
 - Check if an instance exists with a [skill](./Skills.md) for all input/process/output operations
 - Check if each flow is executable
 - TBD

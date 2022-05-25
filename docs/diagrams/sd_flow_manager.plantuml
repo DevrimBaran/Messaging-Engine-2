@@ -1,0 +1,134 @@
+@startuml
+
+' this is a comment
+' read here for syntax: https://plantuml.com/sequence-diagram
+
+title 1. ME2: FlowManager class
+footer Forschungsprojekt 2022, IPVS
+scale 2
+
+actor System #blue
+participant "FlowManager" as FM
+participant "FlowStateManager" as FSM
+participant "FlowMessageBuilder" as FMB
+participant "FlowOperationManager" as FOM
+participant "FlowValidationService" as FVS
+participant "CoApClient" as CAC
+
+== 1.1 start_flow(Flow, SensorReadResult) ==
+note right FM: Only "input" operations are allowed here
+note right FM: Assumption: The first flow operation (SensorReadResult) is already done
+
+System -> FM: start_flow(Flow, SensorReadResult, OperationName)
+activate FM
+FM -> FVS: is_flow_valid()
+activate FVS
+FVS -> FM: true|false
+FM --> System: conditional finish
+deactivate FVS
+FM -> FMB: Build first FlowMessage
+
+activate FMB
+FMB -> FM: FlowMessage
+deactivate FMB
+
+FM -> FSM: start(FlowMessage)
+activate FSM
+FSM -> FSM: store flow start\ninfo
+FSM -> FM:
+deactivate FSM
+
+FM -> FOM: Detect next/second step and nodes
+activate FOM
+FOM -> FM: (step, nodes[])
+deactivate FOM
+
+FM -> FM: Check if these nodes are remote.\nIf yes: send_flow_message(msg, node).\nIf no: call execute_flow(FlowMessage)
+FM -> System: finish
+deactivate FM
+
+== 1.2 execute_flow(FlowMessage) ==
+note right FM: Only "process" and "output" operations are allowed here
+System -> FM: execute_flow(Flow, SensorReadResult)
+activate FM
+
+FM -> FVS: is_flow_valid()
+activate FVS
+FVS -> FM: true|false
+FM --> System: conditional finish
+deactivate FVS
+
+FM -> FOM: Detect current flow step/operation
+activate FOM
+FOM -> FM: Flow step operation info
+deactivate FOM
+
+FM -> FM: If operation is last one in a flow \n-> finish_flow(FlowMessage)\n     and leave
+FM --> System: conditional finish
+
+FM -> FOM: Execute current flow operation\n- if possible ("process" operation\n  or "output" operation)
+activate FOM
+FOM -> FM: Flow step operation info
+deactivate FOM
+
+FM -> FMB: Build FlowMessage
+activate FMB
+FMB -> FM: Flow Message
+deactivate FMB
+
+FM -> FSM: update(FlowMessage)
+activate FSM
+FSM -> FSM: update flow\nexecution info
+FSM -> FM:
+deactivate FSM
+
+FM -> FOM: Detect next step and nodes
+activate FOM
+FOM -> FM: (step, nodes[])
+deactivate FOM
+
+FM -> FM: Check if these nodes are remote.\nIf yes: send_flow_message(msg, node).\nIf no: call execute_flow(FlowMessage)\n         or finish_flow(FlowMessage)
+FM -> System: finish
+deactivate FM
+deactivate FM
+
+== 1.3 finish_flow(FlowMessage) ==
+note right FM: Only finishing/last "output" operations\nof a flow are allowed here
+
+System -> FM: finish_flow(FlowMessage)
+activate FM
+
+FM -> FVS: is_flow_valid()
+activate FVS
+FVS -> FM: true|false
+FM --> System: conditional finish
+deactivate FVS
+
+FM -> FOM: Execute operation
+activate FOM
+FOM -> FM: Flow step operation info
+deactivate FOM
+
+FM -> FSM: finish(FlowMessage)
+activate FSM
+FSM -> FSM: update flow\nexecution info
+FSM -> FM:
+deactivate FSM
+
+FM -> FM: Store finish state of flow in db.
+
+FM -> System: finish
+deactivate FM
+
+== 1.4 send_flow_message(Node, FlowMessage) ==
+System -> FM: send_flow_message(FlowMessage)
+activate FM
+FM -> CAC: Send flow message to node.\nIf successful: leave\nelse: Retry n times
+activate CAC
+CAC -> FM:
+deactivate CAC
+
+FM -> System: finish
+deactivate FM
+
+@enduml
