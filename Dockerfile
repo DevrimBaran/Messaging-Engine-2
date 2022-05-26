@@ -20,8 +20,6 @@ COPY me.yaml /usr/src/app/me.yaml
 RUN chown -R me2:me2 /usr/src/app
 USER me2
 
-VOLUME /usr/src/app/me.yaml
-
 ENV PATH="/home/me2/.local/bin:${PATH}" \
     TZ=UTC \
     LANGUAGE=en_US:en \
