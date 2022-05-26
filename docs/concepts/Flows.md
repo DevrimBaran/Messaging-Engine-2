@@ -7,9 +7,6 @@
 ```json
 {
   "name": "flow_name",
-  "spec": [
-    "FlowOperationName"
-  ],
   "ops": FlowOperationObject[]
 }
 ```
@@ -20,7 +17,7 @@
 
 - Are of type `input`, `process` and `output`
 - Available (currently supported) values are defined below for each operation type
-- Operation names can be used only one time per `spec`
+- Operation names can be used only one time in `ops`
 
 ### Flow Operation Type
 
@@ -40,7 +37,7 @@
 
 ##### Validation
 
-- Check if `spec` and `ops` have at least 2 elements
+- Check if `ops` has at least 2 elements
 - Check if all operation names are known and defined in `ops`
 - Check if an instance exists for each `where`
 - Check if there exists exactly one `input` per `Flow`
@@ -55,11 +52,6 @@
 ```json
 {
   "name": "general_temp_log",
-  "spec": [
-    "sensor_read",
-    "log",
-    "actuator_call"
-  ],
   "ops": [
     {
       "name": "sensor_read",
@@ -84,11 +76,6 @@
 ```json
 {
   "name": "magnet_beep_flow",
-  "spec": [
-    "sensor_read",
-    "log",
-    "beep_call"
-  ],
   "ops": [
     {
       "name": "sensor_read",
