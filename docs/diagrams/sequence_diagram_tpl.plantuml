@@ -3,14 +3,14 @@
 ' this is a comment
 ' read here for syntax: https://plantuml.com/sequence-diagram
 
-title 1. Process:
+title TEMPLATE! 1. Process:
 footer Forschungsprojekt 2022, IPVS
-scale 3
+scale 2
 
-actor User #blue
+actor System #blue
 participant "PIME\nCoAp-Server" as PCS
 
-== 1.1 Process 1 ==
+== 1.1 New Sensor-Read-Message on (internal) queue  ==
 
 User -> PCS: Do something
 activate PCS
