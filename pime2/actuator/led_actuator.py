@@ -35,7 +35,7 @@ class Led(DualGpioActuator):
                 logging.info("Red led is on")
                 GPIO.output(self.green_led, GPIO.HIGH)
         else:
-            logging.info("Green led: %s, Red led: %s", str(led_green), str(led_red))
+            logging.info("Green dummy led: %s, Red dummy led: %s", str(led_green), str(led_red))
             self.green_led_on = led_green
             self.red_led_on = led_red
 

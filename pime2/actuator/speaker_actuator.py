@@ -37,8 +37,8 @@ class Speaker(SingleGpioActuator):
                 time.sleep(sleep_time)
                 elapsed_time = time.time() - start_time
         else:
+            logging.info("Dummy Speaker is on")
             while elapsed_time <= 2.0:
-                logging.info("Speaker is on")
                 elapsed_time = time.time() - start_time
 
     def open(self):
