@@ -1,0 +1,45 @@
+@startuml
+
+' this is a comment
+' read here for syntax: https://plantuml.com/sequence-diagram
+
+title 1. ME2: Flow Execution
+footer Forschungsprojekt 2022, IPVS
+scale 2
+
+
+actor System #blue
+note right System: A Flow Execution can be triggered by:\n - a Sensor-Read-Message\n   (First Flow Execution)\n - an incoming FlowMessage
+
+participant "router_loop()" as RL
+participant "FlowManager" as FM
+== 1.1 New Sensor-Read-Message  ==
+activate RL
+
+
+System -> RL: New message arrives.\nExample: {"message_type": "SENSOR_RESULT",\n"message_content": {"result": false},\n"sensor_type": 3}
+activate RL
+RL -> FM: Pass to FlowManager:\nhandle_read_event()
+activate FM
+FM -> FM: Handle executable\nflow operations\nmatching this event.\nCheck if input\noperation name\n"sensor_<type>" is being used by an\n executable flow operation.
+FM -> FM: If yes: start_flow()
+FM -> RL
+deactivate FM
+deactivate RL
+RL -> System: finish
+
+== 1.2 New FlowMessage  ==
+
+System -> RL: Do something
+System -> RL: New message arrives.\nExample: {"message_type": "FLOW_MESSAGE",\n"message_content": {"result": false},\n"sensor_type": 3}
+activate RL
+RL -> FM: Pass to FlowManager:\nhandle_flow_message(FlowMessage)
+activate FM
+FM -> FM: If valid: execute_flow(FlowMessage)
+FM -> RL:
+deactivate FM
+deactivate RL
+RL -> System: finish
+
+
+@enduml
