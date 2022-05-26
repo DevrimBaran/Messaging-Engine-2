@@ -6,6 +6,9 @@ import typing
 from pime2.sensor.sensor import SinglePinSensor, SensorType, SinglePinOperatorArguments
 from pime2.common.read_output import SingleSensorResult
 
+# Maximum number of GPIO ports of a Raspberry Pi
+MAX_GPIO_PORTS = 27
+
 
 class TemperatureSensorResult(SingleSensorResult):
     """
@@ -30,12 +33,12 @@ class TemperatureSensor(SinglePinSensor):
 
     def read(self) -> TemperatureSensorResult:
         if self.args.is_test_mode is False:
-            temperature = -100
-            if self.sensor_pin > 27:
+            if self.sensor_pin > MAX_GPIO_PORTS:
                 logging.error(
                     "GPIO does not exist.")
                 return TemperatureSensorResult(None)
             # start sensor listening
+            temperature = -100
             if self.sensor is None:
                 logging.error(
                     "Sensor object is None and seems not to be opened. Severe problem with the usage of "
@@ -69,7 +72,7 @@ class TemperatureSensor(SinglePinSensor):
             import board
             import adafruit_dht
             # Set input pin for Sensor
-            if self.sensor_pin <= 27:
+            if self.sensor_pin <= MAX_GPIO_PORTS:
                 gpio = getattr(board, 'D' + str(self.sensor_pin))
                 self.sensor = adafruit_dht.DHT22(gpio)
 
