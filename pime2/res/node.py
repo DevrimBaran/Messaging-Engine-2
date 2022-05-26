@@ -3,7 +3,6 @@ import re
 import logging
 from json import JSONDecodeError
 import sqlite3
-from sys import exc_info
 
 import aiocoap
 from aiocoap import resource
