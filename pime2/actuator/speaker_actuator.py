@@ -18,23 +18,28 @@ class Speaker(SingleGpioActuator):
         self.args = input_arguments
         self.speaker_on = False
 
-    def activate(self, input_arg: float):
-        sleep_time = input_arg
+    def activate(self, input_arg_one: str, input_arg_two="-1", input_arg_three="-1"):
+        sleep_time = float(input_arg_one)
+        if input_arg_two == "-1":
+            sleep_time2 = sleep_time
+        else:
+            sleep_time2 = float(input_arg_two)
+        duration = float(input_arg_three)
         self.speaker_on = True
         start_time = time.time()
         elapsed_time = 0
         if self.args.is_test_mode is False:
             from RPi import GPIO
             logging.info("Speaker is on")
-            # Die Tonhoehe kann mit Variation der Wartezeit (sleep) veraendert werden
-            # while true ist noetig, da sonst kein Ton ausgegeben wird.
+            # The pitch can be changed with variations of the sleep_time (time.sleep).
+            # while true is necessary, otherwise there will be no sound.
             start_time = time.time()
             elapsed_time = 0
-            while elapsed_time <= 2.0:
+            while elapsed_time <= duration:
                 GPIO.output(self.speaker, True)
                 time.sleep(sleep_time)
                 GPIO.output(self.speaker, False)
-                time.sleep(sleep_time)
+                time.sleep(sleep_time2)
                 elapsed_time = time.time() - start_time
         else:
             logging.info("Dummy Speaker is on")

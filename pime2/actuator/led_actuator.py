@@ -1,7 +1,7 @@
 # pylint: disable=import-outside-toplevel
 import logging
 
-from pime2.actuator.actuator import DualGpioActuator, ActuatorType
+from pime2.actuator.actuator import ActuatorType, DualGpioActuator
 from pime2.common.operator import DualGpioOperatorArguments
 
 
@@ -19,9 +19,9 @@ class Led(DualGpioActuator):
         self.green_led_on = False
         self.red_led_on = False
 
-    def activate(self, input_arg_one: bool, input_arg_two: bool):
-        led_green = input_arg_one
-        led_red = input_arg_two
+    def activate(self, input_arg_one: str, input_arg_two="-1", input_arg_three="-1"):
+        led_green = bool(input_arg_one)
+        led_red = bool(input_arg_two)
         if self.args.is_test_mode is False:
             from RPi import GPIO
             if led_green is True:

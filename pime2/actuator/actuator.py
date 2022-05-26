@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 from pime2.common.operator import Operator, SingleGpioOperatorArguments, DualGpioOperatorArguments
-from pime2.common.read_output import DualGpioCommonResult
 
 
 class ActuatorType(Enum):
@@ -22,6 +21,17 @@ class Actuator(Operator, ABC):
         self.actuator_type = actuator_type
         self.name = name
 
+    @abstractmethod
+    def activate(self, input_arg_one: str, input_arg_two="-1", input_arg_three="-1"):
+        """
+        Process current gpio state of a (single?) pin and control the actuator operation.
+
+        :param input_arg_one:
+        :param input_arg_two:
+        :param input_arg_three:
+        :return: success state - if any
+        """
+
 
 class SingleGpioActuator(Actuator, ABC):
     """
@@ -34,15 +44,6 @@ class SingleGpioActuator(Actuator, ABC):
         super().__init__(actuator_type, name)
         self.args = input_arguments
 
-    @abstractmethod
-    def activate(self, input_arg: any):
-        """
-        Process current gpio state of a (single?) pin and control the actuator operation.
-
-        :param input_arg:
-        :return: success state - if any
-        """
-
 
 class DualGpioActuator(Actuator, ABC):
     """
@@ -54,13 +55,3 @@ class DualGpioActuator(Actuator, ABC):
     def __init__(self, name: str, actuator_type: ActuatorType, input_arguments: DualGpioOperatorArguments):
         super().__init__(actuator_type, name)
         self.args = input_arguments
-
-    @abstractmethod
-    def activate(self, input_arg_one: any, input_arg_two: any) -> DualGpioCommonResult:
-        """
-        Process current gpio state of a (single?) pin and control the actuator operation.
-
-        :param input_arg_one:
-        :param input_arg_two:
-        :return: success state - if any
-        """
