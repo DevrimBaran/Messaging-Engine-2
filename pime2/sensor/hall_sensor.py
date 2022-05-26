@@ -21,8 +21,8 @@ class HallSensor(SinglePinSensor):
     input_arguments provide a property is_test_mode.
     """
 
-    def __init__(self, input_arguments: SinglePinOperatorArguments):
-        super().__init__(SensorType.HALL, input_arguments)
+    def __init__(self, name: str, input_arguments: SinglePinOperatorArguments):
+        super().__init__(name, SensorType.HALL, input_arguments)
         self.sensor = input_arguments.input_pin_1
         self.args = input_arguments
 
@@ -50,7 +50,6 @@ class HallSensor(SinglePinSensor):
     def open(self):
         if self.args.is_test_mode is False:
             # start sensor listening
-            # pylint-disable: import-outside-toplevel
             from RPi import GPIO
 
             # Initialising GPIO
