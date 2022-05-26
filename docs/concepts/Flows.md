@@ -25,7 +25,8 @@
 {
   "name": "flow_name",
   "[input | process | output]": "operation_name",
-  "where": "where_spec"
+  "where": "where_spec",
+  "args": ""
 }
 ```
 
