@@ -33,18 +33,11 @@ async def pime_run(config: MEConfiguration):
             logging.error("Problem with sensor configuration: '%s'", config_error)
             sys.exit(1)
 
-        # Example on how to activate actuator
-
         try:
             enabled_actuators = config.available_actuators()
         except RuntimeError as config_error:
             logging.error("Problem with actuator configuration: '%s'", config_error)
             sys.exit(1)
-
-        # Example to activate speaker
-        enabled_actuators[1].open()
-        enabled_actuators[1].activate(0.005)
-        enabled_actuators[1].close()
 
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),

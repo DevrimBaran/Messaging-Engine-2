@@ -206,9 +206,9 @@ def load_actuators(config: MEConfiguration) -> List[Actuator]:
     for actuator in config.actuators:
         # basic validation
         if len(str(actuator.name).strip()) == 0:
-            raise RuntimeError("Empty name of a sensor detected")
+            raise RuntimeError("Empty name of a actuator detected")
         if actuator.gpio1 == 0 or len(str(actuator.gpio1).strip()) == 0:
-            raise RuntimeError("Empty or invalid port detected in property 'GPIO1'")
+            raise RuntimeError("Empty or invalid port detected in property 'gpio1'")
 
         actuator_type = str(actuator.type).upper()
         if actuator.is_test_mode:
@@ -216,7 +216,7 @@ def load_actuators(config: MEConfiguration) -> List[Actuator]:
 
         if actuator_type == ActuatorType.LED.name:
             if actuator.gpio2 == 0 or len(str(actuator.gpio2).strip()) == 0:
-                raise RuntimeError("Empty or invalid port detected in property 'GPIO2'")
+                raise RuntimeError("Empty or invalid port detected in property 'gpio2'")
 
             active_actuators.append(
                 Led(actuator.name, DualGpioOperatorArguments(actuator.gpio1, actuator.gpio2, actuator.is_test_mode)))
