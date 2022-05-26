@@ -4,4 +4,4 @@ host:
 sensors:
   - name: ""
     type: ""
-    pin1: ""
+    gpio1: ""

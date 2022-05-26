@@ -7,7 +7,10 @@ from typing import List
 
 import yaml
 
-from pime2.common.operator import DualPinOperatorArguments, SinglePinOperatorArguments
+from pime2.actuator.actuator import Actuator, ActuatorType
+from pime2.actuator.led_actuator import Led
+from pime2.actuator.speaker_actuator import Speaker
+from pime2.common.operator import DualGpioOperatorArguments, SingleGpioOperatorArguments
 from pime2.sensor.button_sensor import ButtonSensor
 from pime2.sensor.hall_sensor import HallSensor
 from pime2.sensor.sensor import Sensor, SensorType
@@ -82,6 +85,14 @@ class MEConfiguration:
         """
         return load_sensors(self)
 
+    def available_actuators(self) -> List[Actuator]:
+        """
+        Method to get actuator objects defined in the app's configuration.
+        Could raise a RuntimeError, if there is something wrongly configured.
+        :return:
+        """
+        return load_actuators(self)
+
 
 class OperatorConfiguration:
     """
@@ -89,29 +100,29 @@ class OperatorConfiguration:
     """
 
     def __init__(self, operator_object):
-        if 'name' not in operator_object or 'type' not in operator_object or 'pin1' not in operator_object:
-            raise RuntimeError("Missing at least one mandatory operator property: name, type, pin1")
+        if 'name' not in operator_object or 'type' not in operator_object or 'gpio1' not in operator_object:
+            raise RuntimeError("Missing at least one mandatory operator property: name, type, gpio1")
 
-        if operator_object['name'] is None or operator_object['type'] is None or operator_object['pin1'] is None:
-            raise RuntimeError("Missing at least one mandatory operator property value of: name, type, pin1")
+        if operator_object['name'] is None or operator_object['type'] is None or operator_object['gpio1'] is None:
+            raise RuntimeError("Missing at least one mandatory operator property value of: name, type, gpio1")
 
-        if not isinstance(operator_object['pin1'], int):
-            raise RuntimeError("Invalid non integer given for gpio pin1.")
-        if 'pin2' in operator_object and operator_object['pin2'] is not None and not isinstance(operator_object['pin2'],
-                                                                                                int):
-            raise RuntimeError("Invalid non integer given for gpio pin2.")
+        if not isinstance(operator_object['gpio1'], int):
+            raise RuntimeError("Invalid non integer given for gpio1.")
+        if 'gpio2' in operator_object and operator_object['gpio2'] is not None and not isinstance(
+                operator_object['gpio2'], int):
+            raise RuntimeError("Invalid non integer given for gpio gpio2.")
 
         self.name = str(operator_object['name']).strip()
         self.type = str(operator_object['type']).strip()
-        self.pin1 = int(operator_object['pin1'])
+        self.gpio1 = int(operator_object['gpio1'])
         self.is_test_mode = False
         if 'is_test_mode' in operator_object and operator_object['is_test_mode'] is True:
             self.is_test_mode = True
 
-        if 'pin2' in operator_object:
-            self.pin2 = int(operator_object['pin2'])
+        if 'gpio2' in operator_object:
+            self.gpio2 = int(operator_object['gpio2'])
         else:
-            self.pin2 = 0
+            self.gpio2 = 0
         self.original = operator_object
 
 
@@ -159,25 +170,59 @@ def load_sensors(config: MEConfiguration) -> List[Sensor]:
         # basic validation
         if len(str(sensor.name).strip()) == 0:
             raise RuntimeError("Empty name of a sensor detected")
-        if sensor.pin1 == 0 or len(str(sensor.pin1).strip()) == 0:
-            raise RuntimeError("Empty or invalid port detected in property 'pin1'")
+        if sensor.gpio1 == 0 or len(str(sensor.gpio1).strip()) == 0:
+            raise RuntimeError("Empty or invalid port detected in property 'gpio1'")
 
         sensor_type = str(sensor.type).upper()
         if sensor.is_test_mode:
             logging.info("Using test mode for sensor of type '%s' and name '%s'", sensor_type, sensor.name)
 
         if sensor_type == SensorType.BUTTON.name:
-            if sensor.pin2 == 0 or len(str(sensor.pin2).strip()) == 0:
-                raise RuntimeError("Empty or invalid port detected in property 'pin2'")
+            if sensor.gpio2 == 0 or len(str(sensor.gpio2).strip()) == 0:
+                raise RuntimeError("Empty or invalid port detected in property 'gpio2'")
 
             active_sensors.append(
-                ButtonSensor(sensor.name, DualPinOperatorArguments(sensor.pin1, sensor.pin2, sensor.is_test_mode)))
+                ButtonSensor(sensor.name, DualGpioOperatorArguments(sensor.gpio1, sensor.gpio2, sensor.is_test_mode)))
         elif sensor_type == SensorType.HALL.name:
             active_sensors.append(
-                HallSensor(sensor.name, SinglePinOperatorArguments(sensor.pin1, sensor.is_test_mode)))
+                HallSensor(sensor.name, SingleGpioOperatorArguments(sensor.gpio1, sensor.is_test_mode)))
         elif sensor_type == SensorType.TEMPERATURE.name:
             active_sensors.append(
-                TemperatureSensor(sensor.name, SinglePinOperatorArguments(sensor.pin1, sensor.is_test_mode)))
+                TemperatureSensor(sensor.name, SingleGpioOperatorArguments(sensor.gpio1, sensor.is_test_mode)))
         else:
             raise RuntimeError("Unknown sensor type '{]'", sensor_type)
     return active_sensors
+
+
+def load_actuators(config: MEConfiguration) -> List[Actuator]:
+    """
+    This method maps the textual configuration of available actuators to internal classes.
+    This is called during application bootstrap process. If there are problem with the configuration the user
+    provided, this method should raise RuntimeErrors with detailed error information for the user.
+    :param config:
+    :return:
+    """
+    active_actuators: List[Actuator] = []
+    for actuator in config.actuators:
+        # basic validation
+        if len(str(actuator.name).strip()) == 0:
+            raise RuntimeError("Empty name of a actuator detected")
+        if actuator.gpio1 == 0 or len(str(actuator.gpio1).strip()) == 0:
+            raise RuntimeError("Empty or invalid port detected in property 'gpio1'")
+
+        actuator_type = str(actuator.type).upper()
+        if actuator.is_test_mode:
+            logging.info("Using test mode for actuator of type '%s' and name '%s'", actuator_type, actuator.name)
+
+        if actuator_type == ActuatorType.LED.name:
+            if actuator.gpio2 == 0 or len(str(actuator.gpio2).strip()) == 0:
+                raise RuntimeError("Empty or invalid port detected in property 'gpio2'")
+
+            active_actuators.append(
+                Led(actuator.name, DualGpioOperatorArguments(actuator.gpio1, actuator.gpio2, actuator.is_test_mode)))
+        elif actuator_type == ActuatorType.SPEAKER.name:
+            active_actuators.append(
+                Speaker(actuator.name, SingleGpioOperatorArguments(actuator.gpio1, actuator.is_test_mode)))
+        else:
+            raise RuntimeError("Unknown sensor type '{]'", actuator_type)
+    return active_actuators

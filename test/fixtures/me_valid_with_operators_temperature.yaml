@@ -6,4 +6,4 @@ read_interval: 1.0
 sensors:
   - name: "TemperatureSensor"
     type: temperature
-    pin1: 1
+    gpio1: 1

@@ -1,49 +1,66 @@
 from abc import ABC, abstractmethod
-from pime2.sensor.sensor import Operator, SinglePinOperatorArguments, DualPinOperatorArguments
+from enum import Enum
+from pime2.common.operator import Operator, SingleGpioOperatorArguments, DualGpioOperatorArguments
+from pime2.common.read_output import DualGpioCommonResult
 
 
-# TODO: this is not final or perfect
-# TODO: add meaningful properties to these objects
-# TODO implement type of actuator
+class ActuatorType(Enum):
+    """
+    Enum to declare which actuator types are supported.
+    """
+    LED = 1
+    SPEAKER = 2
 
 
-class SinglePinActuator(Operator, ABC):
+class Actuator(Operator, ABC):
+    """
+    Abstract class to represent an abstract sensor.
+    You should never inherit directly from this class, use SinglePinSensor, DualPinSensor...
+    """
+
+    def __init__(self, actuator_type: ActuatorType, name: str = "unknown"):
+        self.actuator_type = actuator_type
+        self.name = name
+
+
+class SingleGpioActuator(Actuator, ABC):
     """
     Abstract class to represent an abstract sensor.
     Each actuator implements this class.
 
     """
 
-    def __init__(self, input_arguments: SinglePinOperatorArguments):
+    def __init__(self, name: str, actuator_type: ActuatorType, input_arguments: SingleGpioOperatorArguments):
+        super().__init__(actuator_type, name)
         self.args = input_arguments
 
     @abstractmethod
-    def handle(self, trigger_args: any) -> bool:
+    def activate(self, input_arg: any):
         """
         Process current gpio state of a (single?) pin and control the actuator operation.
-        TODO: input type is tbd
 
-        :param trigger_args:
+        :param input_arg:
         :return: success state - if any
         """
 
 
-class DualPinActuator(Operator, ABC):
+class DualGpioActuator(Actuator, ABC):
     """
     Abstract class to represent an abstract sensor.
     Each actuator implements this class.
 
     """
 
-    def __init__(self, input_arguments: DualPinOperatorArguments):
+    def __init__(self, name: str, actuator_type: ActuatorType, input_arguments: DualGpioOperatorArguments):
+        super().__init__(actuator_type, name)
         self.args = input_arguments
 
     @abstractmethod
-    def handle(self, trigger_args: any) -> bool:
+    def activate(self, input_arg_one: any, input_arg_two: any) -> DualGpioCommonResult:
         """
         Process current gpio state of a (single?) pin and control the actuator operation.
-        TODO: input type is tbd
 
-        :param trigger_args:
+        :param input_arg_one:
+        :param input_arg_two:
         :return: success state - if any
         """
