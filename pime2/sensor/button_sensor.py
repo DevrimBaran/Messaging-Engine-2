@@ -68,5 +68,6 @@ class ButtonSensor(DualPinSensor):
             GPIO.setup([self.button_1_pin, self.button_2_pin], GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     def close(self):
-        # TODO: Need to test GPIO.cleanup() on pi to avoid errors. Works also without cleanup.
-        pass
+        if self.args.is_test_mode is False:
+            from RPi import GPIO
+            GPIO.cleanup((self.button_1_pin, self.button_2_pin))
