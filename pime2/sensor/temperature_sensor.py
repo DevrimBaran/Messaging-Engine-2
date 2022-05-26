@@ -34,7 +34,7 @@ class TemperatureSensor(SinglePinSensor):
             if self.sensor_pin > 27:
                 logging.error(
                     "GPIO does not exist.")
-                return TemperatureSensorResult(float(temperature))
+                return TemperatureSensorResult(None)
             # start sensor listening
             if self.sensor is None:
                 logging.error(
