@@ -6,12 +6,9 @@ from aiocoap import Code, Context, Message, numbers, Type
 
 numbers.constants.REQUEST_TIMEOUT = 5
 
-async def ping(destination, returnPayload):
+async def ping(destination):
     """
     Ping Implementation
-
-    If returnPayload is true, then it will return the payload of the response
-
     """
     
     logging.info("Created Client Context")
@@ -29,7 +26,7 @@ async def ping(destination, returnPayload):
         return False
     else:
         logging.info('Ping succesful! Response: %s\n%r', response.code, response.payload)
-        return response.payload if returnPayload else True
+        return True
 
 
 async def send_message(destination, endpoint, payload):
