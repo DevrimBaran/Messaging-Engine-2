@@ -29,8 +29,12 @@ class TemperatureSensor(SinglePinSensor):
 
     def read(self) -> TemperatureSensorResult:
         if self.args.is_test_mode is False:
-            # start sensor listening
             temperature = -100
+            if self.sensor_pin > 27:
+                logging.error(
+                    "GPIO does not exist.")
+                return TemperatureSensorResult(float(temperature))
+            # start sensor listening
             if self.sensor is None:
                 logging.error(
                     "Sensor object is None and seems not to be opened. Severe problem with the usage of "
@@ -64,11 +68,15 @@ class TemperatureSensor(SinglePinSensor):
             import board
             import adafruit_dht
             # Set input pin for Sensor
-            gpio = getattr(board, 'D' + str(self.sensor_pin))
-            self.sensor = adafruit_dht.DHT22(gpio)
+            if self.sensor_pin <= 27:
+                gpio = getattr(board, 'D' + str(self.sensor_pin))
+                self.sensor = adafruit_dht.DHT22(gpio)
 
     def close(self):
         if self.args.is_test_mode is False:
             # pylint: disable=unused-import
             import adafruit_dht
-            self.sensor.exit()
+            if isinstance(type(self.sensor), type(adafruit_dht.DHT22)):
+                self.sensor.exit()
+            else:
+                logging.error("Something went wrong when closing the sensor")
