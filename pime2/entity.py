@@ -1,7 +1,7 @@
 # pylint: disable=C0103
 import datetime
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Iterable
 
 
 @dataclass
@@ -13,7 +13,8 @@ class NodeEntity:
     ip: str
     port: int
     sensor_skills: List[str] = field(default_factory=lambda: [])
-    actuator_skills: List[str] = field(default_factory= lambda: [])
+    actuator_skills: List[str] = field(default_factory=lambda: [])
+
 
 @dataclass
 class FlowOperationEntity:
@@ -27,6 +28,7 @@ class FlowOperationEntity:
     output: Optional[str]
     where: str = "*"
     args: str = ""
+
 
 @dataclass
 class FlowEntity:
