@@ -33,12 +33,6 @@ async def pime_run(config: MEConfiguration):
             logging.error("Problem with sensor configuration: '%s'", config_error)
             sys.exit(1)
 
-        try:
-            enabled_actuators = config.available_actuators()
-        except RuntimeError as config_error:
-            logging.error("Problem with actuator configuration: '%s'", config_error)
-            sys.exit(1)
-
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
                      startup_push_queue(zmq_context),
