@@ -3,7 +3,7 @@
 import logging
 import time
 import socket
-import pime2.coap_client as coap_client
+from pime2.coap_client import ping
 
 
 async def find_neighbours(custom_subnet = None):
@@ -26,7 +26,7 @@ async def find_neighbours(custom_subnet = None):
 
         start = time.time()
         try:
-            is_ping_successful = await coap_client.ping(target)
+            is_ping_successful = await ping(target)
             if is_ping_successful:
                 available_ip.append(target)
             else:

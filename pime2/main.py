@@ -31,7 +31,7 @@ async def pime_run():
         enabled_sensors: List[Sensor] = [
             ButtonSensor(DualPinOperatorArguments(12, 13, is_test_mode=True))
         ]
-     
+
         # In Windows you have to give the local subnetwork as a parameter into find_neighbours
         await find_neighbours("192.168.137.")
         tasks = map(asyncio.create_task,

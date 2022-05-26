@@ -1,16 +1,19 @@
 # pylint: disable=W0703
+# pylint: disable=W0611
 import asyncio
 import logging
-from aiocoap import Code, Context, Message, numbers, Type
+from aiocoap import Code, Context, Message, numbers
 
+TIMEOUT = 0.5
 
-numbers.constants.REQUEST_TIMEOUT = 5
+# workaround for timeout
+# TODO: globals()["numbers"].REQUEST_TIMEOUT = 1.0
+# globals()["numbers"].MAX_RETRANSMIT = 0
 
 async def ping(destination):
     """
     Ping Implementation
     """
-    
     logging.info("Created Client Context")
     client_context = await Context.create_client_context()
     logging.info("Sending Ping request")
@@ -19,7 +22,7 @@ async def ping(destination):
     request = Message(code=code, uri=uri)
     logging.debug("Request: code= %s \turi=  %s", code, uri)
     try:
-        response = await asyncio.wait_for(client_context.request(request).response, timeout=0.5)
+        response = await asyncio.wait_for(client_context.request(request).response, timeout=TIMEOUT)
         logging.debug("Response: %s", response)
     except Exception as exception:
         logging.error('Ping failed! Exception: %s', exception)
