@@ -1,45 +1,43 @@
-import socket
+import logging
 import time
-import aiocoap
+import pime2.coap_client as coap_client
 
-class NeighbourDiscovery():
+async def find_neighbours():
+    available_ip = []
+    hello_messages = []
 
-    async def ip_scan(self):
-        port = 5683
-        result = []
-
-        for x in range(1, 255):
-            target = "192.168.178."
+    for x in range(1, 80):
+        try:
+            target = "192.168.137."
             target = target + str(x)
-            t_IP = socket.gethostbyname(target)
-            print ('Starting scan on host: ', t_IP)
-
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(0.01)
+            logging.info('Starting scan on host: %s', target)
 
             start = time.time()
 
-            if self.port_scan(s, t_IP, port):
-                print(f'port {port} is open')
-                result.append(target)
+            is_ping_successful = await coap_client.ping(target, returnPayload = True)
+            if (is_ping_successful):
+                available_ip.append(target)
+                hello_messages.append(is_ping_successful)
+            else:
+                logging.info("No device on: %s", target)
 
-
+        
+        except Exception as exception:
+            logging.error("Error while searching for neighbours: %s", exception)
+        finally:
             end = time.time()
-            print(f'Time taken {end-start:.2f} seconds')
+            logging.info(f'Time taken {end-start:.2f} seconds')
 
-        print(result)
+        end = time.time()
+        logging.info(f'Time taken {end-start:.2f} seconds')
 
-    def port_scan(self, socket, t_IP, port):
-        try:
-            socket.connect((t_IP, port))
-            return True
-        except:
-            return False
+    print(available_ip)
+    print(hello_messages)
 
 
-    def send_hello(self):
-        payload = "{ message: hello message }"
-        #request = aiocoap.Message(code=aiocoap.Code.POST, payload=payload, uri=target)
+def send_hello():
+    payload = "{ message: hello message }"
+    #request = aiocoap.Message(code=aiocoap.Code.POST, payload=payload, uri=target)
 
 
 
