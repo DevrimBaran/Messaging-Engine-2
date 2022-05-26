@@ -57,5 +57,6 @@ class HallSensor(SingleGpioSensor):
             GPIO.setup(self.sensor, GPIO.IN)
 
     def close(self):
-        # TODO: Need to test GPIO.cleanup() on pi to avoid errors. Works also without cleanup.
-        pass
+        if self.args.is_test_mode is False:
+            from RPi import GPIO
+            GPIO.cleanup(self.sensor)

@@ -6,6 +6,9 @@ import typing
 from pime2.sensor.sensor import SingleGpioSensor, SensorType, SingleGpioOperatorArguments
 from pime2.common.read_output import SingleGpioCommonResult
 
+# Maximum number of GPIO ports of a Raspberry Pi
+MAX_GPIO_PORTS = 27
+
 
 class TemperatureSensorResult(SingleGpioCommonResult):
     """
@@ -30,6 +33,10 @@ class TemperatureSensor(SingleGpioSensor):
 
     def read(self) -> TemperatureSensorResult:
         if self.args.is_test_mode is False:
+            if self.sensor_pin > MAX_GPIO_PORTS:
+                logging.error(
+                    "GPIO does not exist.")
+                return TemperatureSensorResult(None)
             # start sensor listening
             temperature = -100
             if self.sensor is None:
@@ -64,10 +71,17 @@ class TemperatureSensor(SingleGpioSensor):
             # pylint: disable=unused-import
             import board
             import adafruit_dht
-            # Set input GPIO for Sensor and set pulseio to False so that the GPIO still can be used after
-            # shutdown of program
-            self.sensor = adafruit_dht.DHT22(board.D12, use_pulseio=False)
+            # Set input pin for Sensor
+            if self.sensor_pin <= MAX_GPIO_PORTS:
+                gpio = getattr(board, 'D' + str(self.sensor_pin))
+                self.sensor = adafruit_dht.DHT22(gpio)
 
     def close(self):
-        # Not necessary since use_pulseio is set to False
-        pass
+        if self.args.is_test_mode is False:
+            # pylint: disable=unused-import
+            import adafruit_dht
+            if isinstance(type(self.sensor), type(adafruit_dht.DHT22)):
+                self.sensor.exit()
+                logging.info("Sensor closed correctly")
+            else:
+                logging.error("Something went wrong when closing the sensor")
