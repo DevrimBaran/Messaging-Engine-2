@@ -23,12 +23,17 @@
 
 ```json
 {
-  "name": "flow_name",
+  "name": "flow_operation_name",
   "[input | process | output]": "operation_name",
   "where": "where_spec",
-  "args": ""
+  "args": "operation_arguments"
 }
 ```
+
+- `name`: Unique flow operation name
+- `input|process|output` A flow operation type with a valid flow operation id
+- `where`: A definition where the flow operation can be executed
+- `args`: Flow operation id specific arguments
 
 ## Flow where_spec
 
@@ -108,6 +113,7 @@
 
 - `log`: Log the current message, useful for debugging and testing
 - `cep_intercept`: Log the current message, useful for debugging and testing
+  - `args`: CEP Flow expression
 
 ## Available Output Operation Names
 
