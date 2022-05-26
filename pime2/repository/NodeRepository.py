@@ -70,6 +70,15 @@ class NodeRepository():
             logging.debug('Can not delete non existing node with name "%s".', name)
             raise sqlite3.Error("Can not delete non existing node")
 
+    def delete_all(self):
+        cursor = self.connection.cursor()
+        query = 'DELETE FROM nodes;'
+        logging.debug('Executing DELETE ALL SQL query: "%s"', query)
+        cursor.execute(query)
+        self.commit()
+        logging.debug('Deleted all records from table "node"')
+        cursor.close()
+    
     def open_repository(self):
         self.connection = db.create_connection("pime_database.py")
     
