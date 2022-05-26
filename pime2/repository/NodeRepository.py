@@ -17,6 +17,7 @@ class NodeRepository():
             cursor.execute(query, (node.name, node.ip, node.port))
         except sqlite3.IntegrityError as integrity_err:
             logging.debug('Node with name "%s" exists already. Please only give unique names. Error: %s', node.name, integrity_err)
+            raise sqlite3.IntegrityError("Duplicate Entry")
         finally:
             self.commit()
             cursor.close()
@@ -53,6 +54,7 @@ class NodeRepository():
             cursor.close()
         else:
             logging.debug('Can not update non existing node with name "%s".', node.name)
+            raise sqlite3.Error("Can not update non existing node")
        
 
     def delete_node_by_name(self, name : str):
@@ -66,6 +68,7 @@ class NodeRepository():
             cursor.close()
         else:
             logging.debug('Can not delete non existing node with name "%s".', name)
+            raise sqlite3.Error("Can not delete non existing node")
 
     def open_repository(self):
         self.connection = db.create_connection("pime_database.py")
