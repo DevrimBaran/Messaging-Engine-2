@@ -33,7 +33,7 @@ class TemperatureSensor(SingleGpioSensor):
 
     def read(self) -> TemperatureSensorResult:
         if self.args.is_test_mode is False:
-            if self.sensor_pin > MAX_GPIO_PORTS:
+            if self.sensor_gpio > MAX_GPIO_PORTS:
                 logging.error(
                     "GPIO does not exist.")
                 return TemperatureSensorResult(None)
@@ -72,8 +72,8 @@ class TemperatureSensor(SingleGpioSensor):
             import board
             import adafruit_dht
             # Set input pin for Sensor
-            if self.sensor_pin <= MAX_GPIO_PORTS:
-                gpio = getattr(board, 'D' + str(self.sensor_pin))
+            if self.sensor_gpio <= MAX_GPIO_PORTS:
+                gpio = getattr(board, 'D' + str(self.sensor_gpio))
                 self.sensor = adafruit_dht.DHT22(gpio)
 
     def close(self):

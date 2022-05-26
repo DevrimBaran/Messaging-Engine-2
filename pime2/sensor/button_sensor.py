@@ -70,4 +70,4 @@ class ButtonSensor(DualGpioSensor):
     def close(self):
         if self.args.is_test_mode is False:
             from RPi import GPIO
-            GPIO.cleanup((self.button_1_pin, self.button_2_pin))
+            GPIO.cleanup((self.button_1_gpio, self.button_2_gpio))
