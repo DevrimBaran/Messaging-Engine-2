@@ -40,7 +40,7 @@ def create_default_tables(connection):
     """
     sql_create_nodes_table = """CREATE TABLE IF NOT EXISTS nodes (
                                     id integer PRIMARY KEY,
-                                    name varchar(255) NOT NULL,
+                                    name varchar(255) NOT NULL UNIQUE,
                                     ip varchar(255) NOT NULL,
                                     port int NOT NULL);"""
 
