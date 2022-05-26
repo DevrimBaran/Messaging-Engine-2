@@ -23,9 +23,6 @@ class Speaker(SingleGpioActuator):
         self.speaker_on = True
         start_time = time.time()
         elapsed_time = 0
-        while elapsed_time <= 2.0:
-            logging.info("Speaker is on")
-            elapsed_time = time.time() - start_time
         if self.args.is_test_mode is False:
             from RPi import GPIO
             logging.info("Speaker is on")
@@ -38,6 +35,10 @@ class Speaker(SingleGpioActuator):
                 time.sleep(sleep_time)
                 GPIO.output(self.speaker, False)
                 time.sleep(sleep_time)
+                elapsed_time = time.time() - start_time
+        else:
+            while elapsed_time <= 2.0:
+                logging.info("Speaker is on")
                 elapsed_time = time.time() - start_time
 
     def open(self):
