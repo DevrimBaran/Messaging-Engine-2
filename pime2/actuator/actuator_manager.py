@@ -1,9 +1,9 @@
+# pylint: disable=consider-using-enumerate
 import logging
 import sys
-from typing import List
 
 from pime2.config import MEConfiguration
-from pime2.actuator.actuator import Actuator, ActuatorType
+from pime2.actuator.actuator import ActuatorType
 
 
 class ActuatorManager:
