@@ -77,8 +77,8 @@ class TemperatureSensor(SinglePinSensor):
         if self.args.is_test_mode is False:
             # pylint: disable=unused-import
             import adafruit_dht
-            if isinstance(type(self.sensor), type(None)):
-                logging.error("Something went wrong when closing the sensor")
-            else:
+            if isinstance(type(self.sensor), type(adafruit_dht.DHT22)):
                 self.sensor.exit()
                 logging.info("Sensor closed correctly")
+            else:
+                logging.error("Something went wrong when closing the sensor")
