@@ -3,14 +3,14 @@ import re
 import logging
 from json import JSONDecodeError
 import sqlite3
-
 import aiocoap
 from aiocoap import resource
 
 from pime2.message import NodeCreateResultMessage
-from pime2.node import NodeEntity
+from pime2.entity.node import NodeEntity
 from pime2.push_queue import get_push_queue
 from pime2.repository.NodeRepository import NodeRepository
+from pime2.mapper.NodeMapper import NodeMapper
 
 
 class Node(resource.Resource):
@@ -66,5 +66,9 @@ class Node(resource.Resource):
         :param request:
         :return:
         """
-        # TODO: return a list of all nodes we know
-        return aiocoap.Message(payload=b"Node")
+        node_repo = NodeRepository()
+        node_list = node_repo.read_all_nodes()
+        node_mapper = NodeMapper()
+        node_json_string = node_mapper.entity_list_to_json(node_list)
+        logging.info("Response JSON: %s", node_json_string)
+        return aiocoap.Message(payload=b"" + node_json_string)
