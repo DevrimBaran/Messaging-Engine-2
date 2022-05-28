@@ -27,9 +27,16 @@ class NodeService():
         """Convert json to a node entity"""
         return self.node_mapper.json_to_entity(node_json)
 
-    def put_node(self, node: NodeEntity):
+    def put_node(self, node: NodeEntity | str):
         """Save a node in the database"""
-        self.node_repository.create_node(node)
+        if isinstance(node, NodeEntity):
+            self.node_repository.create_node(node)
+        elif isinstance(node,str):
+            node = self.json_to_entity(node)
+            self.node_repository.create_node(node)
+        else:
+            # TODO: Vielleicht nen anderen Error benutzen?
+            raise ValueError("Bad Input")
 
     def get_all_nodes_as_json(self) -> str:
         """Get all nodes as a json string"""
@@ -43,7 +50,6 @@ class NodeService():
             self.validate_request(request)
             node_json = request.payload.decode()
             node_record = self.json_to_entity(node_json)
-            self.put_node(node_record)
             await get_push_queue().put(json.dumps(NodeCreateResultMessage(node_record).__dict__))
             return Message(payload=b"OK", code=Code.CREATED)
         except JSONDecodeError as ex:
