@@ -17,8 +17,7 @@ class Hello(resource.Resource):
             my_node = self.node_service.get_own_node()
             my_node_json = self.node_service.entity_to_json(my_node)
             return Message(payload=my_node_json.encode())
-        else:
-            return handle_node_message
+        return handle_node_message
 
     async def render_get(self, request):
         """
