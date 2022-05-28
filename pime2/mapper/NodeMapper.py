@@ -1,4 +1,3 @@
-from msilib.schema import Error
 from pime2.entity.node import NodeEntity
 import json
 import logging
@@ -10,20 +9,13 @@ class NodeMapper():
         node_dict['ip'] = node.ip
         node_dict['port'] = node.port
         node_json_string = json.dump(node_dict)
+        logging.info("Entity to JSON : <%s>",node_json_string)
         return node_json_string
 
     def json_to_entity(json_str:str) -> NodeEntity:
         json_obj = json.load(json_str)
-        required_fields = [
-            "name",
-            "ip",
-            "port",
-        ]
-        for i in required_fields:
-                if i not in json_obj or json_obj[i] is None:
-                    logging.error("Required fields are missing!")
-                    raise Error("Required fields are missing!")
         node = NodeEntity(json_obj['name'],json_obj['ip'],json_obj['port'])
+        logging.info("JSON to entity : <%s>",node)
         return node
 
     def entity_list_to_json(node_list:list[NodeEntity]) -> str:
@@ -35,5 +27,6 @@ class NodeMapper():
             node_dict['port'] = node.port
             node_array.append(node_dict)
         node_json_string = json.dumps(node_array)
+        logging.info("Entity list to json : <%s>",node_json_string)
         return node_json_string
 
