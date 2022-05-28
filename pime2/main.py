@@ -5,7 +5,7 @@ from typing import List
 from zmq.asyncio import Context
 
 import pime2.database as db
-from pime2.neighbour import find_neighbours
+from pime2.neighbour import find_neighbours, send_hello
 from pime2.coap_server import startup_server
 from pime2.common.operator import DualPinOperatorArguments
 from pime2.push_queue import init_push_queue
@@ -33,7 +33,10 @@ async def pime_run():
         ]
 
         # In Windows you have to give the local subnetwork as a parameter into find_neighbours
-        await find_neighbours("192.168.137.")
+        all_neighbours = await find_neighbours("192.168.137.")
+        await send_hello(all_neighbours)
+
+
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
                      startup_push_queue(zmq_context),
