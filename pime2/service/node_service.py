@@ -27,7 +27,7 @@ class NodeService():
         """Convert json to a node entity"""
         return self.node_mapper.json_to_entity(node_json)
 
-    def put_node(self, node: NodeEntity | str):
+    def put_node(self, node):
         """Save a node in the database"""
         if isinstance(node, NodeEntity):
             self.node_repository.create_node(node)
