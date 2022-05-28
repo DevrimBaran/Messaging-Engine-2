@@ -17,7 +17,7 @@ async def find_neighbours(custom_subnet = None):
     """
     available_ip = []
 
-    for suffix in range(1, 256):
+    for suffix in range(60, 70):
         if custom_subnet:
             subnet = custom_subnet
         else:
@@ -43,6 +43,8 @@ async def find_neighbours(custom_subnet = None):
 
         end = time.time()
         logging.info(f'Time taken {end-start:.2f} seconds')
+
+        logging.info("All neighbours found: %s", available_ip)
 
     return available_ip
 
