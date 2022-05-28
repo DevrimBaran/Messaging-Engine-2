@@ -18,7 +18,7 @@ async def ping(destination):
     client_context = await Context.create_client_context()
     logging.info("Sending Ping request")
     code = Code.GET
-    uri = 'coap://' + destination + '/trigger-hello'
+    uri = 'coap://' + destination + '/hello'
     request = Message(code=code, uri=uri)
     logging.debug("Request: code= %s \turi=  %s", code, uri)
     try:
@@ -32,14 +32,13 @@ async def ping(destination):
         return True
 
 
-async def send_message(destination, endpoint, payload):
+async def send_message(destination, endpoint, payload, code):
     """
     Send message with an arbitrary payload to a specific destination and endpoint.
     """
     logging.info("Created Client Context")
-    client_context = Context.create_client_context()
+    client_context = await Context.create_client_context()
     logging.info("Sending Message request")
-    code = Code.POST
     uri = 'coap://' + destination + '/' + endpoint
     request = Message(code=code, uri=uri, payload=payload)
     logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
@@ -48,5 +47,7 @@ async def send_message(destination, endpoint, payload):
         logging.debug("Response: %s", response)
     except Exception as exception:
         logging.error('Sending Message failed! Exception: %s', exception)
+        return False
     else:
         logging.info('Message Request succesful: %s\n%r', response.code, response.payload)
+        return response or True
