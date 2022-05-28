@@ -3,6 +3,9 @@ import logging
 import zmq
 from zmq.asyncio import Poller
 
+from pime2.flow import FlowManager, FlowValidationService, FlowOperationManager
+from pime2.flow.flow_message_builder import FlowMessageBuilder
+from pime2.node import NodeManager
 from pime2.router import router_loop
 from pime2.push_queue import get_push_queue
 
@@ -45,8 +48,15 @@ async def startup_pull_queue(context):
     poller = Poller()
     poller.register(socket, zmq.POLLIN)
 
+    # load and instantiate flow manager
+    flow_validation_service = FlowValidationService()
+    flow_operation_manager = FlowOperationManager()
+    flow_message_builder = FlowMessageBuilder()
+    node_manager = NodeManager()
+    flow_manager = FlowManager(flow_validation_service, flow_operation_manager, flow_message_builder, node_manager)
+
     while True:
         events = await poller.poll()
         if socket in dict(events):
             msg = await socket.recv_multipart()
-            await router_loop(msg)
+            await router_loop(msg, flow_manager)
