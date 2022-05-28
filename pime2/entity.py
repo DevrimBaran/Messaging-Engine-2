@@ -39,4 +39,4 @@ class FlowMessageEntity:
     next_operation: str
     payload: str
     count: int
-    history: Iterable['FlowMessageEntity']
+    history: List['FlowMessageEntity']
