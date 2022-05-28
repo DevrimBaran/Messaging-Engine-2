@@ -38,7 +38,7 @@ async def pime_run(config: MEConfiguration):
             sys.exit(1)
 
         # In Windows you have to give the local subnetwork as a parameter into find_neighbours
-        all_neighbours = await find_neighbours("192.168.137.")
+        all_neighbours = await find_neighbours("192.168.5.")
         await send_hello(all_neighbours)
 
 

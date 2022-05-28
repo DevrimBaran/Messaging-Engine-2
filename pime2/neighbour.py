@@ -4,6 +4,7 @@
 import logging
 import time
 import socket
+from pime2.service.node_service import NodeService
 from aiocoap import Code
 from pime2.coap_client import ping, send_message
 
@@ -62,16 +63,21 @@ async def send_hello(available_ip):
     """
     Sends a hello message to all its neighbours
     """
-    # TODO: Get all known neighbours from database
-    # TODO: Get own node from nodeServide end send it to the neighbours
+    service = NodeService()
+    own_node = service.get_own_node()
+
     for neighbour in available_ip:
-        neighbour_response = await send_message(neighbour, "hello", b"hello neighbour", Code.PUT)
+        neighbour_response = await send_message(neighbour, "hello", service.entity_to_json(own_node).encode() , Code.PUT)
+        service.put_node(neighbour_response.payload.decode())
     return True
 
 async def send_goodbye(all_neighbours):
     """
     Sends a goodbye message to all its neighbours
     """
+    service = NodeService()
+    own_node = service.get_own_node()
+
     # TODO: Get own node from NodeService end sent it to the neighbours. (Maybe only the node name)
     for neighbour in all_neighbours:
         await send_message(neighbour, "hello", b"hello neighbour", Code.PUT)
