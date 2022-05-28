@@ -17,7 +17,7 @@ class NodeMapper():
 
     def json_to_entity(self, json_str:str) -> NodeEntity:
         """Converts json to entity"""
-        json_obj = json.load(json_str)
+        json_obj = json.loads(json_str)
         node = NodeEntity(json_obj['name'],json_obj['ip'],json_obj['port'])
         logging.info("JSON to entity : <%s>",node)
         return node
