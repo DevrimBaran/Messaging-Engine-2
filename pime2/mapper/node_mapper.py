@@ -22,7 +22,7 @@ class NodeMapper():
         logging.info("JSON to entity : <%s>",node)
         return node
 
-    def entity_list_to_json(self, node_list:list[NodeEntity]) -> str:
+    def entity_list_to_json(self, node_list:list) -> str:
         """Converts a list of entities to json"""
         node_array = []
         for node in node_list:
