@@ -13,6 +13,7 @@ class Hello(resource.Resource):
         self.node_service = NodeService()
 
     async def render_put(self, request):
+        """Handles incoming hello message and sends own node entity json as a response"""
         handle_node_message = await self.node_service.handle_incoming_node(request)
         if handle_node_message.code == Code.CREATED:
             my_node = self.node_service.get_own_node()

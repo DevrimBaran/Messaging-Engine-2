@@ -28,6 +28,7 @@ class Node(resource.Resource):
     async def render_get(self, request):
         """
         handle GET request to /nodes
+        Return a json which includes every node in the database
 
         :param request:
         :return:
