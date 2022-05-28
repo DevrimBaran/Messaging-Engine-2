@@ -49,4 +49,4 @@ class CoapClient():
         except Exception as exception:
             logging.error('Sending Message failed! Exception: %s', exception)
         else:
-            logging.info('Message Request succesful: %s\n%r', response.code, response.payload)
+            logging.info('Message Request successful: %s\n%r', response.code, response.payload)
