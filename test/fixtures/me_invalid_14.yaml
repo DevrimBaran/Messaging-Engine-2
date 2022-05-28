@@ -1,0 +1,5 @@
+instance_id: 123456
+loglevel: DEBUG
+port: -5678
+host: 127.0.0.1
+read_interval:

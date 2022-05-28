@@ -1,34 +1,42 @@
 # pylint: disable=import-outside-toplevel
 import logging
 import random
+import typing
 
-from pime2.sensor.sensor import SinglePinSensor, SensorType, SinglePinOperatorArguments
-from pime2.common.read_output import SingleSensorResult
+from pime2.sensor.sensor import SingleGpioSensor, SensorType, SingleGpioOperatorArguments
+from pime2.common.read_output import SingleGpioCommonResult
+
+# Maximum number of GPIO ports of a Raspberry Pi
+MAX_GPIO_PORTS = 27
 
 
-class TemperatureSensorResult(SingleSensorResult):
+class TemperatureSensorResult(SingleGpioCommonResult):
     """
     Simple type for a temperature reading
     """
 
-    def __init__(self, result: float):
+    def __init__(self, result: typing.Optional[float]):
         super().__init__(result)
 
 
-class TemperatureSensor(SinglePinSensor):
+class TemperatureSensor(SingleGpioSensor):
     """
     A simple temperature sensor.
     input_arguments provide a property is_test_mode.
     """
 
-    def __init__(self, input_arguments: SinglePinOperatorArguments):
-        super().__init__(SensorType.TEMPERATURE, input_arguments)
-        self.sensor_pin: int = input_arguments.input_pin_1
+    def __init__(self, name: str, input_arguments: SingleGpioOperatorArguments):
+        super().__init__(name, SensorType.TEMPERATURE, input_arguments)
+        self.sensor_gpio: int = input_arguments.input_gpio_1
         self.sensor = None
         self.args = input_arguments
 
     def read(self) -> TemperatureSensorResult:
         if self.args.is_test_mode is False:
+            if self.sensor_gpio > MAX_GPIO_PORTS:
+                logging.error(
+                    "GPIO does not exist.")
+                return TemperatureSensorResult(None)
             # start sensor listening
             temperature = -100
             if self.sensor is None:
@@ -63,10 +71,17 @@ class TemperatureSensor(SinglePinSensor):
             # pylint: disable=unused-import
             import board
             import adafruit_dht
-            # Set input pin for Sensor and set pulseio to False so that the pin still can be used after
-            # shutdown of program
-            self.sensor = adafruit_dht.DHT22(board.D12, use_pulseio=False)
+            # Set input pin for Sensor
+            if self.sensor_gpio <= MAX_GPIO_PORTS:
+                gpio = getattr(board, 'D' + str(self.sensor_gpio))
+                self.sensor = adafruit_dht.DHT22(gpio)
 
     def close(self):
-        # Not necessary since use_pulseio is set to False
-        pass
+        if self.args.is_test_mode is False:
+            # pylint: disable=unused-import
+            import adafruit_dht
+            if isinstance(type(self.sensor), type(adafruit_dht.DHT22)):
+                self.sensor.exit()
+                logging.info("Sensor closed correctly")
+            else:
+                logging.error("Something went wrong when closing the sensor")
