@@ -2,11 +2,11 @@
 import logging
 import random
 
-from pime2.sensor.sensor import SinglePinSensor, SinglePinOperatorArguments, SensorType
-from pime2.common.read_output import SingleSensorResult
+from pime2.sensor.sensor import SingleGpioSensor, SingleGpioOperatorArguments, SensorType
+from pime2.common.read_output import SingleGpioCommonResult
 
 
-class HallSensorResult(SingleSensorResult):
+class HallSensorResult(SingleGpioCommonResult):
     """
     Simple type to wrap a single sensor measurement result
     """
@@ -15,15 +15,15 @@ class HallSensorResult(SingleSensorResult):
         super().__init__(result)
 
 
-class HallSensor(SinglePinSensor):
+class HallSensor(SingleGpioSensor):
     """
     A simple Hall sensor (detect magnets)
     input_arguments provide a property is_test_mode.
     """
 
-    def __init__(self, input_arguments: SinglePinOperatorArguments):
-        super().__init__(SensorType.HALL, input_arguments)
-        self.sensor = input_arguments.input_pin_1
+    def __init__(self, name: str, input_arguments: SingleGpioOperatorArguments):
+        super().__init__(name, SensorType.HALL, input_arguments)
+        self.sensor = input_arguments.input_gpio_1
         self.args = input_arguments
 
     def read(self) -> HallSensorResult:
@@ -50,7 +50,6 @@ class HallSensor(SinglePinSensor):
     def open(self):
         if self.args.is_test_mode is False:
             # start sensor listening
-            # pylint-disable: import-outside-toplevel
             from RPi import GPIO
 
             # Initialising GPIO
@@ -58,5 +57,6 @@ class HallSensor(SinglePinSensor):
             GPIO.setup(self.sensor, GPIO.IN)
 
     def close(self):
-        # TODO: Need to test GPIO.cleanup() on pi to avoid errors. Works also without cleanup.
-        pass
+        if self.args.is_test_mode is False:
+            from RPi import GPIO
+            GPIO.cleanup(self.sensor)

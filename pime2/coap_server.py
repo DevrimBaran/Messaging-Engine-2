@@ -1,10 +1,10 @@
 import asyncio
 import logging
-import sys
 
 import aiocoap
 from aiocoap import resource
 
+import pime2.config
 from pime2.res.default import Default
 from pime2.res.flow import Flow
 from pime2.res.health import Health
@@ -36,11 +36,9 @@ async def startup_server():
     root.add_resource(['flows'], Flow())
     root.add_resource([''], Default())
 
-    if sys.platform == "win32":
-        await aiocoap.Context.create_server_context(bind=('127.0.0.1', 5683), site=root)
-    else:
-        await aiocoap.Context.create_server_context(bind=('127.0.0.1', 5683), site=root)
+    conf = pime2.config.get_me_conf()
+    await aiocoap.Context.create_server_context(bind=(conf.host, conf.port), site=root)
 
-    logging.info("Started Server")
+    logging.info("Started CoAp-Server at %s:%s", conf.host, conf.port)
     # Run forever
     await asyncio.get_running_loop().create_future()

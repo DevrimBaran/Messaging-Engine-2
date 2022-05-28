@@ -6,6 +6,11 @@ PYLINT = pylint
 PYLINTFLAGS = -rn
 
 PYTHONFILES := $(wildcard *.py)
+ifdef OS
+PYTHON = python
+else
+PYTHON = python3
+endif
 
 pylint: $(patsubst %.py,%.pylint,$(PYTHONFILES))
 
@@ -19,13 +24,22 @@ help: ## show this help
 
 .PHONY: setup
 setup: ## setup the project for development
-	python3 -m pip install --user pylint
-	python3 -m pip install --user autopep8
+	$(PYTHON) -m pip install --user pylint
+	$(PYTHON) -m pip install --user autopep8
 
 .PHONY: setup-venv
 setup-venv: ## create virtual environment for this project
-	python3 -m venv env
+	$(PYTHON) -m venv env
+ifdef OS
+	powershell Set-ExecutionPolicy AllSigned -Scope Process; ./env/Scripts/activate ; pip install -r .\requirements.txt; Set-ExecutionPolicy Default -Scope Process
+else
 	source ./env/bin/activate ; pip install -r requirements.txt
+endif
+
+.PHONY: setup-venv-raspi
+setup-venv-raspi: ## create virtual environment for this project
+	python3 -m venv env
+	source ./env/bin/activate ; pip install -r requirements-raspi.txt
 
 .PHONY: diagrams
 diagrams: ## generate plantuml diagrams
@@ -41,7 +55,7 @@ format: ## auto-format the code
 
 .PHONY: test
 test: ## run unit tests
-	python3 -m unittest test/*.py
+	$(PYTHON) -m unittest test/*.py
 
 .PHONY: runtest
 runtest: setup-venv ## run app for 10 secs - if possible

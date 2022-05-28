@@ -1,0 +1,9 @@
+instance_id: 12345678
+loglevel: DEBUG
+host: 127.0.0.1
+port: 5683
+read_interval: 1.0
+sensors:
+  - name: "Testsensor2"
+    type: hall
+    gpio1: 1
