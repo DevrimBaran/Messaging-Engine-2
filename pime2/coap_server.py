@@ -22,7 +22,6 @@ async def startup_server():
     :return:
     """
     root = resource.Site()
-    print(root.__str__())
 
     root.add_resource(['.well-known', 'core'],
                       resource.WKCResource(root.get_resources_as_linkheader))
