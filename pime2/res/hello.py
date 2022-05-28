@@ -1,8 +1,6 @@
-import aiocoap
-from aiocoap import resource
-from pime2.repository.NodeRepository import NodeRepository
-from pime2.service.NodeService import NodeService
-from aiocoap import Code, Message
+from aiocoap import resource,Code, Message
+from pime2.service.node_service import NodeService
+
 
 
 class Hello(resource.Resource):

@@ -1,14 +1,12 @@
 import logging
-from aiocoap import resource
-from pime2.service.NodeService import NodeService
-from aiocoap import Message
-
+from aiocoap import resource, Message
+from pime2.service.node_service import NodeService
 
 class Node(resource.Resource):
     """
     Node Resource
     """
-    
+
     def __init__(self):
         self.node_service = NodeService()
 
@@ -23,7 +21,6 @@ class Node(resource.Resource):
         response = node_service.handle_incoming_node(request)
         logging.info("Response: %s", response)
         return response
-        
 
     async def render_get(self, request):
         """
