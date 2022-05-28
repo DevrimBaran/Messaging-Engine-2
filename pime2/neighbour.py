@@ -1,9 +1,11 @@
 # pylint: disable=W1203
 # pylint: disable=W0703
+# pylint: disable=E1121
 import logging
 import time
 import socket
-from pime2.coap_client import ping
+from aiocoap import Code
+from pime2.coap_client import ping, send_message
 
 
 async def find_neighbours(custom_subnet = None):
@@ -14,7 +16,7 @@ async def find_neighbours(custom_subnet = None):
     """
     available_ip = []
 
-    for suffix in range(1, 255):
+    for suffix in range(1, 256):
         if custom_subnet:
             subnet = custom_subnet
         else:
@@ -54,3 +56,23 @@ def find_local_subnet():
     local_ip = socket.gethostbyname(hostname)
     local_subnet = ".".join(local_ip.split(".")[:-1])
     return local_subnet
+
+
+async def send_hello(available_ip):
+    """
+    Sends a hello message to all its neighbours
+    """
+    # TODO: Get all known neighbours from database
+    # TODO: Get own node from nodeServide end send it to the neighbours
+    for neighbour in available_ip:
+        neighbour_response = await send_message(neighbour, "hello", b"hello neighbour", Code.PUT)
+    return True
+
+async def send_goodbye(all_neighbours):
+    """
+    Sends a goodbye message to all its neighbours
+    """
+    # TODO: Get own node from NodeService end sent it to the neighbours. (Maybe only the node name)
+    for neighbour in all_neighbours:
+        await send_message(neighbour, "hello", b"hello neighbour", Code.PUT)
+    return True
