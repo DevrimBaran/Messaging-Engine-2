@@ -37,7 +37,7 @@ async def send_message(destination, endpoint, payload):
     Send message with an arbitrary payload to a specific destination and endpoint.
     """
     logging.info("Created Client Context")
-    client_context = Context.create_client_context()
+    client_context = await Context.create_client_context()
     logging.info("Sending Message request")
     code = Code.POST
     uri = 'coap://' + destination + '/' + endpoint

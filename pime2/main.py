@@ -37,8 +37,7 @@ async def pime_run(config: MEConfiguration):
             logging.error("Problem with sensor configuration: '%s'", config_error)
             sys.exit(1)
 
-        # In Windows you have to give the local subnetwork as a parameter into find_neighbours
-        await find_neighbours("192.168.137.")
+        await find_neighbours()
 
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
