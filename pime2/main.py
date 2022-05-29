@@ -1,10 +1,14 @@
 import asyncio
 import logging
 import sys
+import time
 
 from zmq.asyncio import Context
 
 import pime2.database as db
+from pime2.actuator.actuator import ActuatorType
+from pime2.actuator.actuator_manager import ActuatorManager
+from pime2.actuator.speaker_actuator import Speaker
 from pime2.coap_server import startup_server
 from pime2.config import MEConfiguration
 from pime2.push_queue import init_push_queue

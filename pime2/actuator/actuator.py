@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
+from typing import Tuple
+
 from pime2.common.operator import Operator, SingleGpioOperatorArguments, DualGpioOperatorArguments
 
 
@@ -22,13 +24,11 @@ class Actuator(Operator, ABC):
         self.name = name
 
     @abstractmethod
-    def activate(self, input_arg_one: str, input_arg_two="-1", input_arg_three="-1"):
+    def activate(self, input_arg_one: str, *input_args: str):
         """
-        Process current gpio state of a (single?) pin and control the actuator operation.
-
+        Activate actuators with at least one input argument.
         :param input_arg_one:
-        :param input_arg_two:
-        :param input_arg_three:
+        :param input_args:
         :return: success state - if any
         """
 

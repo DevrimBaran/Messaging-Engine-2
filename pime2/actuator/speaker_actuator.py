@@ -1,6 +1,7 @@
 # pylint: disable=import-outside-toplevel
 import logging
 import time
+from typing import Tuple
 
 from pime2.actuator.actuator import SingleGpioActuator, ActuatorType
 from pime2.common.operator import SingleGpioOperatorArguments
@@ -18,13 +19,15 @@ class Speaker(SingleGpioActuator):
         self.args = input_arguments
         self.speaker_on = False
 
-    def activate(self, input_arg_one: str, input_arg_two="-1", input_arg_three="-1"):
-        sleep_time = float(input_arg_one)
-        if input_arg_two == "-1":
+    def activate(self, input_arg_one: str, *input_args: str):
+        sleep_time = input_arg_one
+        if len(input_args) == 0:
             sleep_time2 = sleep_time
+            duration = 2.0
         else:
-            sleep_time2 = float(input_arg_two)
-        duration = float(input_arg_three)
+            sleep_time2 = float(input_args[0])
+            duration = float(input_args[1])
+        print(duration)
         self.speaker_on = True
         start_time = time.time()
         elapsed_time = 0
