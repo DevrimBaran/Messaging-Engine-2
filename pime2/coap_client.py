@@ -1,27 +1,27 @@
-# pylint: disable=W0703
+# pylint: disable=broad-except,wildcard-import
 import logging
 import aiocoap
-from aiocoap import Message
+from aiocoap import Context, Message, Code
 
-class CoapClient():
+
+class CoapClient:
     """
     Coap Client Implementation
     """
 
-    def __init__(self, client_context):
+    def __init__(self, client_context: Context):
         """
         Initialize Coap Client.
         """
         self.client_context = client_context
         logging.info("Created Client")
 
-
     async def ping(self, destination):
         """
         Ping Implementation
         """
         logging.info("Sending Ping request")
-        code = aiocoap.Code.GET
+        code = Code.GET
         uri = 'coap://' + destination + '/trigger-hello'
         request = Message(code=code, uri=uri)
         logging.debug("Request: code= %s \turi=  %s", code, uri)
@@ -31,8 +31,7 @@ class CoapClient():
         except Exception as exception:
             logging.error('Ping failed! Exception: %s', exception)
         else:
-            logging.info('Ping succesful! Response: %s\n%r', response.code, response.payload)
-
+            logging.info('Ping successful! Response: %s\n%r', response.code, response.payload)
 
     async def send_message(self, destination, endpoint, payload):
         """
@@ -41,12 +40,13 @@ class CoapClient():
         logging.info("Sending Message request")
         code = aiocoap.Code.POST
         uri = 'coap://' + destination + '/' + endpoint
-        request = Message(code=code, uri=uri, payload=payload)
+        request = Message(code=code, uri=uri, payload=str(payload).encode("ascii"))
         logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
+
         try:
             response = await self.client_context.request(request).response
             logging.debug("Response: %s", response)
-        except Exception as exception:
-            logging.error('Sending Message failed! Exception: %s', exception)
+        except Exception as ex:
+            logging.error('Sending Message failed! Exception: %s', ex)
         else:
             logging.info('Message Request successful: %s\n%r', response.code, response.payload)

@@ -33,6 +33,11 @@ class NodeService:
         return self.node_mapper.json_to_entity(node_json)
 
     def is_node_remote(self, node: NodeEntity) -> bool:
+        """
+        Method to check if a node is remote
+        :param node:
+        :return:
+        """
         return node.name != get_me_conf().instance_id
 
     def put_node(self, node):
@@ -47,6 +52,10 @@ class NodeService:
             raise ValueError("Bad Input")
 
     def get_all_nodes(self) -> List[NodeEntity]:
+        """
+        Method to return all nodes of this me2 instance
+        :return:
+        """
         node_list = self.node_repository.read_all_nodes()
         if node_list is None:
             return []

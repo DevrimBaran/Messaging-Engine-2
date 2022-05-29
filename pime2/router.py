@@ -28,7 +28,7 @@ async def router_loop(msg, manager: FlowManager):
                 sensor_type = received_object["sensor_type"]
                 sensor_flows = manager.get_available_flows_for_sensor(sensor_type)
                 for i in sensor_flows:
-                    manager.start_flow(i, sensor_type, received_object["message_content"])
+                    await manager.start_flow(i, received_object["message_content"])
 
             logging.debug("detected sensor_read for sensor %s", SensorType(received_object["sensor_type"]))
         elif message_type == MessageType.NODE_CREATE.value:

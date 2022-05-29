@@ -55,6 +55,13 @@ class FlowOperationManager:
         return flow.ops[1].name
 
     def detect_nodes_of_step(self, flow: FlowEntity, step: str, nodes: List[NodeEntity]) -> List[NodeEntity]:
+        """
+        Method to detect which nodes are affected by the given step.
+        :param flow:
+        :param step:
+        :param nodes:
+        :return:
+        """
         if len(flow.ops) == 0:
             logging.warning("Got flow without operations!")
             return []
@@ -74,15 +81,28 @@ class FlowOperationManager:
         return []
 
     def execute_operation(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str):
+        """
+        Method to execute an operation of a flow message defined by the step
+
+        :param flow:
+        :param flow_message:
+        :param step:
+        :return:
+        """
         if flow_message.flow_name != flow.name:
             logging.warning("Invalid flow_message for flow received. Invalid names: flow: %s, flow message: %s",
                             flow.name, flow_message.flow_name)
             return None
+        is_executed = False
         for f in flow.ops:
-            if f.name.lower() == flow_message.next_operation.lower():
+            if f.name.lower() == step.lower():
                 flow_operation_name = f.name.lower()
-                logging.info("FlowOperationManager: Executing Operation %s:%s", flow_operation_name, f.process)
+                is_executed = True
+                logging.info("FlowOperationManager: EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
+                             f.process, flow_message.payload)
                 # TODO: execute operation
+        if not is_executed:
+            logging.error("FlowOperationManager: No operation executed in flow %s with step %s", flow.name, step)
         return None
 
     def is_last_step(self, flow: FlowEntity, current_step: str) -> bool:
