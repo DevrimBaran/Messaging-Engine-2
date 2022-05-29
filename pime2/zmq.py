@@ -47,11 +47,8 @@ async def startup_pull_queue(context):
     poller.register(socket, zmq.POLLIN)
 
     # load and instantiate flow manager
-    flow_validation_service = FlowValidationService()
-    flow_operation_manager = FlowOperationManager()
-    flow_message_builder = FlowMessageBuilder()
-    node_manager = NodeService()
-    flow_manager = FlowManager(flow_validation_service, flow_operation_manager, flow_message_builder, node_manager)
+    flow_manager = FlowManager(FlowValidationService(), FlowOperationManager(),
+                               FlowMessageBuilder(), NodeService())
 
     while True:
         events = await poller.poll()

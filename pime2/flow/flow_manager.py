@@ -1,6 +1,7 @@
 import logging
 from typing import List
 
+from pime2.config import get_me_conf
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
 from pime2.flow.flow_validation_service import FlowValidationService
@@ -23,6 +24,7 @@ class FlowManager:
         self.flow_operation_manager = flow_operation_manager
         self.flow_message_builder = flow_message_builder
         self.node_service = node_service
+        self.startup()
 
     def get_nodes(self) -> List[NodeEntity]:
         """
@@ -31,10 +33,7 @@ class FlowManager:
 
         :return:
         """
-        return [
-            NodeEntity("instance_1", "10.10.10.1", 5683),
-            NodeEntity("instance_2", "10.10.10.2", 5683),
-        ]
+        return self.node_service.get_all_nodes()
 
     def get_flows(self) -> List[FlowEntity]:
         """
@@ -50,7 +49,9 @@ class FlowManager:
             flow,
         ]
 
-    def start_flow(self, flow: FlowEntity, result: dict):
+    def start_flow(self, flow: FlowEntity, sensor_type: SensorType, result: dict):
+        neighbors = self.get_nodes()
+
         # validate
         is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
         if not is_valid:
@@ -65,7 +66,7 @@ class FlowManager:
             logging.error(f"Could not detect second step of flow: {flow.name}")
             return
         # detect nodes of next step and send new flow message
-        nodes = self.flow_operation_manager.detect_nodes_of_step(flow, step)
+        nodes = self.flow_operation_manager.detect_nodes_of_step(flow, step, neighbors)
 
         if nodes is None or len(nodes) == 0:
             logging.error("No nodes can be found for the next flow operation. Cancelling flow.")
@@ -73,15 +74,10 @@ class FlowManager:
 
         # build flow message
         msg = self.flow_message_builder.build_start_message(flow, step, result)
+        # and send message to nodes
+        self.send_message_to_nodes(flow, msg, nodes)
 
-        # delegate next step
-        for neighbor in nodes:
-            if self.node_service.is_node_remote(neighbor):
-                self.send_flow_message(msg, neighbor)
-            else:
-                self.execute_flow(flow, msg)
-
-    def execute_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity):
+    def execute_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity, neighbors: List[NodeEntity]):
         # validate
         is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
         if not is_valid:
@@ -96,30 +92,28 @@ class FlowManager:
             logging.error("Problem detecting current step of flow '%s'", flow.name)
             return
         if self.flow_operation_manager.is_last_step(flow, current_step):
-            return self.finish_flow(flow_message)
+            return self.finish_flow(flow, flow_message)
 
-        result = self.flow_operation_manager.execute_operation(flow, flow_message, current_step)
+        is_done = self.execute_step(flow, flow_message, current_step, neighbors)
+        if not is_done:
+            logging.info("Flow is not executed locally.")
+            return
 
         # detect next step and delegate
-        step = self.flow_operation_manager.detect_next_step(flow, flow_message)
-        if step is None:
+        next_step = self.flow_operation_manager.detect_next_step(flow, flow_message)
+        if next_step is None:
             logging.error(f"Could not detect second step of flow: {flow.name}")
             return
         # detect nodes of next step and send new flow message
-        nodes = self.flow_operation_manager.detect_nodes_of_step(flow, step)
+        nodes = self.flow_operation_manager.detect_nodes_of_step(flow, next_step, neighbors)
         if nodes is None or len(nodes) == 0:
             logging.error("No nodes can be found for the next flow operation. Cancelling flow.")
             return
 
         # build flow message
-        next_msg = self.flow_message_builder.build_next_message(flow_message, result)
+        next_msg = self.flow_message_builder.build_next_message(flow, flow_message, result, current_step, next_step)
 
-        # delegate next step
-        for neighbor in nodes:
-            if self.node_service.is_node_remote(neighbor):
-                self.send_flow_message(next_msg, neighbor)
-            else:
-                self.execute_flow(flow, next_msg)
+        self.send_message_to_nodes(flow, next_msg, nodes)
 
     def finish_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity):
         # validate
@@ -148,3 +142,48 @@ class FlowManager:
     def get_available_flows_for_sensor(self, sensor_type: SensorType) -> List[FlowEntity]:
         # TODO implement
         return self.get_flows()
+
+    def startup(self):
+        """
+        This method is called at the end of the constructor to do prepare the flow managers work.
+        :return:
+        """
+        node = self.node_service.get_own_node()
+        if node is None:
+            # Create own entry
+            logging.info("FlowManager: Creating self node")
+            me_conf = get_me_conf()
+            self.node_service.put_node(NodeEntity(me_conf.instance_id, me_conf.host, me_conf.port))
+        else:
+            logging.info("FlowManager: Self node exists")
+
+    def execute_step(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str,
+                     nodes: List[NodeEntity]) -> bool:
+        """
+        Helper method to execute a single step locally and remote.
+        If the execution was also locally, the return value is true, else false.
+        :param flow:
+        :param flow_message:
+        :param step:
+        :param nodes:
+        :return:
+        """
+        nodes_of_step = self.flow_operation_manager.detect_nodes_of_step(flow, step, nodes)
+
+        message = self.flow_message_builder.build_redirection_message(flow_message)
+        for node in nodes_of_step:
+            if self.node_service.is_node_remote(node):
+                self.send_flow_message(message, node)
+
+        is_executed_locally = len(list(filter(lambda x: x.name == get_me_conf().instance_id, nodes_of_step))) > 0
+        if is_executed_locally:
+            self.flow_operation_manager.execute_operation(flow, flow_message, step)
+            return True
+        return False
+
+    def send_message_to_nodes(self, flow: FlowEntity, message: FlowMessageEntity, nodes: List[NodeEntity]):
+        for neighbor in nodes:
+            if self.node_service.is_node_remote(neighbor):
+                self.send_flow_message(message, neighbor)
+            else:
+                self.execute_flow(flow, message, nodes)

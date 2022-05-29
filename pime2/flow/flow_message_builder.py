@@ -26,3 +26,11 @@ class FlowMessageBuilder:
         return FlowMessageEntity(uuid.uuid4().hex, flow.name, flow_message.src_created_at, datetime.now(),
                                  last_operation, next_operation,
                                  self.base64_encode(json.dumps(result)), 1, old_history)
+
+    def build_redirection_message(self, flow_message: FlowMessageEntity):
+        old_history = list(flow_message.history)
+        old_history.append(flow_message)
+
+        return FlowMessageEntity(uuid.uuid4().hex, flow_message.flow_name, flow_message.src_created_at, datetime.now(),
+                                 flow_message.last_operation, flow_message.next_operation,
+                                 flow_message.payload, 1, old_history)

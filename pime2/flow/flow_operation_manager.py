@@ -54,9 +54,24 @@ class FlowOperationManager:
             return None
         return flow.ops[1].name
 
-    def detect_nodes_of_step(self, flow: FlowEntity, step: str) -> List[NodeEntity]:
-        # TODO implement
-        return [NodeEntity("instance1", "10.10.10.2", 2345)]
+    def detect_nodes_of_step(self, flow: FlowEntity, step: str, nodes: List[NodeEntity]) -> List[NodeEntity]:
+        if len(flow.ops) == 0:
+            logging.warning("Got flow without operations!")
+            return []
+
+        for f in flow.ops:
+            if f.name.lower() == step.lower():
+                where_clause = f.where.strip()
+                if where_clause == "*":
+                    return nodes
+                node_list = []
+                for name in where_clause.split(","):
+                    for node in nodes:
+                        if node.name == name:
+                            node_list.append(node)
+                return node_list
+
+        return []
 
     def execute_operation(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str):
         if flow_message.flow_name != flow.name:
@@ -66,6 +81,7 @@ class FlowOperationManager:
         for f in flow.ops:
             if f.name.lower() == flow_message.next_operation.lower():
                 flow_operation_name = f.name.lower()
+                logging.info("FlowOperationManager: Executing Operation %s:%s", flow_operation_name, f.process)
                 # TODO: execute operation
         return None
 
