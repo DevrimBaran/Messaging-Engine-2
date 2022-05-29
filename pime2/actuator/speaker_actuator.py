@@ -19,14 +19,22 @@ class Speaker(SingleGpioActuator):
         self.speaker_on = False
 
     def activate(self, input_arg_one: str, *input_args: str):
-        sleep_time = input_arg_one
+        sleep_time = float(input_arg_one)
         if len(input_args) == 0:
             sleep_time2 = sleep_time
             duration = 2.0
-        else:
+        elif len(input_args) == 1:
             sleep_time2 = float(input_args[0])
-            duration = float(input_args[1])
-        print(duration)
+            duration = 2.0
+        elif len(input_args) == 2:
+            if input_args[0] == "":
+                sleep_time2 = sleep_time
+                duration = float(input_args[1])
+            else:
+                sleep_time2 = float(input_args[0])
+                duration = float(input_args[1])
+        else:
+            raise RuntimeError("Too many input arguments")
         self.speaker_on = True
         start_time = time.time()
         elapsed_time = 0
