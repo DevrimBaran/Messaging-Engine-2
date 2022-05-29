@@ -8,8 +8,8 @@ class ActuatorType(Enum):
     """
     Enum to declare which actuator types are supported.
     """
-    LED = 1
-    SPEAKER = 2
+    LED = "LED"
+    SPEAKER = "SPEAKER"
 
 
 class Actuator(Operator, ABC):
