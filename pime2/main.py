@@ -5,8 +5,6 @@ import sys
 from zmq.asyncio import Context
 
 import pime2.database as db
-from pime2.actuator.actuator import ActuatorType
-from pime2.actuator.actuator_manager import ActuatorManager
 from pime2.coap_server import startup_server
 from pime2.config import MEConfiguration
 from pime2.push_queue import init_push_queue
@@ -25,7 +23,7 @@ async def pime_run(config: MEConfiguration):
     logging.info("ME2 application STARTED")
     connection = None
     # example for how to initialize actuators
-    manager = ActuatorManager(config)
+    # manager = ActuatorManager(config)
     try:
         connection = db.create_connection("pime_database.db")
         init_push_queue()
@@ -38,8 +36,8 @@ async def pime_run(config: MEConfiguration):
             sys.exit(1)
 
         # example on how to use actuators
-        manager.trigger(ActuatorType.SPEAKER)
-        manager.close(ActuatorType.SPEAKER)
+        # manager.trigger(ActuatorType.SPEAKER)
+        # manager.close(ActuatorType.SPEAKER)
 
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
