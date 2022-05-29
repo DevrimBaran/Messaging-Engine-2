@@ -23,10 +23,9 @@ class Actuator(Operator, ABC):
         self.name = name
 
     @abstractmethod
-    def activate(self, input_arg_one: str, *input_args: str):
+    def handle(self, *input_args: str):
         """
         Activate actuators with at least one input argument.
-        :param input_arg_one:
         :param input_args:
         :return: success state - if any
         """

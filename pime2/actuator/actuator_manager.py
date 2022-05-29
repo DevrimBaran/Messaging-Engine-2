@@ -17,19 +17,18 @@ class ActuatorManager:
             logging.error("Problem with sensor configuration: '%s'", config_error)
             sys.exit(1)
 
-    def trigger(self, actuator_type: ActuatorType, actuator_input_one: str, *actuator_input_args: str):
+    def trigger(self, actuator_type: ActuatorType, *actuator_input_args: str):
         """.
         Trigger actuators.
 
         :param actuator_type:
-        :param actuator_input_one:
         :param actuator_input_args:
         """
         count = 0
         for i in range(len(self.actuators)):
             if self.actuators[i].actuator_type == actuator_type:
                 self.actuators[i].open()
-                self.actuators[i].activate(actuator_input_one, *actuator_input_args)
+                self.actuators[i].handle(*actuator_input_args)
                 count += 1
         logging.info("Started %d actuators", count)
 
