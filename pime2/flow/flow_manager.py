@@ -4,9 +4,9 @@ from typing import List
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
 from pime2.flow.flow_validation_service import FlowValidationService
-from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity
-from pime2.node import NodeEntity, NodeManager
+from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
 from pime2.sensor.sensor import SensorType
+from pime2.service.node_service import NodeService
 
 
 class FlowManager:
@@ -18,11 +18,11 @@ class FlowManager:
     def __init__(self, flow_validation_service: FlowValidationService,
                  flow_operation_manager: FlowOperationManager,
                  flow_message_builder: FlowMessageBuilder,
-                 node_manager: NodeManager):
+                 node_service: NodeService):
         self.flow_validation_service = flow_validation_service
         self.flow_operation_manager = flow_operation_manager
         self.flow_message_builder = flow_message_builder
-        self.node_manager = node_manager
+        self.node_service = node_service
 
     def get_nodes(self) -> List[NodeEntity]:
         """
@@ -76,7 +76,7 @@ class FlowManager:
 
         # delegate next step
         for neighbor in nodes:
-            if self.node_manager.is_node_remote(neighbor):
+            if self.node_service.is_node_remote(neighbor):
                 self.send_flow_message(msg, neighbor)
             else:
                 self.execute_flow(flow, msg)
@@ -116,7 +116,7 @@ class FlowManager:
 
         # delegate next step
         for neighbor in nodes:
-            if self.node_manager.is_node_remote(neighbor):
+            if self.node_service.is_node_remote(neighbor):
                 self.send_flow_message(next_msg, neighbor)
             else:
                 self.execute_flow(flow, next_msg)

@@ -1,4 +1,3 @@
-# pylint: disable=E1121,E1120
 import re as regex
 import logging
 import json
@@ -6,6 +5,10 @@ from json import JSONDecodeError
 from typing import List, Optional
 from aiocoap import Message, Code
 
+from pime2.database import get_db_connection
+from pime2.entity import NodeEntity
+
+from pime2.config import get_me_conf
 from pime2.database import get_db_connection
 from pime2.entity import NodeEntity
 from pime2.message import NodeCreateResultMessage
@@ -31,6 +34,9 @@ class NodeService:
         """Convert json to a node entity"""
         return self.node_mapper.json_to_entity(node_json)
 
+    def is_node_remote(self, node: NodeEntity) -> bool:
+        return node.name != get_me_conf().instance_id
+
     def put_node(self, node):
         """Save a node in the database"""
         if isinstance(node, NodeEntity):
@@ -51,6 +57,12 @@ class NodeService:
             self.node_repository.delete_node_by_name(node.name)
             return True
         return False
+
+    def get_all_nodes(self) -> List[NodeEntity]:
+        node_list = self.node_repository.read_all_nodes()
+        if node_list is None:
+            return []
+        return node_list
 
     def get_all_nodes_as_json(self) -> str:
         """Get all nodes as a json string"""
@@ -75,12 +87,14 @@ class NodeService:
         except ValueError as val_ex:
             logging.warning(
                 "Bad input. Please correct node ip, node port and node name! Error: %s", val_ex)
+        except IntegrityError as integ_ex:
+            logging.warning("Duplicate Entry. Can not process. Error: <%s>", integ_ex)
         return Message(payload=b"INVALID REQUEST", code=Code.BAD_REQUEST)
 
     def validate_request(self, request):
         """Validates request, return invalid request if request is invalid"""
         if len(request.payload) > 2048:
-            raise JSONDecodeError(msg="Invalid json")
+            raise JSONDecodeError(msg="Input too big", doc="request", pos=2048)
         return self.validate_request_payload(request)
 
     def validate_request_payload(self, request):

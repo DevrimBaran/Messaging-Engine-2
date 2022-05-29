@@ -153,13 +153,15 @@ class NodeRepository:
         query = 'SELECT * FROM nodes WHERE name != ?;'
         logging.debug('Executing SELECT SQL query: "%s"', query)
         cursor.execute(query, (get_me_conf().instance_id,))
-        neighbors = cursor.fetchall()
-        if neighbors is None:
-            logging.debug('No nodes existing.')
-            return None
-        logging.debug('Query executed. Result: %s', neighbors)
-        cursor.close()
-        result__list = []
+        try:
+            neighbors = cursor.fetchall()
+            if neighbors is None:
+                logging.debug('No nodes existing.')
+                return None
+            logging.debug('Query executed. Result: %s', neighbors)
+        finally:
+            cursor.close()
+        result_list = []
         for node in neighbors:
-            result__list.append(NodeEntity(node[1], node[2], node[3], node[4], node[5]))
-        return result__list
+            result_list.append(NodeEntity(node[1], node[2], node[3], node[4], node[5]))
+        return result_list

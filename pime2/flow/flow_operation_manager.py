@@ -1,8 +1,7 @@
 import logging
 from typing import List, Optional
 
-from pime2.entity import FlowEntity, FlowMessageEntity
-from pime2.node import NodeEntity
+from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
 
 
 class FlowOperationManager:

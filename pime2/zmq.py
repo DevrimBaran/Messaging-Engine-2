@@ -5,9 +5,9 @@ from zmq.asyncio import Poller
 
 from pime2.flow import FlowManager, FlowValidationService, FlowOperationManager
 from pime2.flow.flow_message_builder import FlowMessageBuilder
-from pime2.node import NodeManager
 from pime2.router import router_loop
 from pime2.push_queue import get_push_queue
+from pime2.service.node_service import NodeService
 
 
 async def startup_push_queue(context):
@@ -18,7 +18,6 @@ async def startup_push_queue(context):
     :param context:
     :return:
     """
-    # pylint: disable=E1101
     socket = context.socket(zmq.PUSH)
     socket.bind("tcp://127.0.0.1:5555")
     logging.info("Push queue started")
@@ -41,7 +40,6 @@ async def startup_pull_queue(context):
     :param context:
     :return:
     """
-    # pylint: disable=E1101
     socket = context.socket(zmq.PULL)
     socket.connect("tcp://127.0.0.1:5555")
     logging.info("Pull queue started")
@@ -52,7 +50,7 @@ async def startup_pull_queue(context):
     flow_validation_service = FlowValidationService()
     flow_operation_manager = FlowOperationManager()
     flow_message_builder = FlowMessageBuilder()
-    node_manager = NodeManager()
+    node_manager = NodeService()
     flow_manager = FlowManager(flow_validation_service, flow_operation_manager, flow_message_builder, node_manager)
 
     while True:
