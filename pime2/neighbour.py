@@ -38,7 +38,7 @@ async def find_neighbours():
 
         logging.info("All neighbours found: %s", available_ip)
 
-    return available_ip
+    await send_hello(available_ip)
 
 
 def find_local_subnet():
@@ -65,9 +65,9 @@ async def send_hello(available_ip):
     """
     service = NodeService()
     own_node = service.get_own_node()
-
+    own_node_json = service.entity_to_json(own_node)
     for neighbour in available_ip:
-        neighbour_response = await send_message(neighbour, "hello", service.entity_to_json(own_node).encode() , Code.PUT)
+        neighbour_response = await send_message(neighbour, "hello", own_node_json.encode() , Code.PUT)
         service.put_node(neighbour_response.payload.decode())
     return True
 

@@ -26,9 +26,9 @@ async def pime_run(config: MEConfiguration):
     logging.info("ME2 application STARTED")
     connection = None
     try:
-        connection = db.create_connection("pime_database.db")
+        connection = db.create_connection(config.database)
         init_push_queue()
-        create_default_tables(connection)
+        create_default_tables(connection, config)
         zmq_context = Context.instance()
 
         try:
@@ -37,8 +37,7 @@ async def pime_run(config: MEConfiguration):
             logging.error("Problem with sensor configuration: '%s'", config_error)
             sys.exit(1)
 
-        all_neighbours = await find_neighbours()
-        await send_hello(all_neighbours)     
+        await find_neighbours()
 
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),

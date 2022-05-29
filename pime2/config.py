@@ -43,6 +43,7 @@ class MEConfiguration:
         self.loglevel = str(config_yaml['loglevel']).strip()
         self.host = str(config_yaml['host']).strip()
         self.port = int(str(config_yaml['port']).strip())
+        self.database = str(config_yaml['database']).strip()
         self.read_interval = float(str(config_yaml['read_interval']).strip())
 
         if len(self.instance_id) == 0:
@@ -53,6 +54,8 @@ class MEConfiguration:
             raise RuntimeError("Empty 'host' not allowed in configuration.")
         if self.port <= 0 or self.port >= pow(2, 16) or config_yaml['port'] is None:
             raise RuntimeError("Invalid 'port' not allowed in configuration.")
+        if len(self.database) == 0:
+            raise RuntimeError("Empty 'database' not allowed in configuration.")
         if self.read_interval < 0.3 or self.read_interval > 300:
             raise RuntimeError("Invalid 'read_interval' not allowed in configuration.")
 

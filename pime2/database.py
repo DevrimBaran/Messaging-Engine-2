@@ -3,6 +3,9 @@ import sqlite3
 import logging
 from sqlite3 import Error
 
+from pime2.entity.node import NodeEntity
+from pime2.service.node_service import NodeService
+
 
 
 def create_connection(db_file):
@@ -32,7 +35,7 @@ def disconnect(connection):
         logging.info("Successfully disconnected from the database")
 
 
-def create_default_tables(connection):
+def create_default_tables(connection, config):
     """
     This method creates all mandatory tables
     :param connection: connection to the database
@@ -44,11 +47,15 @@ def create_default_tables(connection):
                                     ip varchar(255) NOT NULL,
                                     port int NOT NULL);"""
 
+    own_node = NodeEntity(name=config.instance_id, ip=config.host, port=config.port)
+    service = NodeService()
+
     cursor = connection.cursor()
     try:
         cursor.execute(sql_create_nodes_table)
         connection.commit()
         logging.info("Successfully created all default tables")
+        service.put_node(own_node)
     except Error:
         logging.exception("An error occurred while creating the default tables")
     finally:
