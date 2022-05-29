@@ -1,7 +1,6 @@
 # pylint: disable=import-outside-toplevel
 import logging
 import time
-from typing import Tuple
 
 from pime2.actuator.actuator import SingleGpioActuator, ActuatorType
 from pime2.common.operator import SingleGpioOperatorArguments
