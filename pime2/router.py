@@ -24,8 +24,9 @@ async def router_loop(msg, manager: FlowManager):
             and received_object["message_type"] is not None and received_object["message_content"] is not None:
         message_type = received_object["message_type"]
         if message_type == MessageType.SENSOR_RESULT.value:
-            if "sensor_type" in received_object["message_content"]["sensor_type"]:
-                sensor_type = received_object["message_content"]["sensor_type"]
+            if "sensor_type" in received_object:
+                sensor_type = received_object["sensor_type"]
+                # TODO use sensor_type as string not int value for enum
                 sensor_flows = manager.get_available_flows_for_sensor(sensor_type)
                 for i in sensor_flows:
                     manager.start_flow(i, received_object["message_content"])

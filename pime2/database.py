@@ -1,8 +1,9 @@
 import sys
 import sqlite3
 import logging
-from sqlite3 import Error
+from sqlite3 import Error, Connection
 
+DB_CONNECTION: Connection
 
 
 def create_connection(db_file):
@@ -11,9 +12,12 @@ def create_connection(db_file):
     :param db_file: file path to the database
     :return: connection
     """
+    # pylint: disable=global-statement
+    global DB_CONNECTION
     connection = None
     try:
-        connection = sqlite3.connect(db_file)
+        DB_CONNECTION = sqlite3.connect(db_file)
+        connection = DB_CONNECTION
         logging.info("Successfully connected to database: %s", db_file)
     except Error:
         logging.exception("An error occurred while connecting to the database. \n Pime will now shutdown safely.")
@@ -53,3 +57,11 @@ def create_default_tables(connection):
         logging.exception("An error occurred while creating the default tables")
     finally:
         cursor.close()
+
+
+def get_db_connection():
+    """
+    Returns an instance of the database
+    :return:
+    """
+    return DB_CONNECTION

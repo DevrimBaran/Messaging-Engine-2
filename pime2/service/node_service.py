@@ -1,42 +1,56 @@
-# pylint: disable=E1121,E1120
 import re as regex
 import logging
 import json
 from json import JSONDecodeError
 from sqlite3 import IntegrityError
+from typing import Optional, List
+
 from aiocoap import Message, Code
-from pime2.entity.node import NodeEntity
+
+from pime2.config import get_me_conf
+from pime2.database import get_db_connection
+from pime2.entity import NodeEntity
 from pime2.message import NodeCreateResultMessage
 from pime2.repository.node_repository import NodeRepository
 from pime2.mapper.node_mapper import NodeMapper
 from pime2.push_queue import get_push_queue
 
 
-class NodeService():
+class NodeService:
     """Implements node service class"""
+
     def __init__(self):
         """Initialize NodeRepository and NodeMapper"""
-        self.node_repository = NodeRepository()
+        self.node_repository = NodeRepository(get_db_connection())
         self.node_mapper = NodeMapper()
 
     def entity_to_json(self, node: NodeEntity) -> str:
         """Convert node entity to a json"""
-        return self.node_mapper.entity_to_json(node)
+        return json.dumps(node.__dict__)
 
     def json_to_entity(self, node_json: str) -> NodeEntity:
         """Convert json to a node entity"""
         return self.node_mapper.json_to_entity(node_json)
 
+    def is_node_remote(self, node: NodeEntity) -> bool:
+        return node.name != get_me_conf().instance_id
+
     def put_node(self, node):
         """Save a node in the database"""
         if isinstance(node, NodeEntity):
             self.node_repository.create_node(node)
-        elif isinstance(node,str):
+        elif isinstance(node, str):
             node = self.json_to_entity(node)
             self.node_repository.create_node(node)
         else:
             # TODO: Vielleicht nen anderen Error benutzen?
             raise ValueError("Bad Input")
+
+    def get_all_nodes(self) -> List[NodeEntity]:
+        node_list = self.node_repository.read_all_nodes()
+        if node_list is None:
+            return []
+        return node_list
 
     def get_all_nodes_as_json(self) -> str:
         """Get all nodes as a json string"""
@@ -58,21 +72,21 @@ class NodeService():
             logging.warning(
                 "Bad input. Please correct node ip, node port and node name! Error: %s", val_ex)
         except IntegrityError as integ_ex:
-            logging.warning("Duplicate Entry. Can not process. Error: <%s>",integ_ex)
+            logging.warning("Duplicate Entry. Can not process. Error: <%s>", integ_ex)
         return Message(payload=b"INVALID REQUEST", code=Code.BAD_REQUEST)
 
     def validate_request(self, request):
         """Validates request, return invalid request if request is invalid"""
         if len(request.payload) > 2048:
-            raise JSONDecodeError(msg="Invalid json")
+            raise JSONDecodeError(msg="Input too big", doc="request", pos=2048)
         return self.validate_request_payload(request)
 
     def validate_request_payload(self, request):
         """Validate the payload of the request whether it fits the specifications"""
         required_fields = [
-        "name",
-        "ip",
-        "port",
+            "name",
+            "ip",
+            "port",
         ]
         ipv4_regex = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
         name_regex = "^[a-zA-Z0-9_.-]{3,128}$"
@@ -89,6 +103,6 @@ class NodeService():
                 raise ValueError("Bad Input. Invalid json!")
             return True
 
-    def get_own_node(self) -> NodeEntity:
+    def get_own_node(self) -> Optional[NodeEntity]:
         """Gets the first node in the database which is the device itself"""
-        return self.node_repository.get_first()
+        return self.node_repository.read_node_by_name(get_me_conf().instance_id)

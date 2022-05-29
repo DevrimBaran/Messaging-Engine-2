@@ -1,12 +1,13 @@
-from aiocoap import resource,Code, Message
-from pime2.service.node_service import NodeService
+from aiocoap import resource, Code, Message
 
+from pime2.service.node_service import NodeService
 
 
 class Hello(resource.Resource):
     """
     Hello Resource
     """
+
     def __init__(self):
         self.node_service = NodeService()
 
