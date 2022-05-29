@@ -1,6 +1,5 @@
 # pylint: disable=import-outside-toplevel
 import logging
-from typing import Tuple
 
 from pime2.actuator.actuator import ActuatorType, SingleGpioActuator
 from pime2.common.operator import SingleGpioOperatorArguments
@@ -40,7 +39,7 @@ class Led(SingleGpioActuator):
     def close(self):
         if self.args.is_test_mode is False:
             from RPi import GPIO
-            GPIO.cleanup((self.green_led, self.red_led))
+            GPIO.cleanup(self.green_led)
         self.green_led_on = False
         logging.info("Led is off")
 

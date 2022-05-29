@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Tuple
 
 from pime2.common.operator import Operator, SingleGpioOperatorArguments, DualGpioOperatorArguments
 
