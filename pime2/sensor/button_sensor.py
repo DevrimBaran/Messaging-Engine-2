@@ -50,14 +50,14 @@ class ButtonSensor(DualGpioSensor):
         dummy_button_two_up = bool(random.randint(0, 1))
 
         if dummy_button_one_up is True:
-            logging.info("Button 1 up")
+            logging.debug("Button 1 up")
         else:
-            logging.info("Button 1 down")
+            logging.debug("Button 1 down")
 
         if dummy_button_two_up is True:
-            logging.info("Button 2 up")
+            logging.debug("Button 2 up")
         else:
-            logging.info("Button 2 down")
+            logging.debug("Button 2 down")
         return ButtonSensorResult(dummy_button_one_up, dummy_button_two_up)
 
     def open(self):

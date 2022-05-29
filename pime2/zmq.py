@@ -1,8 +1,12 @@
+# pylint: disable=broad-except
+import asyncio
 import logging
 
 import zmq
+from aiocoap import Context
 from zmq.asyncio import Poller
 
+from pime2.coap_client import CoapClient
 from pime2.flow import FlowManager, FlowValidationService, FlowOperationManager
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.router import router_loop
@@ -48,10 +52,20 @@ async def startup_pull_queue(context):
 
     # load and instantiate flow manager
     flow_manager = FlowManager(FlowValidationService(), FlowOperationManager(),
-                               FlowMessageBuilder(), NodeService())
+                               FlowMessageBuilder(), NodeService(), CoapClient(await Context.create_client_context()))
 
     while True:
-        events = await poller.poll()
-        if socket in dict(events):
-            msg = await socket.recv_multipart()
-            await router_loop(msg, flow_manager)
+        try:
+            events = await poller.poll()
+            if socket in dict(events):
+                msg = await socket.recv_multipart()
+                future = asyncio.wait([asyncio.create_task(router_loop(msg, flow_manager))], timeout=30.0)
+                try:
+                    await future
+                except asyncio.exceptions.TimeoutError:
+                    logging.warning("Message processing timeout reached!")
+                except Exception as ex:
+                    logging.error("Message processing inner exception: %s, %s", ex, future)
+
+        except Exception as e:
+            logging.error("Message processing outer exception: %s", e)

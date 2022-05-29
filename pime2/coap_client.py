@@ -28,7 +28,7 @@ async def ping(destination):
         logging.error('Ping failed! Exception: %s', exception)
         return False
     else:
-        logging.info('Ping succesful! Response: %s\n%r', response.code, response.payload)
+        logging.info('Ping successful! Response: %s\n%r', response.code, response.payload)
         return True
 
 
