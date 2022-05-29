@@ -2,6 +2,7 @@ import logging
 from aiocoap import resource, Message
 from pime2.service.node_service import NodeService
 
+
 class Node(resource.Resource):
     """
     Node Resource

@@ -3,11 +3,11 @@ from aiocoap import resource, Message
 from pime2.service.node_service import NodeService
 
 
-
 class Hello(resource.Resource):
     """
     Hello Resource
     """
+
     def __init__(self):
         self.node_service = NodeService()
 

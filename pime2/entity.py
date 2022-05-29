@@ -1,6 +1,17 @@
+# pylint: disable=C0103
 import datetime
 from dataclasses import dataclass
-from typing import List, Optional, Iterable
+from typing import List, Optional
+
+
+@dataclass
+class NodeEntity:
+    """
+    class to represent a node, a "neighbor"
+    """
+    name: str
+    ip: str
+    port: int
 
 
 @dataclass
