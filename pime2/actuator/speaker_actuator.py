@@ -17,7 +17,7 @@ class Speaker(SingleGpioActuator):
         self.speaker = input_arguments.input_gpio_1
         self.args = input_arguments
 
-    async def handle(self, *input_args: str):
+    def handle(self, *input_args: str):
         # input variables all have default values, if there's an input the value will be set according to this order:
         # First input is the duration for how long the speaker is active, the second and third one are for the pitch
         # of the speaker.
