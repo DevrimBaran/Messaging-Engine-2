@@ -1,7 +1,6 @@
 import json
 import logging
 
-from sqlite3 import IntegrityError
 from pime2.message import MessageType
 from pime2.sensor.sensor import SensorType
 from pime2.service.node_service import NodeService

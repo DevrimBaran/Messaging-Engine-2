@@ -1,5 +1,5 @@
 import json
-from aiocoap import resource,Code, Message
+from aiocoap import resource, Message
 from pime2.service.node_service import NodeService
 
 
