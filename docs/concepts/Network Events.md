@@ -1,18 +1,18 @@
 # Network Events
 
-## `NeighbourUpdateRequired`
+## `NeighborUpdateRequired`
 
 TBD
 
-## `NeighbourUpdateRegular`
+## `NeighborUpdateRegular`
 
 TBD
 
 
-## `NeighbourRegister`
+## `NeighborRegister`
 
 TBD
 
-## `NeighbourUnregister`
+## `NeighborUnregister`
 
 TBD

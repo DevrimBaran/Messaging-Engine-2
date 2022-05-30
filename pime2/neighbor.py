@@ -6,7 +6,7 @@ from pime2.config import get_me_conf
 from pime2.coap_client import ping
 
 
-async def find_neighbours():
+async def find_neighbors():
     """
     Finds all available hosts
     """
@@ -25,13 +25,13 @@ async def find_neighbours():
                 logging.info("No device on: %s", target)
 
         except Exception as exception:
-            logging.error("Error while searching for neighbours: %s", exception)
+            logging.error("Error while searching for neighbors: %s", exception)
         finally:
             end = time.time()
             logging.info("Time taken: %s seconds", round(end-start,2))
 
         end = time.time()
-        logging.info("All neighbours found: %s", available_ip)
+        logging.info("All neighbors found: %s", available_ip)
 
     return available_ip
 
