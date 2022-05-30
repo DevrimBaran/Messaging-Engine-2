@@ -20,6 +20,8 @@ class ActuatorManager:
     def open(self, actuator_type: ActuatorType):
         """
         Open actuators.
+
+        :param actuator_type:
         """
         count = 0
         for i in range(len(self.actuators)):
@@ -35,9 +37,12 @@ class ActuatorManager:
         :param actuator_type:
         :param actuator_input_args:
         """
+        count = 0
         for i in range(len(self.actuators)):
             if self.actuators[i].actuator_type == actuator_type:
                 self.actuators[i].handle(*actuator_input_args)
+                count += 1
+        logging.info("Triggered %d actuators", count)
 
     def close(self, actuator_type: ActuatorType):
         """
