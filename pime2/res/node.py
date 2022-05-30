@@ -34,12 +34,12 @@ class Node(resource.Resource):
         return Message(payload=node_json_string.encode())
 
     async def render_delete(self, request):
-            """
-            handle DELETE request to /nodes
-            Deletes all nodes from the database
+        """
+        handle DELETE request to /nodes
+        Deletes all nodes from the database
 
-            :param request:
-            :return:
-            """
-            self.node_service.delete_all_nodes()
-            return Message(payload=b'Deleted all nodes')
+        :param request:
+        :return:
+        """
+        self.node_service.delete_all_nodes()
+        return Message(payload=b'Deleted all nodes')
