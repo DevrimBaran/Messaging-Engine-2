@@ -1,3 +1,4 @@
+import json
 from aiocoap import resource,Code, Message
 from pime2.service.node_service import NodeService
 
@@ -26,4 +27,6 @@ class Hello(resource.Resource):
         :param request:
         :return:
         """
-        return Message(payload=b"Helloooo!")
+        own_node = self.node_service.get_own_node()
+        own_node_json = json.dumps(own_node.__dict__)
+        return Message(payload=own_node_json.encode())
