@@ -1,4 +1,4 @@
-# Neighbour discovery concept
+# Neighbor discovery concept
 
 We have an arbitrary amount of devices which will be able to send messages to each other.
 Thus each of them has to know if and how to reach the target device.

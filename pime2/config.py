@@ -69,6 +69,12 @@ class MEConfiguration:
             self.is_debug = bool(config_yaml['is_debug'])
         else:
             self.is_debug = False
+
+        if 'is_neighbor_discovery_enabled' in config_yaml:
+            self.is_neighbor_discovery_enabled = bool(config_yaml['is_neighbor_discovery_enabled'])
+        else:
+            self.is_neighbor_discovery_enabled = False
+
         self.sensors = []
         self.actuators = []
 

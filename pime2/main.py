@@ -5,7 +5,7 @@ import sys
 from zmq.asyncio import Context
 
 import pime2.database as db
-from pime2.neighbour import find_neighbours, send_hello
+from pime2.neighbor import find_neighbors
 from pime2.coap_server import startup_server
 from pime2.config import MEConfiguration
 from pime2.database import create_default_tables
@@ -37,7 +37,8 @@ async def pime_run(config: MEConfiguration):
             logging.error("Problem with sensor configuration: '%s'", config_error)
             sys.exit(1)
 
-        await find_neighbours()
+        if config.is_neighbor_discovery_enabled:
+            await find_neighbors()
 
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
