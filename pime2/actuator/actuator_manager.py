@@ -1,15 +1,17 @@
 # pylint: disable=consider-using-enumerate
 import logging
 import sys
+from typing import List
 
 from pime2.config import MEConfiguration
-from pime2.actuator.actuator import ActuatorType
+from pime2.actuator.actuator import ActuatorType, Actuator
 
 
 class ActuatorManager:
     """
     Simple actuator manager to activate and close actuators
     """
+
     def __init__(self, config: MEConfiguration):
         try:
             self.actuators = config.available_actuators()
@@ -30,18 +32,28 @@ class ActuatorManager:
                 count += 1
         logging.info("Started %d actuators", count)
 
-    def trigger(self, actuator_type: ActuatorType, *actuator_input_args: str):
-        """.
+    def trigger(self, actuator_type: ActuatorType = None, *actuator_input_args: str,
+                actuators_list: List[str] = None):
+        """
         Trigger actuators.
 
         :param actuator_type:
+        :param actuators_list:
         :param actuator_input_args:
         """
         count = 0
-        for i in range(len(self.actuators)):
-            if self.actuators[i].actuator_type == actuator_type:
-                self.actuators[i].handle(*actuator_input_args)
-                count += 1
+        if actuators_list is None:
+            for actuator in range(len(self.actuators)):
+                if self.actuators[actuator].actuator_type == actuator_type:
+                    self.actuators[actuator].handle(*actuator_input_args)
+                    count += 1
+        else:
+            for actuator in range(len(self.actuators)):
+                for input_actuator in range(len(actuators_list)):
+                    print(input_actuator)
+                    if self.actuators[actuator].name == actuators_list[input_actuator]:
+                        self.actuators[actuator].handle(*actuator_input_args)
+                        count += 1
         logging.info("Triggered %d actuators", count)
 
     def close(self, actuator_type: ActuatorType):

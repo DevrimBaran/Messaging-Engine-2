@@ -18,7 +18,10 @@ actuators:
   - name: "LED-Actuator"
     type: led
     gpio1: 15
-    gpio2: 16
+    is_test_mode: true
+  - name: "Speaker2"
+    type: speaker
+    gpio1: 15
     is_test_mode: true
   - name: "Speaker-Actuator"
     type: speaker
