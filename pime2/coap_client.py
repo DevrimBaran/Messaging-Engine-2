@@ -1,8 +1,7 @@
-# pylint: disable=W0703
-# pylint: disable=W0611
+# pylint: disable=broad-except
 import asyncio
 import logging
-from aiocoap import Code, Context, Message, numbers
+from aiocoap import Code, Context, Message
 
 TIMEOUT = 0.5
 
@@ -13,12 +12,13 @@ TIMEOUT = 0.5
 async def ping(destination):
     """
     Ping Implementation
+    takes an IP as destination and sends a get request to its hello endpoint
     """
     logging.info("Created Client Context")
     client_context = await Context.create_client_context()
     logging.info("Sending Ping request")
     code = Code.GET
-    uri = 'coap://' + destination + '/trigger-hello'
+    uri = 'coap://' + destination + '/hello'
     request = Message(code=code, uri=uri)
     logging.debug("Request: code= %s \turi=  %s", code, uri)
     try:
@@ -35,6 +35,7 @@ async def ping(destination):
 async def send_message(destination, endpoint, payload):
     """
     Send message with an arbitrary payload to a specific destination and endpoint.
+    Takes an IP as destination, an endpoint of the destination and the payload to send
     """
     logging.info("Created Client Context")
     client_context = await Context.create_client_context()

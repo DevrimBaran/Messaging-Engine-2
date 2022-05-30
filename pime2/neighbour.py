@@ -1,8 +1,8 @@
-# pylint: disable=W1203
-# pylint: disable=W0703
+# pylint: disable=broad-except
 import logging
 import time
 import socket
+from pime2.config import get_me_conf
 from pime2.coap_client import ping
 
 
@@ -12,8 +12,8 @@ async def find_neighbours():
     """
     available_ip = []
 
+    subnet = find_local_subnet()
     for suffix in range(1, 255):
-        subnet = find_local_subnet()
         target = subnet + str(suffix)
         logging.info('Starting scan on host: %s', target)
         start = time.time()
@@ -28,10 +28,10 @@ async def find_neighbours():
             logging.error("Error while searching for neighbours: %s", exception)
         finally:
             end = time.time()
-            logging.info(f'Time taken {end-start:.2f} seconds')
+            logging.info("Time taken: %s seconds", round(end-start,2))
 
         end = time.time()
-        logging.info(f'Time taken {end-start:.2f} seconds')
+        logging.info("All neighbours found: %s", available_ip)
 
     return available_ip
 
@@ -44,10 +44,10 @@ def find_local_subnet():
     sock.settimeout(0)
     try:
         # doesn't even have to be reachable
-        sock.connect(('8.8.8.8', 1))
+        sock.connect(('129.69.5.3', 80))
         local_ip = sock.getsockname()[0]
     except Exception:
-        local_ip = '127.0.0.1'
+        local_ip = get_me_conf().host
     finally:
         sock.close()
     local_subnet = ".".join(local_ip.split(".")[:-1]) + "."
