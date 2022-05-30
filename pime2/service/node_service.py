@@ -56,7 +56,7 @@ class NodeService():
         node_list = self.node_repository.read_all_nodes()
         node_json_string = self.node_mapper.entity_list_to_json(node_list)
         return node_json_string
-    
+
     def get_neighbors_as_entity(self) -> list:
         """Get all nodes as a json string"""
         node_list = self.node_repository.read_all_neighbors()

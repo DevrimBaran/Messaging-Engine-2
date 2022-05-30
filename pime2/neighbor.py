@@ -36,7 +36,6 @@ async def find_neighbors():
 
         logging.info("All neighbors found: %s", available_ip)
 
-
     await send_hello(available_ip)
 
 
@@ -78,7 +77,6 @@ async def send_goodbye():
     own_node = service.get_own_node()
     own_node_json = json.dumps(own_node.__dict__)
     all_neighbors = service.get_all_neighbor_nodes()
-    print("Nächste Zeile ALle nachbarn")
-    print(all_neighbors)
     for neighbor in all_neighbors:
+        logging.info("Sending goodbye to: %s ", neighbor.name)
         await send_message(neighbor.ip, "goodbye", own_node_json.encode(), Code.DELETE)

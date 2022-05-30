@@ -7,6 +7,7 @@ from aiocoap import resource
 import pime2.config
 from pime2.res.default import Default
 from pime2.res.flow import Flow
+from pime2.res.goodbye import Goodbye
 from pime2.res.health import Health
 from pime2.res.hello import Hello
 from pime2.res.message import Message
@@ -27,6 +28,7 @@ async def startup_server():
                       resource.WKCResource(root.get_resources_as_linkheader))
 
     root.add_resource(['hello'], Hello())
+    root.add_resource(['goodbye'], Goodbye())
     root.add_resource(['trigger-hello'], TriggerHello())
     root.add_resource(['messages'], Message())
     root.add_resource(['health'], Health())

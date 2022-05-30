@@ -48,7 +48,6 @@ def create_default_tables(connection, config):
                                     port int NOT NULL);"""
 
     own_node = NodeEntity(name=config.instance_id, ip=config.host, port=config.port)
-    second_node = NodeEntity(name="23423523", ip="46483213", port=config.port)
     service = NodeService()
 
     cursor = connection.cursor()
@@ -57,7 +56,6 @@ def create_default_tables(connection, config):
         connection.commit()
         logging.info("Successfully created all default tables")
         service.put_node(own_node)
-        service.put_node(second_node)
     except Error:
         logging.exception("An error occurred while creating the default tables")
     finally:
