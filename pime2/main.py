@@ -37,7 +37,8 @@ async def pime_run(config: MEConfiguration):
             logging.error("Problem with sensor configuration: '%s'", config_error)
             sys.exit(1)
 
-        await find_neighbours()
+        if config.is_neighbor_discovery_enabled:
+            await find_neighbours()
 
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
