@@ -21,14 +21,8 @@ async def router_loop(msg):
         if message_type == MessageType.SENSOR_RESULT.value:
             logging.debug("detected sensor_read for sensor %s", SensorType(received_object["sensor_type"]))
         elif message_type == MessageType.NODE_CREATE.value:
-            node_service = NodeService()
-            node = json.dumps(received_object["message_content"])
-            try:
-                node_service.put_node(node)
-            except IntegrityError:
-                logging.debug("Duplicate Entry")
-            else:
-                logging.debug("detected node create event with node: %s", node)
+            NodeService().put_node(json.dumps(received_object["message_content"]))
+            logging.debug("detected node create event with node: %s", received_object["message_content"])
         logging.info("received message json: %s", received_object)
     else:
         logging.error("problem with received message: %s", received_object)
