@@ -11,7 +11,7 @@ When the health endpoint is called following payload will be send:
     "ram_available": The available RAM on the device given in bytes,
     "ram_used": The used RAM on the device given in bytes,
     "ram_used_percentage": The used RAM on the device in percentage,
-    "neighbour_count": The total amount of neigbhours in the current pime network,
+    "neighbor_count": The total amount of neigbhours in the current pime network,
     "sensor_count": The total amount of sensors on the current device,
     "actuator_count": The total coamountunt of acutators on the current device
 }

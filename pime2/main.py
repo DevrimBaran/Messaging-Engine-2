@@ -5,6 +5,7 @@ import sys
 from zmq.asyncio import Context
 
 import pime2.database as db
+from pime2.neighbor import find_neighbors
 from pime2.coap_server import startup_server
 from pime2.config import MEConfiguration
 from pime2.database import create_default_tables
@@ -37,6 +38,9 @@ async def pime_run(config: MEConfiguration):
         except RuntimeError as config_error:
             logging.error("Problem with sensor configuration: '%s'", config_error)
             sys.exit(1)
+
+        if config.is_neighbor_discovery_enabled:
+            await find_neighbors()
 
         # example on how to use actuators
         # manager.trigger(ActuatorType.SPEAKER)
