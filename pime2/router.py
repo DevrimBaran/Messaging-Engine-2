@@ -15,6 +15,7 @@ async def router_loop(msg):
     :return:
     """
     received_object = json.loads(msg[0])
+    logging.info("received message json: %s", received_object)
     if "message_type" in received_object and received_object["message_type"] is not None:
         message_type = received_object["message_type"]
         if message_type == MessageType.SENSOR_RESULT.value:
@@ -22,6 +23,5 @@ async def router_loop(msg):
         elif message_type == MessageType.NODE_CREATE.value:
             NodeService().put_node(json.dumps(received_object["message_content"]))
             logging.debug("detected node create event with node: %s", received_object["message_content"])
-        logging.info("received message json: %s", received_object)
     else:
         logging.error("problem with received message: %s", received_object)
