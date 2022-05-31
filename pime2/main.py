@@ -24,6 +24,8 @@ async def pime_run(config: MEConfiguration):
     """
     logging.info("ME2 application STARTED")
     connection = None
+    # example for how to initialize actuators
+    # manager = ActuatorManager(config)
     try:
         connection = db.create_connection("pime_database.db")
         init_push_queue()
@@ -35,6 +37,10 @@ async def pime_run(config: MEConfiguration):
         except RuntimeError as config_error:
             logging.error("Problem with sensor configuration: '%s'", config_error)
             sys.exit(1)
+
+        # example on how to use actuators
+        # manager.trigger(ActuatorType.SPEAKER)
+        # manager.close(ActuatorType.SPEAKER)
 
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
