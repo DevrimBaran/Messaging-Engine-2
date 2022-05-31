@@ -1,4 +1,4 @@
-# pylint: disable=E1121
+# pylint: disable=E1121,E1120
 import re as regex
 import logging
 import json
@@ -27,9 +27,16 @@ class NodeService():
         """Convert json to a node entity"""
         return self.node_mapper.json_to_entity(node_json)
 
-    def put_node(self, node: NodeEntity):
+    def put_node(self, node):
         """Save a node in the database"""
-        self.node_repository.create_node(node)
+        if isinstance(node, NodeEntity):
+            self.node_repository.create_node(node)
+        elif isinstance(node,str):
+            node = self.json_to_entity(node)
+            self.node_repository.create_node(node)
+        else:
+            # TODO: Vielleicht nen anderen Error benutzen?
+            raise ValueError("Bad Input")
 
     def get_all_nodes_as_json(self) -> str:
         """Get all nodes as a json string"""
@@ -40,9 +47,9 @@ class NodeService():
     async def handle_incoming_node(self, request) -> Message:
         """Handles incoming node request and saves it to the database if everything is valid"""
         try:
-            self.validate_json_node(request)
-            node_record = self.json_to_entity(request)
-            self.put_node(node_record)
+            self.validate_request(request)
+            node_json = request.payload.decode()
+            node_record = self.json_to_entity(node_json)
             await get_push_queue().put(json.dumps(NodeCreateResultMessage(node_record).__dict__))
             return Message(payload=b"OK", code=Code.CREATED)
         except JSONDecodeError as ex:
@@ -54,8 +61,14 @@ class NodeService():
             logging.warning("Duplicate Entry. Can not process. Error: <%s>",integ_ex)
         return Message(payload=b"INVALID REQUEST", code=Code.BAD_REQUEST)
 
-    def validate_json_node(self, json_node):
-        """Validates json node, raises error if json is invalid"""
+    def validate_request(self, request):
+        """Validates request, return invalid request if request is invalid"""
+        if len(request.payload) > 2048:
+            raise JSONDecodeError(msg="Invalid json")
+        return self.validate_request_payload(request)
+
+    def validate_request_payload(self, request):
+        """Validate the payload of the request whether it fits the specifications"""
         required_fields = [
         "name",
         "ip",
@@ -63,10 +76,7 @@ class NodeService():
         ]
         ipv4_regex = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
         name_regex = "^[a-zA-Z0-9_.-]{3,128}$"
-        # parse node record from request payload - if possible
-        if len(json_node.payload) > 2048:
-            return Message(payload=b"INVALID REQUEST", code=Code.BAD_REQUEST)
-        node = json.loads(json_node.payload)
+        node = json.loads(request.payload)
         for i in required_fields:
             if i not in node or node[i] is None:
                 return Message(payload=b"INVALID REQUEST, MISSING PROPERTY", code=Code.BAD_REQUEST)

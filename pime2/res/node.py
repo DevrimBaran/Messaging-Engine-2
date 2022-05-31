@@ -17,8 +17,7 @@ class Node(resource.Resource):
         :param request:
         :return:
         """
-        node_service = NodeService()
-        response = node_service.handle_incoming_node(request)
+        response = await self.node_service.handle_incoming_node(request)
         logging.info("Response: %s", response)
         return response
 

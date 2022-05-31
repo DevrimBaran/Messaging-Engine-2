@@ -42,7 +42,7 @@ class NodeRepository():
         cursor.close()
         return result_node
 
-    def read_all_nodes(self) -> list[NodeEntity]:
+    def read_all_nodes(self) -> list:
         """Return every node in the database as a list"""
         cursor = self.connection.cursor()
         query = 'SELECT * FROM nodes;'

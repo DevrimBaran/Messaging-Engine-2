@@ -95,7 +95,7 @@
     },
     {
       "name": "beep_call",
-      "output": "actuator_vibration",
+      "output": "actuator_speaker",
       "where": "me2_third"
     }
   ]
@@ -120,4 +120,4 @@
 - `exit`: exit flow without further action (the only case when no `where` is required, see in Example above)
 - `actuator_* <args>`: for all supported actuators
     - `led`
-    - `vibration`
+    - `speaker`
