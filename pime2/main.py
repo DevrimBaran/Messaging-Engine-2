@@ -41,7 +41,7 @@ async def pime_run(config: MEConfiguration):
 
         if config.is_neighbor_discovery_enabled:
             await find_neighbors()
-            
+
         # example on how to use actuators
         # manager.trigger(ActuatorType.SPEAKER)
         # manager.close(ActuatorType.SPEAKER)
