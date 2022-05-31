@@ -17,7 +17,7 @@ class ActuatorManager:
         try:
             self.actuators = config.available_actuators()
         except RuntimeError as config_error:
-            logging.error("Problem with sensor configuration: '%s'", config_error)
+            logging.error("Problem with actuator configuration: '%s'", config_error)
             sys.exit(1)
 
     def open(self, actuator_type: ActuatorType):
