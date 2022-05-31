@@ -50,7 +50,6 @@ class ActuatorManager:
         else:
             for actuator in range(len(self.actuators)):
                 for input_actuator in range(len(actuators_list)):
-                    print(input_actuator)
                     if self.actuators[actuator].name == actuators_list[input_actuator]:
                         self.actuators[actuator].handle(*actuator_input_args)
                         count += 1
