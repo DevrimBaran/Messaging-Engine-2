@@ -1,10 +1,11 @@
 # pylint: disable=consider-using-enumerate
+# pylint: disable=keyword-arg-before-vararg
 import logging
 import sys
 from typing import List
 
 from pime2.config import MEConfiguration
-from pime2.actuator.actuator import ActuatorType, Actuator
+from pime2.actuator.actuator import ActuatorType
 
 
 class ActuatorManager:
