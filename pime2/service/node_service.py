@@ -64,8 +64,6 @@ class NodeService():
     def get_all_neighbor_nodes(self) -> List[NodeEntity]:
         """Get all nodes except the own node"""
         node_list = self.get_neighbors_as_entity()
-        print("hier die liste")
-        print(node_list)
         return node_list
 
     async def handle_incoming_node(self, request) -> Message:

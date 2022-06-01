@@ -16,7 +16,8 @@ async def find_neighbors():
     """
     available_ip = []
 
-    subnet = find_local_subnet()
+    # subnet = find_local_subnet()
+    subnet = "192.168.137."
     for suffix in range(1, 255):
         target = subnet + str(suffix)
         logging.info('Starting scan on host: %s', target)
@@ -59,14 +60,16 @@ def find_local_subnet():
 
 async def send_hello(available_ip):
     """
-    Sends a hello message to all its neighbor
+    Sends a hello message to all its neighbor. The message response contains the node of the neighbor, which then is saved in the database.
+    After that it sends the own node to the neighbor
     """
     service = NodeService()
     own_node = service.get_own_node()
     own_node_json = service.entity_to_json(own_node)
     for neighbor_ip in available_ip:
-        neighbor_response = await send_message(neighbor_ip, "hello", own_node_json.encode() , Code.PUT)
+        neighbor_response = await send_message(neighbor_ip, "hello", "Hello, I'm online!" , Code.GET)
         service.put_node(neighbor_response.payload.decode())
+        await send_message(neighbor_ip, "node", own_node_json.encode() , Code.PUT)
 
 
 async def send_goodbye():
