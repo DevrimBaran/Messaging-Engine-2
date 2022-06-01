@@ -5,7 +5,7 @@ import sys
 from zmq.asyncio import Context
 
 import pime2.database as db
-from pime2.neighbor import find_neighbors
+from pime2.neighbor import find_neighbors, send_goodbye
 from pime2.coap_server import startup_server
 from pime2.config import MEConfiguration
 from pime2.database import create_default_tables
@@ -53,5 +53,6 @@ async def pime_run(config: MEConfiguration):
                      startup_silent_task()])
         await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
     finally:
+        await send_goodbye()
         db.disconnect(connection)
         logging.info("ME2 application TERMINATED")

@@ -1,4 +1,5 @@
 # pylint: disable=broad-except
+import json
 import logging
 import time
 import socket
@@ -33,10 +34,7 @@ async def find_neighbors():
             end = time.time()
             logging.info("Time taken: %s seconds", round(end-start,2))
 
-        end = time.time()
         logging.info("All neighbors found: %s", available_ip)
-
-        logging.info("All neighbours found: %s", available_ip)
 
     await send_hello(available_ip)
 
@@ -61,24 +59,24 @@ def find_local_subnet():
 
 async def send_hello(available_ip):
     """
-    Sends a hello message to all its neighbours
+    Sends a hello message to all its neighbor
     """
     service = NodeService()
     own_node = service.get_own_node()
     own_node_json = service.entity_to_json(own_node)
-    for neighbour in available_ip:
-        neighbour_response = await send_message(neighbour, "hello", own_node_json.encode() , Code.PUT)
-        service.put_node(neighbour_response.payload.decode())
-    return True
+    for neighbor_ip in available_ip:
+        neighbor_response = await send_message(neighbor_ip, "hello", own_node_json.encode() , Code.PUT)
+        service.put_node(neighbor_response.payload.decode())
 
-async def send_goodbye(all_neighbours):
-    """
-    Sends a goodbye message to all its neighbours
-    """
-    #service = NodeService()
-    #own_node = service.get_own_node()
 
-    # TODO: Get own node from NodeService end sent it to the neighbours. (Maybe only the node name)
-    for neighbour in all_neighbours:
-        await send_message(neighbour, "hello", b"hello neighbour", Code.PUT)
-    return True
+async def send_goodbye():
+    """
+    Sends a goodbye message to all its neighbor
+    """
+    service = NodeService()
+    own_node = service.get_own_node()
+    own_node_json = json.dumps(own_node.__dict__)
+    all_neighbors = service.get_all_neighbor_nodes()
+    for neighbor in all_neighbors:
+        logging.info("Sending goodbye to: %s ", neighbor.name)
+        await send_message(neighbor.ip, "goodbye", own_node_json.encode(), Code.DELETE)

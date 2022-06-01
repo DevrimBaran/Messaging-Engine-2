@@ -2,8 +2,10 @@
 import logging
 import sqlite3
 from sqlite3 import IntegrityError
+from typing import List
 import pime2.database as db
 from pime2.entity.node import NodeEntity
+from pime2.config import get_me_conf
 
 
 class NodeRepository():
@@ -43,7 +45,7 @@ class NodeRepository():
         cursor.close()
         return result_node
 
-    def read_all_nodes(self) -> list:
+    def read_all_nodes(self) -> List[NodeEntity]:
         """Return every node in the database as a list"""
         cursor = self.connection.cursor()
         query = 'SELECT * FROM nodes;'
@@ -147,4 +149,20 @@ class NodeRepository():
         logging.debug('Query executed. Result: %s', first_node)
         result_node = NodeEntity(first_node[1],first_node[2],first_node[3])
         return result_node
- 
+
+    def read_all_neighbors(self) -> List[NodeEntity]:
+        """Return every node except the own device node from the database as a list"""
+        cursor = self.connection.cursor()
+        query = 'SELECT * FROM nodes WHERE name != ?;'
+        logging.debug('Executing SELECT SQL query: "%s"', query)
+        cursor.execute(query, (get_me_conf().instance_id,))
+        neighbors = cursor.fetchall()
+        if neighbors is None:
+            logging.debug('No nodes existing.')
+            return None
+        logging.debug('Query executed. Result: %s', neighbors)
+        cursor.close()
+        result__list = []
+        for node in neighbors:
+            result__list.append(NodeEntity(node[1],node[2],node[3]))
+        return result__list

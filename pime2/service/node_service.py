@@ -4,6 +4,7 @@ import logging
 import json
 from json import JSONDecodeError
 from sqlite3 import IntegrityError
+from typing import List
 from aiocoap import Message, Code
 from pime2.entity.node import NodeEntity
 from pime2.message import NodeCreateResultMessage
@@ -38,16 +39,33 @@ class NodeService():
             # TODO: Vielleicht nen anderen Error benutzen?
             raise ValueError("Bad Input")
 
+    def remove_node(self, node) -> bool:
+        """Removes a node from the database"""
+        if isinstance(node, NodeEntity):
+            self.node_repository.delete_node_by_name(node.name)
+            return True
+        if isinstance(node, str):
+            node = self.json_to_entity(node)
+            self.node_repository.delete_node_by_name(node.name)
+            return True
+        return False
+
     def get_all_nodes_as_json(self) -> str:
         """Get all nodes as a json string"""
         node_list = self.node_repository.read_all_nodes()
         node_json_string = self.node_mapper.entity_list_to_json(node_list)
         return node_json_string
 
-    def get_all_neighbour_nodes(self) -> str:
+    def get_neighbors_as_entity(self) -> list:
+        """Get all nodes as a json string"""
+        node_list = self.node_repository.read_all_neighbors()
+        return node_list
+
+    def get_all_neighbor_nodes(self) -> List[NodeEntity]:
         """Get all nodes except the own node"""
-        node_list = self.node_repository.read_all_nodes()
-        node_list = node_list.pop(0)
+        node_list = self.get_neighbors_as_entity()
+        print("hier die liste")
+        print(node_list)
         return node_list
 
     async def handle_incoming_node(self, request) -> Message:
