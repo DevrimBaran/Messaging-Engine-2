@@ -44,12 +44,11 @@ class NodeService():
         if isinstance(node, NodeEntity):
             self.node_repository.delete_node_by_name(node.name)
             return True
-        elif isinstance(node, str):
+        if isinstance(node, str):
             node = self.json_to_entity(node)
             self.node_repository.delete_node_by_name(node.name)
             return True
-        else:
-            return False
+        return False
 
     def get_all_nodes_as_json(self) -> str:
         """Get all nodes as a json string"""
