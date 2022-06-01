@@ -28,7 +28,7 @@ async def pime_run(config: MEConfiguration):
     try:
         connection = db.create_connection(config.database)
         init_push_queue()
-        create_default_tables(connection, config)
+        create_default_tables(connection)
         zmq_context = Context.instance()
 
         try:

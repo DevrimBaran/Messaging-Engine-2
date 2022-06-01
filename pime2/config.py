@@ -33,6 +33,7 @@ class MEConfiguration:
             "loglevel",
             "host",
             "port",
+            "database",
             "read_interval",
         ]
         for i in required_elements:
