@@ -32,3 +32,14 @@ class Node(resource.Resource):
         node_json_string = self.node_service.get_all_nodes_as_json()
         logging.info("Response JSON: %s", node_json_string)
         return Message(payload=node_json_string.encode())
+
+    async def render_delete(self, request):
+        """
+        handle DELETE request to /nodes
+        Deletes all nodes from the database
+
+        :param request:
+        :return:
+        """
+        self.node_service.delete_all_nodes()
+        return Message(payload=b'Deleted all nodes')

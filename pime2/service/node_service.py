@@ -115,4 +115,9 @@ class NodeService():
 
     def get_own_node(self) -> NodeEntity:
         """Gets the first node in the database which is the device itself"""
-        return self.node_repository.get_first()
+        result = self.node_repository.get_first()
+        return result
+
+    def delete_all_nodes(self):
+        """Deletes all nodes from the database"""
+        self.node_repository.delete_all()

@@ -25,6 +25,8 @@ async def pime_run(config: MEConfiguration):
     """
     logging.info("ME2 application STARTED")
     connection = None
+    # example for how to initialize actuators
+    # manager = ActuatorManager(config)
     try:
         connection = db.create_connection(config.database)
         init_push_queue()
@@ -39,6 +41,10 @@ async def pime_run(config: MEConfiguration):
 
         if config.is_neighbor_discovery_enabled:
             await find_neighbors()
+
+        # example on how to use actuators
+        # manager.trigger(ActuatorType.SPEAKER)
+        # manager.close(ActuatorType.SPEAKER)
 
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),

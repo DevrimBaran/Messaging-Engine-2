@@ -97,9 +97,9 @@ class NodeRepository():
             raise sqlite3.Error("Can not delete non existing node")
 
     def delete_all(self):
-        """Deletes the node records of the node table except the first one (device node)"""
+        """Deletes the node records of the node table"""
         cursor = self.connection.cursor()
-        query = 'DELETE FROM nodes WHERE id != 1;'
+        query = 'DELETE FROM nodes;'
         logging.debug('Executing DELETE ALL SQL query: "%s"', query)
         cursor.execute(query)
         self.commit()
