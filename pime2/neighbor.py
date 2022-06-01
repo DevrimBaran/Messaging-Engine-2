@@ -2,8 +2,11 @@
 import logging
 import time
 import socket
+from aiocoap import Code
+from pime2.service.node_service import NodeService
 from pime2.config import get_me_conf
-from pime2.coap_client import ping
+from pime2.coap_client import ping, send_message
+
 
 
 async def find_neighbors():
@@ -33,7 +36,9 @@ async def find_neighbors():
         end = time.time()
         logging.info("All neighbors found: %s", available_ip)
 
-    return available_ip
+        logging.info("All neighbours found: %s", available_ip)
+
+    await send_hello(available_ip)
 
 
 def find_local_subnet():
@@ -52,3 +57,28 @@ def find_local_subnet():
         sock.close()
     local_subnet = ".".join(local_ip.split(".")[:-1]) + "."
     return local_subnet
+
+
+async def send_hello(available_ip):
+    """
+    Sends a hello message to all its neighbours
+    """
+    service = NodeService()
+    own_node = service.get_own_node()
+    own_node_json = service.entity_to_json(own_node)
+    for neighbour in available_ip:
+        neighbour_response = await send_message(neighbour, "hello", own_node_json.encode() , Code.PUT)
+        service.put_node(neighbour_response.payload.decode())
+    return True
+
+async def send_goodbye(all_neighbours):
+    """
+    Sends a goodbye message to all its neighbours
+    """
+    #service = NodeService()
+    #own_node = service.get_own_node()
+
+    # TODO: Get own node from NodeService end sent it to the neighbours. (Maybe only the node name)
+    for neighbour in all_neighbours:
+        await send_message(neighbour, "hello", b"hello neighbour", Code.PUT)
+    return True

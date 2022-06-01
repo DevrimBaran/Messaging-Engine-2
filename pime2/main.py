@@ -28,7 +28,7 @@ async def pime_run(config: MEConfiguration):
     # example for how to initialize actuators
     # manager = ActuatorManager(config)
     try:
-        connection = db.create_connection("pime_database.db")
+        connection = db.create_connection(config.database)
         init_push_queue()
         create_default_tables(connection)
         zmq_context = Context.instance()

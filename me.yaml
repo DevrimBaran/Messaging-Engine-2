@@ -4,6 +4,7 @@ is_debug: false
 is_neighbor_discovery_enabled: false
 host: 127.0.0.1
 port: 5683
+database: "pime_database.db"
 read_interval: 3.0
 sensors:
   - name: "Button-Sensor"

@@ -17,12 +17,13 @@ class NodeRepository():
         cursor = self.connection.cursor()
         query = 'INSERT INTO nodes(name,ip,port) VALUES(?,?,?);'
         logging.debug('Executing SQL query: "%s"', query)
-        logging.debug('Values inserted: name:<%s> ip:<%s> port:<%s>', node.name, node.ip, node.port)
         try:
             cursor.execute(query, (node.name, node.ip, node.port))
+            logging.debug('Values inserted: name:<%s> ip:<%s> port:<%s>', node.name, node.ip, node.port)
         except IntegrityError as integrity_err:
-            logging.debug('Node with name "%s" exists already. Please only give unique names. Error: %s', node.name, integrity_err)
-            raise IntegrityError("Duplicate Entry") from integrity_err
+            logging.debug('Skipping node creation: Node with name "%s" exists already. Please only give unique names. Error: %s', node.name, integrity_err)
+            # Do we really need the next line?
+            # raise IntegrityError("Duplicate Entry") from integrity_err
         finally:
             self.commit()
             cursor.close()

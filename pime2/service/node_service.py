@@ -44,6 +44,12 @@ class NodeService():
         node_json_string = self.node_mapper.entity_list_to_json(node_list)
         return node_json_string
 
+    def get_all_neighbour_nodes(self) -> str:
+        """Get all nodes except the own node"""
+        node_list = self.node_repository.read_all_nodes()
+        node_list = node_list.pop(0)
+        return node_list
+
     async def handle_incoming_node(self, request) -> Message:
         """Handles incoming node request and saves it to the database if everything is valid"""
         try:
