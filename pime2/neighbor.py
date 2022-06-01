@@ -75,7 +75,7 @@ async def send_goodbye(all_neighbours):
     """
     Sends a goodbye message to all its neighbours
     """
-    service = NodeService()
+    #service = NodeService()
     #own_node = service.get_own_node()
 
     # TODO: Get own node from NodeService end sent it to the neighbours. (Maybe only the node name)
