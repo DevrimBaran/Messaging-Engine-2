@@ -1,7 +1,6 @@
 # pylint: disable=C0301
 import logging
 import sqlite3
-from sqlite3 import IntegrityError
 from typing import List, Optional
 
 from pime2.entity import NodeEntity
@@ -19,7 +18,7 @@ class NodeRepository:
         query = 'INSERT INTO nodes(name,ip,port,sensor_skills,actuator_skills) VALUES(?,?,?,?,?);'
         logging.debug('Executing SQL query: "%s"', query)
         logging.debug('Values inserted: name:<%s> ip:<%s> port:<%s> sensor_skills:<%s> actuator_skills: <%s>', node.name, node.ip, node.port, node.sensor_skills, node.actuator_skills)
-        cursor.execute(query, (node.name, node.ip, node.port, ",".join(node.sensor_skills),  ",".join(node.actuator_skills),))
+        cursor.execute(query, (node.name, node.ip, node.port, ",".join(node.sensor_skills), ",".join(node.actuator_skills),))
         self.commit()
         cursor.close()
 
@@ -76,7 +75,7 @@ class NodeRepository:
             logging.debug('Current node: <%s>', node)
             logging.debug('Executing UPDATE SQL query: "%s"', query)
             logging.debug('Updating values to: ip:<%s> port:<%s> sensor_skills:<%s> actuator_skills: <%s>', node.ip, node.port, node.sensor_skills, node.actuator_skills)
-            cursor.execute(query, (node.ip, node.port, ",".join(node.sensor_skills), ",".join(node.actuator_skills),node.name))
+            cursor.execute(query, (node.ip, node.port, ",".join(node.sensor_skills), ",".join(node.actuator_skills), node.name))
             self.commit()
             logging.debug('Updated record.')
             cursor.close()
