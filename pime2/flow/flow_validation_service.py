@@ -20,5 +20,4 @@ class FlowValidationService:
         if len(flow.ops) == 0:
             return False, ["Got flow without operations!"]
 
-        # TODO implement
         return True, []

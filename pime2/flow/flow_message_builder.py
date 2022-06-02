@@ -11,10 +11,11 @@ class FlowMessageBuilder:
     A helper class to create FlowMessage instances
     """
 
-    def build_start_message(self, flow: FlowEntity, next_operation: str, sensor_result: dict) -> FlowMessageEntity:
+    def build_start_message(self, flow: FlowEntity, last_operation: str, next_operation: str,
+                            sensor_result: dict) -> FlowMessageEntity:
         """Build first message of a flow"""
         started_at = datetime.now()
-        return FlowMessageEntity(uuid.uuid4().hex, flow.name, started_at, started_at, None, next_operation,
+        return FlowMessageEntity(uuid.uuid4().hex, flow.name, started_at, started_at, last_operation, next_operation,
                                  self.base64_encode(json.dumps(sensor_result)), 1, [])
 
     def base64_encode(self, raw_text: str) -> str:

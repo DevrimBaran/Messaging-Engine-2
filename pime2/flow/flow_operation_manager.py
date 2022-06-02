@@ -36,10 +36,12 @@ class FlowOperationManager:
         if flow_message.flow_name != flow.name:
             return None
         take_this = False
+        i = 0
         for f in flow.ops:
+            i += 1
             if take_this:
                 return f.name
-            if f.name.lower() == flow_message.next_operation.lower():
+            if f.name.lower() == flow_message.last_operation.lower():
                 take_this = True
         return None
 
@@ -74,7 +76,7 @@ class FlowOperationManager:
                 node_list = []
                 for name in where_clause.split(","):
                     for node in nodes:
-                        if node.name == name:
+                        if node.name == name.strip():
                             node_list.append(node)
                 return node_list
 
@@ -97,8 +99,10 @@ class FlowOperationManager:
         for f in flow.ops:
             if f.name.lower() == step.lower():
                 flow_operation_name = f.name.lower()
+                flow_operation = f.process
                 is_executed = True
-                logging.info("FlowOperationManager: EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
+
+                logging.info("FlowOperationManager: EXECUTE OPERATION %s:%s with input: %s", flow_operation,
                              f.process, flow_message.payload)
                 # TODO: execute operation
         if not is_executed:
