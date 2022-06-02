@@ -66,10 +66,11 @@ async def send_hello(available_ip):
     own_node = service.get_own_node()
     own_node_json = service.entity_to_json(own_node)
     for neighbor_ip in available_ip:
-        neighbor_response = await send_message(neighbor_ip, "hello", "Hello, I'm online!" , Code.GET)
+        logging.info("Sending hello to %s", neighbor_ip)
+        neighbor_response = await send_message(neighbor_ip, "hello", "Hello, I'm online!".encode() , Code.GET)
         neighbor_entity = service.json_to_entity(neighbor_response.payload.decode())
         service.put_node(neighbor_entity)
-        await send_message(neighbor_ip, "node", own_node_json.encode() , Code.PUT)
+        await send_message(neighbor_ip, "nodes", own_node_json.encode() , Code.PUT)
 
 
 async def send_goodbye():
