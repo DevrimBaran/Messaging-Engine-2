@@ -13,11 +13,11 @@ class DatabaseTest(unittest.TestCase):
     def test_create_default_tables(self):
         db.create_default_tables(self.connection)
 
-        sql_insert_testdata = """INSERT INTO nodes (id, name, ip, port)
+        sql_insert_testdata = """INSERT INTO nodes (id, name, ip, port, sensor_skills, actuator_skills)
                                     VALUES 
-                                        (1, 'node1', "10.10.10.1", 5683),
-                                        (2, 'node2', "10.10.10.2", 5683),
-                                        (3, 'node3', "10.10.10.3", 5683);"""
+                                        (1, 'node1', "10.10.10.1", 5683,"TEMP","LIGHT"),
+                                        (2, 'node2', "10.10.10.2", 5683,"TEMP","LIGHT"),
+                                        (3, 'node3', "10.10.10.3", 5683,"TEMP","LIGHT");"""
 
         sql_select_testdata = """SELECT * FROM nodes"""
 
@@ -30,7 +30,7 @@ class DatabaseTest(unittest.TestCase):
         cursor.close()
 
         self.assertEqual(
-            [(1, 'node1', '10.10.10.1', 5683), (2, 'node2', "10.10.10.2", 5683), (3, 'node3', "10.10.10.3", 5683)],
+            [(1, 'node1', '10.10.10.1', 5683,"TEMP","LIGHT"), (2, 'node2', "10.10.10.2", 5683,"TEMP","LIGHT"), (3, 'node3', "10.10.10.3", 5683,"TEMP","LIGHT")],
             result)
 
     @classmethod
