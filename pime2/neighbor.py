@@ -59,7 +59,8 @@ def find_local_subnet():
 
 async def send_hello(available_ip):
     """
-    Sends a hello message to all its neighbor. The message response contains the node of the neighbor, which then is saved in the database.
+    Sends a hello message to all its neighbor.
+    The message response contains the node of the neighbor, which then is saved in the database.
     After that it sends the own node to the neighbor
     """
     service = NodeService()
