@@ -1,15 +1,13 @@
 import json
-import logging
 import unittest
 import os
 import pime2.database as db
 from pime2.mapper.node_mapper import NodeMapper as mapper
 from pime2.repository.node_repository import NodeRepository as repo
 from pime2.entity import NodeEntity as Node
-from sqlite3 import IntegrityError, Error
 
 
-class NodeRepositoryTest(unittest.TestCase):
+class NodeMapperTest(unittest.TestCase):
     connection = None
     node_repo = None
 
