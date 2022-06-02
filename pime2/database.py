@@ -50,7 +50,9 @@ def create_default_tables(connection):
                                     id integer PRIMARY KEY,
                                     name varchar(255) NOT NULL UNIQUE,
                                     ip varchar(255) NOT NULL,
-                                    port int NOT NULL);"""
+                                    port int NOT NULL,
+                                    sensor_skills varchar(255),
+                                    actuator_skills varchar(255));"""
 
     own_node = NodeEntity(name=get_me_conf().instance_id, ip=get_me_conf().host, port=get_me_conf().port)
     service = NodeService()
