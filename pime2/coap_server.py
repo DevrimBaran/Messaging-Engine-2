@@ -8,6 +8,7 @@ import pime2.config
 from pime2.res.default import Default
 from pime2.res.flow import Flow
 from pime2.res.goodbye import Goodbye
+from pime2.res.flow_message import FlowMessage
 from pime2.res.health import Health
 from pime2.res.hello import Hello
 from pime2.res.message import Message
@@ -35,6 +36,7 @@ async def startup_server():
     root.add_resource(['nodes'], Node())
     root.add_resource(['operations'], Operation())
     root.add_resource(['flows'], Flow())
+    root.add_resource(['flow-messages'], FlowMessage())
     root.add_resource([''], Default())
 
     conf = pime2.config.get_me_conf()

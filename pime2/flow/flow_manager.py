@@ -43,12 +43,12 @@ class FlowManager:
 
         :return:
         """
-        flow_ops = [FlowOperationEntity("op_name", "sensor_read_temperature", None, None, "*"),
-                    FlowOperationEntity("op_name2", None, "log", None, "*")]
-        flow = FlowEntity("test_flow", flow_ops)
-        return [
-            flow,
-        ]
+        flow = FlowEntity("test_flow1", [
+            FlowOperationEntity("first_step", "sensor_temperature", None, None),
+            FlowOperationEntity("second_step", None, "log", None),
+            FlowOperationEntity("last_step", None, None, "exit"),
+        ])
+        return [flow]
 
     async def start_flow(self, flow: FlowEntity, result: dict):
         """
@@ -67,6 +67,11 @@ class FlowManager:
             for i in validation_msgs:
                 logging.error("Validation message: %s", i)
             return
+        # detect first step
+        first_step = flow.ops[0].name if len(flow.ops) >= 1 else None
+        if first_step is None:
+            logging.error("Problem: Cannot find first step in given flow. %s", flow)
+            return
 
         # detect next step
         step = self.flow_operation_manager.detect_second_step(flow)
@@ -81,7 +86,7 @@ class FlowManager:
             return
 
         # build flow message
-        msg = self.flow_message_builder.build_start_message(flow, step, result)
+        msg = self.flow_message_builder.build_start_message(flow, first_step, step, result)
         # and send message to nodes
         await self.send_message_to_nodes(flow, msg, nodes)
 
@@ -118,7 +123,7 @@ class FlowManager:
         # detect next step and delegate
         next_step = self.flow_operation_manager.detect_next_step(flow, flow_message)
         if next_step is None:
-            logging.error("Could not detect second step of flow: %s", flow.name)
+            logging.error("Could not detect next step of flow: %s", flow.name)
             return
         # detect nodes of next step and send new flow message
         nodes = self.flow_operation_manager.detect_nodes_of_step(flow, next_step, neighbors)
@@ -168,7 +173,7 @@ class FlowManager:
         """
         logging.info("Send FlowMessage to %s:%s", node.ip, node.port)
 
-        await self.coap_client.send_message(f"{node.ip}:{node.port}", "/flow_message",
+        await self.coap_client.send_message(f"{node.ip}:{node.port}", "flow-message",
                                             json.dumps(flow_message.__dict__, default=str))
 
         logging.info("Send FlowMessage finished")
@@ -180,8 +185,16 @@ class FlowManager:
         :param sensor_type:
         :return:
         """
-        # TODO implement
-        return self.get_flows()
+        flows = self.get_flows()
+        out = []
+        for f in flows:
+            is_affected = False
+            for operation in f.ops:
+                if operation.input is not None and operation.input == ("sensor_" + str(sensor_type).lower()):
+                    is_affected = True
+            if is_affected:
+                out.append(f)
+        return out
 
     def startup(self):
         """
@@ -232,4 +245,6 @@ class FlowManager:
             else:
                 if execute_local:
                     await self.execute_flow(flow, message, nodes)
+        if len(node_tasks) == 0:
+            return
         await asyncio.wait(node_tasks, return_when=asyncio.ALL_COMPLETED, timeout=20)

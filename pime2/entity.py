@@ -12,6 +12,8 @@ class NodeEntity:
     name: str
     ip: str
     port: int
+    # actuator_skills: List[str]
+    # sensor_skills: List[str]
 
 
 @dataclass
