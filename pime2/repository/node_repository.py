@@ -3,6 +3,9 @@ import logging
 import sqlite3
 from sqlite3 import IntegrityError
 from typing import List, Optional
+import pime2.database as db
+from pime2.entity import NodeEntity
+from pime2.config import get_me_conf
 
 from pime2.entity import NodeEntity
 
@@ -18,13 +21,13 @@ class NodeRepository:
         cursor = self.connection.cursor()
         query = 'INSERT INTO nodes(name,ip,port) VALUES(?,?,?);'
         logging.debug('Executing SQL query: "%s"', query)
-        logging.debug('Values inserted: name:<%s> ip:<%s> port:<%s>', node.name, node.ip, node.port)
         try:
             cursor.execute(query, (node.name, node.ip, node.port))
+            logging.debug('Values inserted: name:<%s> ip:<%s> port:<%s>', node.name, node.ip, node.port)
         except IntegrityError as integrity_err:
-            logging.debug('Node with name "%s" exists already. Please only give unique names. Error: %s', node.name,
-                          integrity_err)
-            raise IntegrityError("Duplicate Entry") from integrity_err
+            logging.debug('Skipping node creation: Node with name "%s" exists already. Please only give unique names. Error: %s', node.name, integrity_err)
+            # Do we really need the next line?
+            # raise IntegrityError("Duplicate Entry") from integrity_err
         finally:
             self.commit()
             cursor.close()
@@ -103,9 +106,9 @@ class NodeRepository:
             raise sqlite3.Error("Can not delete non existing node")
 
     def delete_all(self):
-        """Deletes the node records of the node table except the first one (device node)"""
+        """Deletes the node records of the node table"""
         cursor = self.connection.cursor()
-        query = 'DELETE FROM nodes WHERE id != 1;'
+        query = 'DELETE FROM nodes;'
         logging.debug('Executing DELETE ALL SQL query: "%s"', query)
         cursor.execute(query)
         self.commit()
@@ -136,3 +139,34 @@ class NodeRepository:
     def check_in_database(self, name: str) -> bool:
         """Checks if a node with a specific name is in database"""
         return self.read_node_by_name(name) is not None
+
+    def get_first(self):
+        """Return the device node"""
+        cursor = self.connection.cursor()
+        query = "SELECT * FROM nodes WHERE id=1"
+        logging.debug('Executing SELECT SQL query: "%s"', query)
+        cursor.execute(query)
+        first_node = cursor.fetchone()
+        if first_node is None:
+            logging.debug('Nodes table is empty')
+            return None
+        logging.debug('Query executed. Result: %s', first_node)
+        result_node = NodeEntity(first_node[1],first_node[2],first_node[3])
+        return result_node
+
+    def read_all_neighbors(self) -> List[NodeEntity]:
+        """Return every node except the own device node from the database as a list"""
+        cursor = self.connection.cursor()
+        query = 'SELECT * FROM nodes WHERE name != ?;'
+        logging.debug('Executing SELECT SQL query: "%s"', query)
+        cursor.execute(query, (get_me_conf().instance_id,))
+        neighbors = cursor.fetchall()
+        if neighbors is None:
+            logging.debug('No nodes existing.')
+            return None
+        logging.debug('Query executed. Result: %s', neighbors)
+        cursor.close()
+        result__list = []
+        for node in neighbors:
+            result__list.append(NodeEntity(node[1],node[2],node[3]))
+        return result__list

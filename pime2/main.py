@@ -5,6 +5,7 @@ import sys
 from zmq.asyncio import Context
 
 import pime2.database as db
+from pime2.neighbor import find_neighbors, send_goodbye
 from pime2.coap_server import startup_server
 from pime2.config import MEConfiguration
 from pime2.database import create_default_tables
@@ -24,8 +25,10 @@ async def pime_run(config: MEConfiguration):
     """
     logging.info("ME2 application STARTED")
     connection = None
+    # example for how to initialize actuators
+    # manager = ActuatorManager(config)
     try:
-        connection = db.create_connection("pime_database.db")
+        connection = db.create_connection(config.database)
         init_push_queue()
         create_default_tables(connection)
         zmq_context = Context.instance()
@@ -36,6 +39,13 @@ async def pime_run(config: MEConfiguration):
             logging.error("Problem with sensor configuration: '%s'", config_error)
             sys.exit(1)
 
+        if config.is_neighbor_discovery_enabled:
+            await find_neighbors()
+
+        # example on how to use actuators
+        # manager.trigger(ActuatorType.SPEAKER)
+        # manager.close(ActuatorType.SPEAKER)
+
         tasks = map(asyncio.create_task,
                     [startup_server(), startup_pull_queue(zmq_context),
                      startup_push_queue(zmq_context),
@@ -43,5 +53,6 @@ async def pime_run(config: MEConfiguration):
                      startup_silent_task()])
         await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
     finally:
+        await send_goodbye()
         db.disconnect(connection)
         logging.info("ME2 application TERMINATED")

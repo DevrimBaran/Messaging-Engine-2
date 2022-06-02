@@ -1,7 +1,10 @@
 instance_id: 12345678
 loglevel: DEBUG
-is_debug: false
 database: "pime_test_database"
 host: 127.0.0.1
 port: 5683
 read_interval: 1.0
+actuators:
+  - name: "Testactuator"
+    type: led
+    gpio1: 17

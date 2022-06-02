@@ -3,8 +3,7 @@ import logging
 import json
 from json import JSONDecodeError
 from sqlite3 import IntegrityError
-from typing import Optional, List
-
+from typing import List
 from aiocoap import Message, Code
 
 from pime2.config import get_me_conf
@@ -60,12 +59,32 @@ class NodeService:
         if node_list is None:
             return []
         return node_list
+    def remove_node(self, node) -> bool:
+        """Removes a node from the database"""
+        if isinstance(node, NodeEntity):
+            self.node_repository.delete_node_by_name(node.name)
+            return True
+        if isinstance(node, str):
+            node = self.json_to_entity(node)
+            self.node_repository.delete_node_by_name(node.name)
+            return True
+        return False
 
     def get_all_nodes_as_json(self) -> str:
         """Get all nodes as a json string"""
         node_list = self.node_repository.read_all_nodes()
         node_json_string = self.node_mapper.entity_list_to_json(node_list)
         return node_json_string
+
+    def get_neighbors_as_entity(self) -> list:
+        """Get all nodes as a json string"""
+        node_list = self.node_repository.read_all_neighbors()
+        return node_list
+
+    def get_all_neighbor_nodes(self) -> List[NodeEntity]:
+        """Get all nodes except the own node"""
+        node_list = self.get_neighbors_as_entity()
+        return node_list
 
     async def handle_incoming_node(self, request) -> Message:
         """Handles incoming node request and saves it to the database if everything is valid"""
@@ -115,3 +134,7 @@ class NodeService:
     def get_own_node(self) -> Optional[NodeEntity]:
         """Gets the first node in the database which is the device itself"""
         return self.node_repository.read_node_by_name(get_me_conf().instance_id)
+
+    def delete_all_nodes(self):
+        """Deletes all nodes from the database"""
+        self.node_repository.delete_all()

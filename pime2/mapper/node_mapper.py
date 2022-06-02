@@ -1,8 +1,8 @@
 import json
 import logging
 from typing import List
-
 from pime2.entity import NodeEntity
+
 
 
 class NodeMapper:
@@ -15,7 +15,7 @@ class NodeMapper:
         logging.info("JSON to entity : <%s>", node)
         return node
 
-    def entity_list_to_json(self, node_list: List[NodeEntity]) -> str:
+    def entity_list_to_json(self, node_list:List[NodeEntity]) -> str:
         """Converts a list of entities to json"""
         node_array = []
         for node in node_list:

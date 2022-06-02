@@ -28,8 +28,8 @@ Example: Happens between instances of ME 2 or other CoAp clients.
 1. Sending a message to a CoAp endpoint
 2. If there is a response in a given time box, then ok -> success
 3. If there is **no** response in a given time box, the message is sent again one time
-   and a `NeighbourUpdateRequired` network event is thrown to update the network/availability status of the neighbours.
-   As long as the neighbour with the target CoAp endpoint is considered online for the ME 2 sender instance, it will
+   and a `NeighborUpdateRequired` network event is thrown to update the network/availability status of the neighbors.
+   As long as the neighbor with the target CoAp endpoint is considered online for the ME 2 sender instance, it will
    repeat sending the same message within an interval of *n* seconds. But there is also a general `resend_limit` for
    messages
    which means that a single message is sent at most `y` times.
@@ -40,7 +40,7 @@ Example: Happens between instances of ME 2 or other CoAp clients.
 - Each message has a unique ID
 - Each flow has a unique ID
 - Each device has its own universally unique ID
-    - Neighbours will know it in combination
+    - Neighbors will know it in combination
       with the device's IP address
 
 #### (Possible) Problems
@@ -71,10 +71,10 @@ with a well-defined payload.
 
 There is an operation for each `NetworkEvent` listed [here](./Network%20Events.md):
 
-- NeighbourRegister
-- NeighbourUnregister
-- NeighbourUpdateRegular
-- NeighbourUpdateRequired
+- NeighborRegister
+- NeighborUnregister
+- NeighborUpdateRegular
+- NeighborUpdateRequired
 
 ### Implementation Details
 

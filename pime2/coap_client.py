@@ -1,52 +1,54 @@
-# pylint: disable=broad-except,wildcard-import
+# pylint: disable=broad-except
+import asyncio
 import logging
-import aiocoap
-from aiocoap import Context, Message, Code
+from aiocoap import Code, Context, Message
 
+TIMEOUT = 0.5
 
-class CoapClient:
+# workaround for timeout
+# TODO: globals()["numbers"].REQUEST_TIMEOUT = 1.0
+# globals()["numbers"].MAX_RETRANSMIT = 0
+
+async def ping(destination):
     """
-    Coap Client Implementation
+    Ping Implementation
+    takes an IP as destination and sends a get request to its hello endpoint
     """
+    logging.info("Created Client Context")
+    client_context = await Context.create_client_context()
+    logging.info("Sending Ping request")
+    code = Code.GET
+    uri = 'coap://' + destination + '/hello'
+    request = Message(code=code, uri=uri)
+    logging.debug("Request: code= %s \turi=  %s", code, uri)
+    try:
+        response = await asyncio.wait_for(client_context.request(request).response, timeout=TIMEOUT)
+        logging.debug("Response: %s", response)
+    except Exception as exception:
+        logging.error('Ping failed! Exception: %s', exception)
+        return False
+    else:
+        logging.info('Ping succesful! Response: %s\n%r', response.code, response.payload)
+        return True
 
-    def __init__(self, client_context: Context):
-        """
-        Initialize Coap Client.
-        """
-        self.client_context = client_context
-        logging.info("Created Client")
 
-    async def ping(self, destination):
-        """
-        Ping Implementation
-        """
-        logging.info("Sending Ping request")
-        code = Code.GET
-        uri = 'coap://' + destination + '/trigger-hello'
-        request = Message(code=code, uri=uri)
-        logging.debug("Request: code= %s \turi=  %s", code, uri)
-        try:
-            response = await self.client_context.request(request).response
-            logging.debug("Response: %s", response)
-        except Exception as exception:
-            logging.error('Ping failed! Exception: %s', exception)
-        else:
-            logging.info('Ping successful! Response: %s\n%r', response.code, response.payload)
-
-    async def send_message(self, destination, endpoint, payload):
-        """
-        Send message with an arbitrary payload to a specific destination and endpoint.
-        """
-        logging.info("Sending Message request")
-        code = aiocoap.Code.POST
-        uri = 'coap://' + destination + '/' + endpoint
-        request = Message(code=code, uri=uri, payload=str(payload).encode("ascii"))
-        logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
-
-        try:
-            response = await self.client_context.request(request).response
-            logging.debug("Response: %s", response)
-        except Exception as ex:
-            logging.error('Sending Message failed! Exception: %s', ex)
-        else:
-            logging.info('Message Request successful: %s\n%r', response.code, response.payload)
+async def send_message(destination, endpoint, payload, code):
+    """
+    Send message with an arbitrary payload to a specific destination and endpoint.
+    Takes an IP as destination, an endpoint of the destination and the payload to send
+    """
+    logging.info("Created Client Context")
+    client_context = await Context.create_client_context()
+    logging.info("Sending Message request")
+    uri = 'coap://' + destination + '/' + endpoint
+    request = Message(code=code, uri=uri, payload=payload)
+    logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
+    try:
+        response = await client_context.request(request).response
+        logging.debug("Response: %s", response)
+    except Exception as exception:
+        logging.error('Sending Message failed! Exception: %s', exception)
+        return False
+    else:
+        logging.info('Message Request succesful: %s\n%r', response.code, response.payload)
+        return response or True

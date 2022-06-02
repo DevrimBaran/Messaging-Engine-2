@@ -21,7 +21,7 @@ for this project.
 - **PIME Deployment:** The whole software is getting rolled out
 - **Data Flow Model Deployment:** A Data Flow Model is rolled out
 - **Ping Request:** Connecting to "Hello" endpoint
-- **Neighbour Provisioning:** The system gets information about a (new) PIME2-neighbour-instance
+- **Neighbor Provisioning:** The system gets information about a (new) PIME2-neighbor-instance
 - **Operation Provisioning:** The system gets information about the operation(s) it should work with
 - **[Message Sending](./concepts/Messaging.md):** The system receives a message with (arbitrary) payload
 - **System Health Metrics:** The system provides information about its state
@@ -38,7 +38,7 @@ for this project.
 
 #### Message Prioritization
 
-### Neighbour Discovery/Dynamic Network
+### Neighbor Discovery/Dynamic Network
 
 "Heartbeat"
 
