@@ -12,8 +12,8 @@ class NodeEntity:
     name: str
     ip: str
     port: int
-    sensor_skills: Set[str] = field(default=())
-    actuator_skills: Set[str] = field(default=())
+    sensor_skills: List[str] = field(default_factory=lambda: [])
+    actuator_skills: List[str] = field(default_factory= lambda: [])
 
 @dataclass
 class FlowOperationEntity:
@@ -27,7 +27,6 @@ class FlowOperationEntity:
     output: Optional[str]
     where: str = "*"
     args: str = ""
-
 
 @dataclass
 class FlowEntity:
