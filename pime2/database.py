@@ -55,7 +55,7 @@ def create_default_tables(connection):
                                     actuator_skills varchar(255));"""
 
     own_node = NodeEntity(name=get_me_conf().instance_id, ip=get_me_conf().host, port=get_me_conf().port)
-    service = NodeService()
+    service = NodeService(connection)
 
     cursor = connection.cursor()
     try:
