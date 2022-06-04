@@ -26,6 +26,10 @@ class NodeRepositoryTest(unittest.TestCase):
         db.create_default_tables(cls.connection)
         cls.node_repo.delete_all()
 
+    def get_node_list(self):
+        return [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], [
+            "LIGHT"]), Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node6", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"])]
+
     def test_read_node_by_name(self):
         simple_node = Node("simple_node", "10.10.10.1",
                            5683, ["TEMPERATURE"], ["LIGHT"])
@@ -36,8 +40,7 @@ class NodeRepositoryTest(unittest.TestCase):
         self.assertIsNone(result_node_none)
 
     def test_read_all_nodes(self):
-        node_list = [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], [
-            "LIGHT"]), Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node6", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"])]
+        node_list =  self.get_node_list()
         for node in node_list:
             self.node_repo.create_node(node)
         result = self.node_repo.read_all_nodes()
@@ -92,8 +95,7 @@ class NodeRepositoryTest(unittest.TestCase):
         self.assertEqual(node_no_sensor_and_no_actuator, result[0])
 
     def test_delete_all(self):
-        node_list = [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], [
-            "LIGHT"]), Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node6", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"])]
+        node_list = self.get_node_list()
         for node in node_list:
             self.node_repo.create_node(node)
         result = self.node_repo.read_all_nodes()
@@ -103,8 +105,7 @@ class NodeRepositoryTest(unittest.TestCase):
         self.assertEqual(0, result.__len__())
 
     def test_delete_node_by_name(self):
-        node_list = [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], [
-            "LIGHT"]), Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node6", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"])]
+        node_list = self.get_node_list()
         for node in node_list:
             self.node_repo.create_node(node)
         result = self.node_repo.read_all_nodes()
@@ -115,8 +116,7 @@ class NodeRepositoryTest(unittest.TestCase):
             self.node_repo.delete_node_by_name("Test")
 
     def test_get_node_id_by_name(self):
-        node_list = [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], [
-            "LIGHT"]), Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node6", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"])]
+        node_list = self.get_node_list()
         for node in node_list:
             self.node_repo.create_node(node)
         result_id = self.node_repo.get_node_id_by_name("node1")
@@ -124,16 +124,14 @@ class NodeRepositoryTest(unittest.TestCase):
         self.assertIsNone(self.node_repo.get_node_id_by_name("Test"))
 
     def test_check_in_database(self):
-        node_list = [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], [
-            "LIGHT"]), Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node6", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"])]
+        node_list =self.get_node_list()
         for node in node_list:
             self.node_repo.create_node(node)
         self.assertEqual(True, self.node_repo.check_in_database("node1"))
         self.assertEqual(False, self.node_repo.check_in_database("Test"))
 
     def test_update_node(self):
-        node_list = [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], [
-            "LIGHT"]), Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node6", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"])]
+        node_list = self.get_node_list()
         for node in node_list:
             self.node_repo.create_node(node)
         self.assertEqual(node_list, self.node_repo.read_all_nodes())
