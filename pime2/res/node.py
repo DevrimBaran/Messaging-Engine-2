@@ -1,14 +1,14 @@
 import logging
 from aiocoap import resource, Message
 from pime2.service.node_service import NodeService
-
+from pime2.database import get_db_connection
 class Node(resource.Resource):
     """
     Node Resource
     """
 
     def __init__(self):
-        self.node_service = NodeService()
+        self.node_service = NodeService(get_db_connection())
 
     async def render_put(self, request):
         """
