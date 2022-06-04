@@ -2,8 +2,8 @@ import json
 import unittest
 import os
 import pime2.database as db
-from pime2.mapper.node_mapper import NodeMapper as mapper
-from pime2.repository.node_repository import NodeRepository as repo
+from pime2.mapper.node_mapper import NodeMapper
+from pime2.repository.node_repository import NodeRepository
 from pime2.entity import NodeEntity as Node
 
 
@@ -14,8 +14,8 @@ class NodeMapperTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.connection = db.create_connection("testDatabase.db")
-        cls.node_repo = repo(cls.connection)
-        cls.node_mapper = mapper()
+        cls.node_repo = NodeRepository(cls.connection)
+        cls.node_mapper = NodeMapper()
         db.create_default_tables(cls.connection)
 
     @classmethod
@@ -24,10 +24,11 @@ class NodeMapperTest(unittest.TestCase):
             db.disconnect(cls.connection)
             os.remove("testDatabase.db")
         cls.connection = db.create_connection("testDatabase.db")
+        cls.node_repo = NodeRepository(cls.connection)
         db.create_default_tables(cls.connection)
+        cls.node_repo.delete_all()
 
     def test_json_to_entity(self):
-        self.node_repo = repo(self.connection)
         node_list = [
             Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), 
             Node("node2", "10.10.10.1", 5683, [], ["LIGHT"]), 

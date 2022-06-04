@@ -1,7 +1,8 @@
+import imp
 import unittest
 import os
 import pime2.database as db
-
+from pime2.repository.node_repository import NodeRepository
 
 class DatabaseTest(unittest.TestCase):
     connection = None
@@ -9,9 +10,20 @@ class DatabaseTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.connection = db.create_connection("testDatabase.db")
+        cls.node_repo = NodeRepository(cls.connection)
+        db.create_default_tables(cls.connection)
+
+    @classmethod
+    def setUp(cls):
+        if os.path.exists("testDatabase.db"):
+            db.disconnect(cls.connection)
+            os.remove("testDatabase.db")
+        cls.connection = db.create_connection("testDatabase.db")
+        cls.node_repo = NodeRepository(cls.connection)
 
     def test_create_default_tables(self):
         db.create_default_tables(self.connection)
+        self.node_repo.delete_all()
 
         sql_insert_testdata = """INSERT INTO nodes (id, name, ip, port, sensor_skills, actuator_skills)
                                     VALUES 

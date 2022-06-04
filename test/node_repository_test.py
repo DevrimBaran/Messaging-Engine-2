@@ -24,6 +24,7 @@ class NodeRepositoryTest(unittest.TestCase):
         cls.connection = db.create_connection("testDatabase.db")
         cls.node_repo = repo(cls.connection)
         db.create_default_tables(cls.connection)
+        cls.node_repo.delete_all()
 
     def test_read_node_by_name(self):
         simple_node = Node("simple_node", "10.10.10.1",
