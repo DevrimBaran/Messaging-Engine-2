@@ -4,6 +4,7 @@ import sqlite3
 from typing import List, Optional
 
 from pime2.entity import NodeEntity
+from pime2.config import get_me_conf
 
 
 class NodeRepository:
@@ -140,3 +141,20 @@ class NodeRepository:
     def check_in_database(self, name: str) -> bool:
         """Checks if a node with a specific name is in database"""
         return self.read_node_by_name(name) is not None
+
+    def read_all_neighbors(self) -> List[NodeEntity]:
+            """Return every node except the own device node from the database as a list"""
+            cursor = self.connection.cursor()
+            query = 'SELECT * FROM nodes WHERE name != ?;'
+            logging.debug('Executing SELECT SQL query: "%s"', query)
+            cursor.execute(query, (get_me_conf().instance_id,))
+            neighbors = cursor.fetchall()
+            if neighbors is None:
+                logging.debug('No nodes existing.')
+                return None
+            logging.debug('Query executed. Result: %s', neighbors)
+            cursor.close()
+            result__list = []
+            for node in neighbors:
+                result__list.append(NodeEntity(node[1],node[2],node[3],node[4],node[5]))
+            return result__list
