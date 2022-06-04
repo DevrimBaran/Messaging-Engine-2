@@ -7,6 +7,7 @@ from aiocoap import Code
 from pime2.service.node_service import NodeService
 from pime2.config import get_me_conf
 from pime2.coap_client import ping, send_message
+from pime2.database import get_db_connection
 
 
 
@@ -78,7 +79,7 @@ async def send_goodbye():
     """
     Sends a goodbye message to all its neighbor
     """
-    service = NodeService()
+    service = NodeService(get_db_connection())
     own_node = service.get_own_node()
     own_node_json = json.dumps(own_node.__dict__)
     all_neighbors = service.get_all_neighbor_nodes()
