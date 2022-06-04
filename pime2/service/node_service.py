@@ -3,7 +3,7 @@ import re as regex
 import logging
 import json
 from json import JSONDecodeError
-from sqlite3 import IntegrityError, connect
+from sqlite3 import IntegrityError
 from typing import List
 from aiocoap import Message, Code
 
@@ -13,6 +13,7 @@ from pime2.message import NodeCreateResultMessage
 from pime2.repository.node_repository import NodeRepository
 from pime2.mapper.node_mapper import NodeMapper
 from pime2.push_queue import get_push_queue
+from pime2.config import get_me_conf
 
 
 class NodeService:
@@ -38,8 +39,7 @@ class NodeService:
             node = self.json_to_entity(node)
             self.node_repository.create_node(node)
         else:
-            # TODO: Vielleicht nen anderen Error benutzen?
-            raise ValueError("Bad Input")
+            raise TypeError("Bad Input")
 
     def remove_node(self, node) -> bool:
         """Removes a node from the database"""
@@ -115,7 +115,7 @@ class NodeService:
 
     def get_own_node(self) -> NodeEntity:
         """Gets the first node in the database which is the device itself"""
-        result = self.node_repository.get_first()
+        result = self.node_repository.read_node_by_name(get_me_conf().instance_id)
         return result
 
     def delete_all_nodes(self):
