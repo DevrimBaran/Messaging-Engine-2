@@ -3,11 +3,11 @@ import re as regex
 import logging
 import json
 from json import JSONDecodeError
-from sqlite3 import IntegrityError
+from sqlite3 import IntegrityError, connect
 from typing import List
 from aiocoap import Message, Code
 
-from pime2.database import get_db_connection
+
 from pime2.entity import NodeEntity
 from pime2.message import NodeCreateResultMessage
 from pime2.repository.node_repository import NodeRepository
@@ -17,9 +17,9 @@ from pime2.push_queue import get_push_queue
 
 class NodeService:
     """Implements node service class"""
-    def __init__(self):
+    def __init__(self, connection):
         """Initialize NodeRepository and NodeMapper"""
-        self.node_repository = NodeRepository(get_db_connection())
+        self.node_repository = NodeRepository(connection)
         self.node_mapper = NodeMapper()
 
     def entity_to_json(self, node: NodeEntity) -> str:
