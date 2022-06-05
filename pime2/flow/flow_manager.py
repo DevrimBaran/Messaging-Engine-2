@@ -3,11 +3,11 @@ import json
 import logging
 from typing import List
 
-from pime2.coap_client import CoapClient
+# from pime2.coap_client import CoapClient
 from pime2.config import get_me_conf
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
-from pime2.flow.flow_validation_service import FlowValidationService
+from pime2.flow import flow_validation_service
 from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
 from pime2.sensor.sensor import SensorType
 from pime2.service.node_service import NodeService
@@ -19,13 +19,12 @@ class FlowManager:
     Flow step operations are executed by FlowOperationManager.
     """
 
-    def __init__(self, flow_validation_service: FlowValidationService, flow_operation_manager: FlowOperationManager,
-                 flow_message_builder: FlowMessageBuilder, node_service: NodeService, coap_client: CoapClient):
+    def __init__(self, flow_operation_manager: FlowOperationManager,
+                 flow_message_builder: FlowMessageBuilder, node_service: NodeService):
         self.flow_validation_service = flow_validation_service
         self.flow_operation_manager = flow_operation_manager
         self.flow_message_builder = flow_message_builder
         self.node_service = node_service
-        self.coap_client = coap_client
         self.startup()
 
     def get_nodes(self) -> List[NodeEntity]:
