@@ -85,7 +85,7 @@ class FlowMessage(resource.Resource):
         for datetimelike_field in ["src_created_at", "sent_at"]:
             try:
                 datetime.datetime.fromisoformat(str(node[datetimelike_field]))
-            except ValueError as ex:
+            except ValueError:
                 logging.debug("Invalid date in field %s", datetimelike_field)
                 return False
 
@@ -93,7 +93,7 @@ class FlowMessage(resource.Resource):
             logging.debug("Invalid integer value for 'count'")
             return False
 
-        if "history" in node and node["history"] is not None and type(node["history"]) == List:
+        if "history" in node and node["history"] is not None and isinstance(node["history"], List):
             for i in node["history"]:
                 return await self.is_request_valid(i)
 
@@ -106,7 +106,7 @@ class FlowMessage(resource.Resource):
         payload_content = base64.b64decode(str(node["payload"]).encode("ascii"))
         try:
             json.loads(payload_content)
-        except JSONDecodeError as ex:
+        except JSONDecodeError:
             logging.debug("Decoded payload is not a valid JSON")
             return False
 

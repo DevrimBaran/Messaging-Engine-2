@@ -3,6 +3,8 @@ import json
 import logging
 from typing import List
 
+import aiocoap
+
 from pime2.coap_client import send_message
 from pime2.config import get_me_conf
 from pime2.flow.flow_message_builder import FlowMessageBuilder
@@ -173,7 +175,7 @@ class FlowManager:
         logging.info("Send FlowMessage to %s:%s", node.ip, node.port)
 
         await send_message(f"{node.ip}:{node.port}", "flow-message",
-                           json.dumps(flow_message.__dict__, default=str))
+                           json.dumps(flow_message.__dict__, default=str), aiocoap.Code.GET)
 
         logging.info("Send FlowMessage finished")
 

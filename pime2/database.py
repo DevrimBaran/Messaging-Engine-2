@@ -45,6 +45,7 @@ def create_default_tables(connection):
     :param connection: connection to the database
     :return:
     """
+    # pylint: disable=import-outside-toplevel
     from pime2.service.node_service import NodeService
 
     sql_create_nodes_table = """CREATE TABLE IF NOT EXISTS nodes (

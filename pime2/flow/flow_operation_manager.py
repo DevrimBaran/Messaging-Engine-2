@@ -102,8 +102,8 @@ class FlowOperationManager:
                 flow_operation = f.process
                 is_executed = True
 
-                logging.info("FlowOperationManager: EXECUTE OPERATION %s:%s with input: %s", flow_operation,
-                             f.process, flow_message.payload)
+                logging.info("FlowOperationManager: EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
+                             flow_operation, flow_message.payload)
                 # TODO: execute operation
         if not is_executed:
             logging.error("FlowOperationManager: No operation executed in flow %s with step %s", flow.name, step)

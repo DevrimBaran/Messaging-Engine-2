@@ -3,7 +3,6 @@ import asyncio
 import logging
 
 import zmq
-from aiocoap import Context
 from zmq.asyncio import Poller
 
 from pime2.flow import FlowManager, FlowValidationService, FlowOperationManager
