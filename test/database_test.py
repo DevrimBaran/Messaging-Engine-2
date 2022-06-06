@@ -1,11 +1,8 @@
-import imp
 import unittest
 import os
 import pime2.database as db
-from pime2.repository.node_repository import NodeRepository
 
 from pime2 import database
-from pime2.config import load_app_config
 from pime2.repository.node_repository import NodeRepository
 from pime2.service.node_service import NodeService
 
@@ -23,7 +20,6 @@ class DatabaseTest(unittest.TestCase):
         database.create_default_tables(cls.connection, NodeService())
 
     def test_create_default_tables(self):
-        db.create_default_tables(self.connection)
         self.node_repo.delete_all()
 
         sql_insert_testdata = """INSERT INTO nodes (id, name, ip, port, sensor_skills, actuator_skills)

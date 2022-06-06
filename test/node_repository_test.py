@@ -1,9 +1,10 @@
 import unittest
 import os
 import pime2.database as db
+from pime2.config import load_app_config
 from pime2.repository.node_repository import NodeRepository as repo
 from pime2.entity import NodeEntity as Node
-from sqlite3 import IntegrityError, Error
+from sqlite3 import Error
 
 from pime2.service.node_service import NodeService
 
@@ -13,20 +14,14 @@ class NodeRepositoryTest(unittest.TestCase):
     node_repo = None
 
     @classmethod
-    def setUpClass(cls):
-        cls.connection = db.create_connection("testDatabase.db")
-        db.create_default_tables(cls.connection, NodeService())
-
-    @classmethod
     def setUp(cls):
         if os.path.exists("testDatabase.db"):
             db.disconnect(cls.connection)
             os.remove("testDatabase.db")
         cls.connection = db.create_connection("testDatabase.db")
+        load_app_config("me.yaml")
         cls.node_repo = repo(cls.connection)
         db.create_default_tables(cls.connection, NodeService())
-        cls.node_repo.delete_all()
-        db.create_default_tables(cls.connection)
         cls.node_repo.delete_all()
 
     def get_node_list(self):

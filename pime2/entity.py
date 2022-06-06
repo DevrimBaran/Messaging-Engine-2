@@ -1,7 +1,7 @@
 # pylint: disable=C0103
 import datetime
 from dataclasses import dataclass, field
-from typing import List, Optional, Set
+from typing import List, Optional
 
 
 @dataclass

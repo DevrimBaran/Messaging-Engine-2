@@ -12,11 +12,11 @@ class NodeMapper:
         """Converts json to entity"""
         json_obj = json.loads(json_str)
         name = json_obj['name']
-        ip = json_obj['ip']
+        ip_addr = json_obj['ip']
         port = json_obj['port']
         sensor_skills = json_obj['sensor_skills']
         actuator_skills = json_obj['actuator_skills']
-        node = NodeEntity(name, ip, port, sensor_skills, actuator_skills)
+        node = NodeEntity(name, ip_addr, port, sensor_skills, actuator_skills)
         logging.info("JSON to entity : <%s>", node)
         return node
 

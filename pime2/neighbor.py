@@ -7,8 +7,6 @@ from aiocoap import Code
 from pime2.service.node_service import NodeService
 from pime2.config import get_me_conf
 from pime2.coap_client import ping, send_message
-from pime2.database import get_db_connection
-
 
 
 async def find_neighbors():
@@ -33,7 +31,7 @@ async def find_neighbors():
             logging.error("Error while searching for neighbors: %s", exception)
         finally:
             end = time.time()
-            logging.info("Time taken: %s seconds", round(end-start,2))
+            logging.info("Time taken: %s seconds", round(end - start, 2))
 
     logging.info("All neighbors found: %s", available_ip)
 
@@ -69,17 +67,17 @@ async def send_hello(available_ip):
     own_node_json = service.entity_to_json(own_node)
     for neighbor_ip in available_ip:
         logging.info("Sending hello to %s", neighbor_ip)
-        neighbor_response = await send_message(neighbor_ip, "hello", "Hello, I'm online!".encode() , Code.GET)
+        neighbor_response = await send_message(neighbor_ip, "hello", "Hello, I'm online!".encode(), Code.GET)
         neighbor_entity = service.json_to_entity(neighbor_response.payload.decode())
         service.put_node(neighbor_entity)
-        await send_message(neighbor_ip, "nodes", own_node_json.encode() , Code.PUT)
+        await send_message(neighbor_ip, "nodes", own_node_json.encode(), Code.PUT)
 
 
 async def send_goodbye():
     """
     Sends a goodbye message to all its neighbor
     """
-    service = NodeService(get_db_connection())
+    service = NodeService()
     own_node = service.get_own_node()
     own_node_json = json.dumps(own_node.__dict__)
     all_neighbors = service.get_all_neighbor_nodes()

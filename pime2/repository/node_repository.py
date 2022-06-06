@@ -28,7 +28,6 @@ class NodeRepository:
             self.commit()
         except IntegrityError:
             logging.debug("Integrity error during insert detected")
-            pass
         finally:
             cursor.close()
 
@@ -149,18 +148,18 @@ class NodeRepository:
         return self.read_node_by_name(name) is not None
 
     def read_all_neighbors(self) -> List[NodeEntity]:
-            """Return every node except the own device node from the database as a list"""
-            cursor = self.connection.cursor()
-            query = 'SELECT * FROM nodes WHERE name != ?;'
-            logging.debug('Executing SELECT SQL query: "%s"', query)
-            cursor.execute(query, (get_me_conf().instance_id,))
-            neighbors = cursor.fetchall()
-            if neighbors is None:
-                logging.debug('No nodes existing.')
-                return None
-            logging.debug('Query executed. Result: %s', neighbors)
-            cursor.close()
-            result__list = []
-            for node in neighbors:
-                result__list.append(NodeEntity(node[1],node[2],node[3],node[4],node[5]))
-            return result__list
+        """Return every node except the own device node from the database as a list"""
+        cursor = self.connection.cursor()
+        query = 'SELECT * FROM nodes WHERE name != ?;'
+        logging.debug('Executing SELECT SQL query: "%s"', query)
+        cursor.execute(query, (get_me_conf().instance_id,))
+        neighbors = cursor.fetchall()
+        if neighbors is None:
+            logging.debug('No nodes existing.')
+            return None
+        logging.debug('Query executed. Result: %s', neighbors)
+        cursor.close()
+        result__list = []
+        for node in neighbors:
+            result__list.append(NodeEntity(node[1], node[2], node[3], node[4], node[5]))
+        return result__list

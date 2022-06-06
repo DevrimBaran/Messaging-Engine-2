@@ -1,6 +1,6 @@
 from aiocoap import resource, Code, Message
 from pime2.service.node_service import NodeService
-from pime2.database import get_db_connection
+
 
 class Goodbye(resource.Resource):
     """
@@ -8,7 +8,7 @@ class Goodbye(resource.Resource):
     """
 
     def __init__(self):
-        self.node_service = NodeService(get_db_connection)
+        self.node_service = NodeService()
 
     async def render_delete(self, request):
         """handles incoming goodbye message"""
