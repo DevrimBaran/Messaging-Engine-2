@@ -3,10 +3,8 @@ import asyncio
 import logging
 
 import zmq
-from aiocoap import Context
 from zmq.asyncio import Poller
 
-from pime2.coap_client import CoapClient
 from pime2.flow import FlowManager, FlowValidationService, FlowOperationManager
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.router import router_loop
@@ -52,7 +50,7 @@ async def startup_pull_queue(context):
 
     # load and instantiate flow manager
     flow_manager = FlowManager(FlowValidationService(), FlowOperationManager(),
-                               FlowMessageBuilder(), NodeService(), CoapClient(await Context.create_client_context()))
+                               FlowMessageBuilder(), NodeService())
 
     while True:
         try:

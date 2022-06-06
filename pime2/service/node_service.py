@@ -79,9 +79,8 @@ class NodeService:
 
     def get_neighbors_as_entity(self) -> list:
         """Get all nodes as a json string"""
-        node_list = self.node_repository.read_all_neighbors()
+        node_list = self.node_repository.read_all_nodes()
         return node_list
-
 
     def get_all_neighbor_nodes(self) -> List[NodeEntity]:
         """Get all nodes except the own node"""

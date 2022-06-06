@@ -1,9 +1,6 @@
 import json
 import logging
 
-from sqlite3 import IntegrityError
-
-from pime2.entity import FlowEntity
 from pime2.flow import FlowManager
 from pime2.mapper.flow_mapper import FlowMapper
 from pime2.message import MessageType

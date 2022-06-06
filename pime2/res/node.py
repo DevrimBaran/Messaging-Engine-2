@@ -87,7 +87,4 @@ class Node(resource.Resource):
         ipv4_regex_res = regex.match(ipv4_regex, node["ip"])
         name_regex_res = regex.match(name_regex, node["name"])
         node_match_res = 0 < node["port"] <= 65535
-        if ipv4_regex_res and name_regex_res and node_match_res:
-            return True
-        else:
-            return False
+        return ipv4_regex_res and name_regex_res and node_match_res

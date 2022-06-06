@@ -1,8 +1,7 @@
 import json
 import logging
-from pime2.entity import NodeEntity
 from typing import List
-
+from pime2.entity import NodeEntity
 
 
 class NodeMapper:

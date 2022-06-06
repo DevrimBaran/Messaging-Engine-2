@@ -21,7 +21,7 @@ class NodeRepository:
         try:
             cursor.execute(query, (node.name, node.ip, node.port))
             logging.debug('Values inserted: name:<%s> ip:<%s> port:<%s>', node.name, node.ip, node.port)
-        except Exception as ex:
+        except IntegrityError as ex:
             logging.debug('Skipping node creation: Node with name "%s" exists already. Please only give unique names. Error: %s', node.name, ex)
         finally:
             self.commit()
