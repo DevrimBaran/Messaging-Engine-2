@@ -57,17 +57,13 @@ async def startup_pull_queue(context):
             events = await poller.poll()
             if socket in dict(events):
                 msg = await socket.recv_multipart()
-                loop = asyncio.new_event_loop()
-
-                future = asyncio.wait([loop.run_until_complete(await router_loop(msg, flow_manager))], timeout=60.0)
                 try:
-                    await future
+                    await asyncio.wait_for(router_loop(msg, flow_manager), timeout=60)
                 except asyncio.exceptions.TimeoutError:
                     logging.warning("Message processing timeout reached!")
                 except Exception as ex:
-                    logging.error("Message processing inner exception: %s, %s", ex, future)
-                finally:
-                    loop.close()
-
+                    logging.error("Message processing inner exception: %s", ex)
         except Exception as e:
             logging.error("Message processing outer exception: %s", e)
+        finally:
+            logging.info("Message processing finished")
