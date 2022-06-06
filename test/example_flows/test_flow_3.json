@@ -1,0 +1,25 @@
+{
+  "name": "test_cep_flow_2",
+  "ops": [
+    {
+      "name": "sensor_read",
+      "input": "sensor_temperature",
+      "where": "me2_first"
+    },
+    {
+      "name": "cep_intercept",
+      "process": "cep_intercept",
+      "where": "me2_second",
+      "args": {
+        "expression": "x > 30",
+        "variables":  { "x": "temperature" }
+      }
+    },
+    {
+      "name": "beep_call",
+      "output": "actuator_speaker",
+      "where": "me2_third"
+    }
+  ]
+}
+  

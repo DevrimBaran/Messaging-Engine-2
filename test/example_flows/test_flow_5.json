@@ -1,0 +1,44 @@
+{
+  "name": "test_cep_flow_join_2",
+  "ops": [
+    {
+      "name": "sensor_read",
+      "input": "sensor_button",
+      "where": "me2_first"
+    },
+    {
+      "name": "cep_intercepted",
+      "process": "cep_intercept",
+      "where": "me2_second",
+      "args": {
+
+        "cep":{
+          "expression": "x=True and y=True",
+          "variables":  { 
+            "x": "button1",
+            "y": "button2"
+          }
+        }
+      }
+    },
+    {
+      "name": "log",
+      "process": "log",
+      "where": "me2_second"
+    },
+    {
+      "name": "",
+      "join": "actuator_led",
+      "where": "me2_third",
+      "args": {
+        "join": ["cep_intercepted", "log"]
+      }
+    },
+    {
+      "name": "led_call",
+      "output": "actuator_led",
+      "where": "me2_third"
+    }
+  ]
+}
+  
