@@ -1,4 +1,4 @@
-# pylint: disable=broad-except
+# pylint: disable=broad-except,no-member
 import asyncio
 import logging
 
