@@ -8,6 +8,7 @@ from pime2.repository.node_repository import NodeRepository
 
 class DatabaseTest(unittest.TestCase):
     node_repo: NodeRepository = None
+    connection = None
 
     @classmethod
     def setUp(cls):

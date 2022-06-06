@@ -44,6 +44,7 @@
 ##### Validation
 
 - Check if `ops` has at least 2 elements
+- Check if all operation names are unique
 - Check if all operation names are known and defined in `ops`
 - Check if an instance exists for each `where`
 - Check if there exists exactly one `input` per `Flow`
