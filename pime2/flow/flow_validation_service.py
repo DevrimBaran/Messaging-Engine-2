@@ -1,5 +1,5 @@
+# pylint: disable=too-many-return-statements
 import re
-from typing import List
 
 from pime2.entity import FlowEntity
 from pime2.flow.flow_operation_manager import FlowOperationManager
@@ -56,4 +56,4 @@ def is_flow_valid(flow: FlowEntity) -> (bool, str):
     op_names_set = set(op_names)
     if len(op_names_set) != len(op_names):
         return False, "Operation names need to be unique per flow!"
-    return True,
+    return True

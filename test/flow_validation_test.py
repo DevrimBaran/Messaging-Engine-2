@@ -31,7 +31,7 @@ class MyTestCase(unittest.TestCase):
                     FlowOperationEntity(test_name2, None, "log", None, "*"),
                     FlowOperationEntity(test_name3, None, "cep_intercept", "actuator_speaker", "*")]
         flow = FlowEntity("test_flow", flow_ops)
-        self.assertEqual(flow_validation_service.is_flow_valid(flow), (True,))
+        self.assertEqual(flow_validation_service.is_flow_valid(flow), True)
 
     def test_invalid_flow_validation(self):
         test_name = "op_name"
