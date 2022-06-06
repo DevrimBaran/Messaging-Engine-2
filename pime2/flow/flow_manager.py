@@ -3,7 +3,7 @@ import json
 import logging
 from typing import List
 
-from pime2.coap_client import CoapClient
+from pime2.coap_client import send_message
 from pime2.config import get_me_conf
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
@@ -20,12 +20,11 @@ class FlowManager:
     """
 
     def __init__(self, flow_validation_service: FlowValidationService, flow_operation_manager: FlowOperationManager,
-                 flow_message_builder: FlowMessageBuilder, node_service: NodeService, coap_client: CoapClient):
+                 flow_message_builder: FlowMessageBuilder, node_service: NodeService):
         self.flow_validation_service = flow_validation_service
         self.flow_operation_manager = flow_operation_manager
         self.flow_message_builder = flow_message_builder
         self.node_service = node_service
-        self.coap_client = coap_client
         self.startup()
 
     def get_nodes(self) -> List[NodeEntity]:
@@ -173,8 +172,8 @@ class FlowManager:
         """
         logging.info("Send FlowMessage to %s:%s", node.ip, node.port)
 
-        await self.coap_client.send_message(f"{node.ip}:{node.port}", "flow-message",
-                                            json.dumps(flow_message.__dict__, default=str))
+        await send_message(f"{node.ip}:{node.port}", "flow-message",
+                           json.dumps(flow_message.__dict__, default=str))
 
         logging.info("Send FlowMessage finished")
 
