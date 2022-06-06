@@ -23,13 +23,27 @@ class MyTestCase(unittest.TestCase):
         database.create_default_tables(cls.connection)
 
     def test_valid_flow_validation(self):
+        self.node_repo.delete_all()
+
+        database.create_default_tables(self.connection)
+
+        sql_insert_testdata = """INSERT INTO nodes (name, ip, port)
+                                            VALUES 
+                                                ('node1', "10.10.10.1", 5683);"""
+
+        cursor = self.connection.cursor()
+        cursor.execute(sql_insert_testdata)
+        self.connection.commit()
+
+        cursor.close()
+
         test_name = "op_name"
         test_name2 = "op_name2"
         test_name3 = "op_name3"
         test_op_name = "sensor_temperature"
         flow_ops = [FlowOperationEntity(test_name, test_op_name, None, "actuator_led", "*"),
                     FlowOperationEntity(test_name2, None, "log", None, "*"),
-                    FlowOperationEntity(test_name3, None, "cep_intercept", "actuator_speaker", "*")]
+                    FlowOperationEntity(test_name3, None, "cep_intercept", "actuator_speaker", "node1")]
         flow = FlowEntity("test_flow", flow_ops)
         self.assertEqual(flow_validation_service.is_flow_valid(flow), True)
 
