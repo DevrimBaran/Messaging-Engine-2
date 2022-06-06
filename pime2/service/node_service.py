@@ -92,18 +92,26 @@ class NodeService:
         ]
         ipv4_regex = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
         name_regex = "^[a-zA-Z0-9_.-]{3,128}$"
+
+        chained_name_regex = r"^[a-zA-Z0-9_.-]{3,128}(\s*,\s*[a-zA-Z0-9_.-]{3,128})*,?$"
         node = json.loads(request.payload)
         for i in required_fields:
             if i not in node or node[i] is None:
                 return Message(payload=b"INVALID REQUEST, MISSING PROPERTY", code=Code.BAD_REQUEST)
-            ipv4_regex_res = regex.match(ipv4_regex, node["ip"])
-            name_regex_res = regex.match(name_regex, node["name"])
-            node_match_res = node["port"] > 0 and node["port"] <= 65535
-            if ipv4_regex_res and name_regex_res and node_match_res:
-                pass
-            else:
-                raise ValueError("Bad Input. Invalid json!")
-            return True
+        ipv4_regex_res = regex.match(ipv4_regex, node["ip"])
+        name_regex_res = regex.match(name_regex, node["name"])
+        node_match_res = 0 < node["port"] <= 65535
+
+        if ipv4_regex_res and name_regex_res and node_match_res:
+            pass
+        else:
+            raise ValueError("Bad Input. Invalid json!")
+
+        for i in ["sensor_skills", "actuator_skills"]:
+            if i in node and len(node[i]) > 0 and not regex.match(chained_name_regex, node[i]):
+                raise ValueError("Bad input in actuator/sensor skills")
+
+        return True
 
     def get_own_node(self) -> Optional[NodeEntity]:
         """Gets the first node in the database which is the device itself"""
