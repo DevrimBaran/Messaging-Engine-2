@@ -3,6 +3,7 @@ import os
 import pime2.database as db
 
 from pime2 import database
+from pime2.config import get_me_conf
 from pime2.repository.node_repository import NodeRepository
 from pime2.service.node_service import NodeService
 
@@ -19,11 +20,11 @@ class DatabaseTest(unittest.TestCase):
         cls.connection = db.create_connection("testDatabase.db")
         cls.node_repo = NodeRepository(cls.connection)
         database.create_default_tables(cls.connection, NodeService())
+        cls.node_repo.delete_all()
 
     def test_create_default_tables(self):
         self.node_repo.delete_all()
-
-        database.create_default_tables(self.connection)
+        database.create_default_tables(self.connection, NodeService())
 
         sql_insert_testdata = """INSERT INTO nodes (name, ip, port)
                                     VALUES 

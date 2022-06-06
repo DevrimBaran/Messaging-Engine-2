@@ -1,18 +1,11 @@
 import json
 
-from json import JSONDecodeError
 from typing import List, Optional
-from aiocoap import Message, Code
 
-from pime2.database import get_db_connection
-from pime2.entity import NodeEntity
-
-from pime2.config import get_me_conf
 from pime2.database import get_db_connection
 from pime2.entity import NodeEntity
 from pime2.repository.node_repository import NodeRepository
 from pime2.mapper.node_mapper import NodeMapper
-from pime2.push_queue import get_push_queue
 from pime2.config import get_me_conf
 
 
