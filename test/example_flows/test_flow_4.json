@@ -11,7 +11,7 @@
       "process": "cep_intercept",
       "where": "me2_second",
       "args": {
-        "expression": "x=True and y=True",
+        "expression": "x=true and y=true",
         "variables":  { 
           "x": "button1",
           "y": "button2"
