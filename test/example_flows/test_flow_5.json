@@ -13,7 +13,7 @@
       "args": {
 
         "cep":{
-          "expression": "x=True and y=True",
+          "expression": "x=true and y=true",
           "variables":  { 
             "x": "button1",
             "y": "button2"
@@ -27,7 +27,7 @@
       "where": "me2_second"
     },
     {
-      "name": "",
+      "name": "join_op",
       "join": "actuator_led",
       "where": "me2_third",
       "args": {
