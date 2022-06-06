@@ -11,6 +11,7 @@ from pime2.config import MEConfiguration
 from pime2.database import create_default_tables
 from pime2.push_queue import init_push_queue
 from pime2.sensor_listener import startup_sensor_listener
+from pime2.service.node_service import NodeService
 from pime2.silent import startup_silent_task
 from pime2.zmq import startup_pull_queue, startup_push_queue
 
@@ -30,7 +31,7 @@ async def pime_run(config: MEConfiguration):
     try:
         connection = db.create_connection(config.database)
         init_push_queue()
-        create_default_tables(connection)
+        create_default_tables(connection, NodeService())
         zmq_context = Context.instance()
 
         try:

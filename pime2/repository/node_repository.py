@@ -1,6 +1,7 @@
 # pylint: disable=C0301
 import logging
 import sqlite3
+from sqlite3 import IntegrityError
 from typing import List, Optional
 
 from pime2.entity import NodeEntity
@@ -16,14 +17,18 @@ class NodeRepository:
     def create_node(self, node: NodeEntity):
         """Saves a node in database"""
         cursor = self.connection.cursor()
+        # TODO make insert/update dynamically
         query = 'INSERT INTO nodes(name,ip,port,sensor_skills,actuator_skills) VALUES(?,?,?,?,?);'
         logging.debug('Executing SQL query: "%s"', query)
         logging.debug('Values inserted: name:<%s> ip:<%s> port:<%s> sensor_skills:<%s> actuator_skills: <%s>',
                       node.name, node.ip, node.port, node.sensor_skills, node.actuator_skills)
         try:
             cursor.execute(query, (
-            node.name, node.ip, node.port, ",".join(node.sensor_skills), ",".join(node.actuator_skills),))
+                node.name, node.ip, node.port, ",".join(node.sensor_skills), ",".join(node.actuator_skills),))
             self.commit()
+        except IntegrityError:
+            logging.debug("Integrity error during insert detected")
+            pass
         finally:
             cursor.close()
 
@@ -56,20 +61,20 @@ class NodeRepository:
         try:
             cursor.execute(query)
             nodes_in_database = cursor.fetchall()
-            if nodes_in_database.__len__() == 0:
+            if len(nodes_in_database) == 0 or nodes_in_database is None:
                 logging.debug('No nodes existing.')
                 return []
             logging.debug('Query executed. Result: %s', nodes_in_database)
-            result__list = []
+            result_list = []
             for node in nodes_in_database:
                 sensor_skills = [] if list(node[4]).__len__() == 0 else node[4].split(",")
                 actuator_skills = [] if list(node[5]).__len__() == 0 else node[5].split(",")
-                result__list.append(NodeEntity(node[1], node[2], node[3], sensor_skills, actuator_skills))
-            return result__list
+                result_list.append(NodeEntity(node[1], node[2], node[3], sensor_skills, actuator_skills))
+            return result_list
         finally:
             cursor.close()
 
-    def update_node(self, node: NodeEntity) -> NodeEntity:
+    def update_node(self, node: NodeEntity):
         """Updates a specific node"""
         cursor = self.connection.cursor()
         query = """
@@ -84,7 +89,7 @@ class NodeRepository:
                 logging.debug('Updating values to: ip:<%s> port:<%s> sensor_skills:<%s> actuator_skills: <%s>', node.ip,
                               node.port, node.sensor_skills, node.actuator_skills)
                 cursor.execute(query, (
-                node.ip, node.port, ",".join(node.sensor_skills), ",".join(node.actuator_skills), node.name))
+                    node.ip, node.port, ",".join(node.sensor_skills), ",".join(node.actuator_skills), node.name))
                 self.commit()
                 logging.debug('Updated record.')
             else:
@@ -119,6 +124,7 @@ class NodeRepository:
 
     def get_node_id_by_name(self, name) -> Optional[int]:
         """Gets the id of the node by its name"""
+        # TODO this method could be the same as self.read_node_by_name?
         cursor = self.connection.cursor()
         query = 'SELECT id FROM nodes WHERE name = ?;'
         logging.debug('Executing SELECT SQL query: "%s" with name:<%s>', query, name)

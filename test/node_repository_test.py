@@ -5,6 +5,8 @@ from pime2.repository.node_repository import NodeRepository as repo
 from pime2.entity import NodeEntity as Node
 from sqlite3 import IntegrityError, Error
 
+from pime2.service.node_service import NodeService
+
 
 class NodeRepositoryTest(unittest.TestCase):
     connection = None
@@ -13,8 +15,7 @@ class NodeRepositoryTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.connection = db.create_connection("testDatabase.db")
-        cls.node_repo = repo(cls.connection)
-        db.create_default_tables(cls.connection)
+        db.create_default_tables(cls.connection, NodeService())
 
     @classmethod
     def setUp(cls):
@@ -23,12 +24,18 @@ class NodeRepositoryTest(unittest.TestCase):
             os.remove("testDatabase.db")
         cls.connection = db.create_connection("testDatabase.db")
         cls.node_repo = repo(cls.connection)
+        db.create_default_tables(cls.connection, NodeService())
+        cls.node_repo.delete_all()
         db.create_default_tables(cls.connection)
         cls.node_repo.delete_all()
 
     def get_node_list(self):
-        return [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], [
-            "LIGHT"]), Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node6", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"])]
+        return [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]),
+                Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]),
+                Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], [
+                    "LIGHT"]), Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]),
+                Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]),
+                Node("node6", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"])]
 
     def test_read_node_by_name(self):
         simple_node = Node("simple_node", "10.10.10.1",
@@ -40,7 +47,7 @@ class NodeRepositoryTest(unittest.TestCase):
         self.assertIsNone(result_node_none)
 
     def test_read_all_nodes(self):
-        node_list =  self.get_node_list()
+        node_list = self.get_node_list()
         for node in node_list:
             self.node_repo.create_node(node)
         result = self.node_repo.read_all_nodes()
@@ -56,32 +63,21 @@ class NodeRepositoryTest(unittest.TestCase):
         result = self.node_repo.read_all_nodes()
         self.assertEqual(simple_node, result[0])
 
-    def test_create_node_with_same_name(self):
-        simple_node_one = Node("duplicate_node", "10.10.10.1", 5683, [
-                               "TEMPERATURE"], ["LIGHT"])
-        simple_node_two = Node("duplicate_node", "10.10.10.1", 5683, [
-                               "TEMPERATURE"], ["LIGHT"])
-        self.node_repo.create_node(simple_node_one)
-        with self.assertRaises(IntegrityError):
-            self.node_repo.create_node(simple_node_two)
-
     def test_create_node_with_sensor(self):
-        node_only_sensor_multiple = Node("node_sens", "10.10.10.1", 5683, [
-                                         "TEMPERATURE", "LIGHT", "HUMIDITY"], [])
+        node_only_sensor_multiple = Node("node_sens", "10.10.10.1", 5683, ["TEMPERATURE", "LIGHT", "HUMIDITY"], [])
         self.node_repo.create_node(node_only_sensor_multiple)
         result = self.node_repo.read_all_nodes()
         self.assertEqual(node_only_sensor_multiple, result[0])
 
     def test_create_node_with_actuator(self):
-        node_only_actuator = Node("node_act", "10.10.10.1", 5683, [], [
-                                  "LIGHT", "MOTOR", "SPEAKER"])
+        node_only_actuator = Node("node_act", "10.10.10.1", 5683, [], ["LIGHT", "MOTOR", "SPEAKER"])
         self.node_repo.create_node(node_only_actuator)
         result = self.node_repo.read_all_nodes()
         self.assertEqual(node_only_actuator, result[0])
 
     def test_create_node_with_sensor_and_actuator(self):
-        node_sensor_and_actuator = Node("node_sens_act", "10.10.10.1", 5683, [
-                                        "TEMPERATURE", "LIGHT", "HUMIDITY"], ["LIGHT", "MOTOR", "SPEAKER"])
+        node_sensor_and_actuator = Node("node_sens_act", "10.10.10.1", 5683, ["TEMPERATURE", "LIGHT", "HUMIDITY"],
+                                        ["LIGHT", "MOTOR", "SPEAKER"])
         self.node_repo.create_node(node_sensor_and_actuator)
         result = self.node_repo.read_all_nodes()
         self.assertEqual(node_sensor_and_actuator, result[0])
@@ -135,14 +131,18 @@ class NodeRepositoryTest(unittest.TestCase):
         for node in node_list:
             self.node_repo.create_node(node)
         self.assertEqual(node_list, self.node_repo.read_all_nodes())
-        node_list_update = [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT", "SPEAKER"]), Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], [
-            "LIGHT"]), Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]), Node("node6", "10.10.10.1", 5683, ["TEMPERATURE", "HUMIDITY"], ["LIGHT"])]
+        node_list_update = [Node("node1", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT", "SPEAKER"]),
+                            Node("node2", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]),
+                            Node("node3", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]),
+                            Node("node4", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]),
+                            Node("node5", "10.10.10.1", 5683, ["TEMPERATURE"], ["LIGHT"]),
+                            Node("node6", "10.10.10.1", 5683, ["TEMPERATURE", "HUMIDITY"], ["LIGHT"])
+                            ]
         for node_update in node_list_update:
             self.node_repo.update_node(node_update)
         self.assertEqual(node_list_update, self.node_repo.read_all_nodes())
         with self.assertRaises(Error):
-            self.node_repo.update_node(
-                Node("Test", "127.1.1.1", 5863, "TEMP", "SPEAKER"))
+            self.node_repo.update_node(Node("Test", "127.1.1.1", 5863, set("TEMP"), set("SPEAKER")))
 
     @classmethod
     def tearDownClass(cls):

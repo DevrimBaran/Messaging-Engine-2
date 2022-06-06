@@ -28,7 +28,7 @@ async def ping(destination):
         logging.error('Ping failed! Exception: %s', exception)
         return False
     else:
-        logging.info('Ping succesful! Response: %s\n%r', response.code, response.payload)
+        logging.info('Ping successful! Response: %s\n%r', response.code, response.payload)
         return True
 
 
@@ -50,5 +50,5 @@ async def send_message(destination, endpoint, payload, code):
         logging.error('Sending Message failed! Exception: %s', exception)
         return False
     else:
-        logging.info('Message Request succesful: %s\n%r', response.code, response.payload)
+        logging.info('Message Request successful: %s\n%r', response.code, response.payload)
         return response or True

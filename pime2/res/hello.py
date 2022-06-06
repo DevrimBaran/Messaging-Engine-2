@@ -4,11 +4,11 @@ from pime2.service.node_service import NodeService
 from pime2.database import get_db_connection
 
 
-
 class Hello(resource.Resource):
     """
     Hello Resource
     """
+
     def __init__(self):
         self.node_service = NodeService(get_db_connection())
 
