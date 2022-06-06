@@ -3,8 +3,7 @@ import sqlite3
 import logging
 from sqlite3 import Error, Connection
 
-from pime2.entity.node import NodeEntity
-from pime2.service.node_service import NodeService
+from pime2.entity import NodeEntity
 from pime2.config import get_me_conf
 
 DB_CONNECTION: Connection
@@ -46,6 +45,8 @@ def create_default_tables(connection):
     :param connection: connection to the database
     :return:
     """
+    from pime2.service.node_service import NodeService
+
     sql_create_nodes_table = """CREATE TABLE IF NOT EXISTS nodes (
                                     id integer PRIMARY KEY,
                                     name varchar(255) NOT NULL UNIQUE,
