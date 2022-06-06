@@ -26,7 +26,7 @@ def is_flow_valid(flow: FlowEntity) -> (bool, str):
     if len(flow.ops) == 0:
         return False, "Got flow without operations!"
     if not re.match(pattern, flow.name):
-        return False, "Flow Name should match following regex: ^[a-zA-Z0-9_.-]{3,128}$!"
+        return False, "Flow Name should match following regex: ^[a-zA-Z0-9_.-]{3,128}$ !"
     if len(flow.ops) <= 1:
         return False, "Got flow with too less operations!"
     for op in flow.ops:
@@ -42,7 +42,7 @@ def is_flow_valid(flow: FlowEntity) -> (bool, str):
         if op.process not in process_ops and op.process:
             return False, "Wrong input for process!"
         if not re.match(pattern, op.name):
-            return False, "Operation Name should match following regex: ^[a-zA-Z0-9_.-]{3,128}$!"
+            return False, "Operation Name should match following regex: ^[a-zA-Z0-9_.-]{3,128}$ !"
         if op.output in output_ops:
             if_output_defined = True
         if op.output not in output_ops and op.output:
