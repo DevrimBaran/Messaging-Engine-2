@@ -1,6 +1,6 @@
 # pylint: disable=C0103
 import datetime
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional
 
 
@@ -12,8 +12,8 @@ class NodeEntity:
     name: str
     ip: str
     port: int
-    # actuator_skills: List[str]
-    # sensor_skills: List[str]
+    sensor_skills: List[str] = field(default_factory=lambda: [])
+    actuator_skills: List[str] = field(default_factory=lambda: [])
 
 
 @dataclass

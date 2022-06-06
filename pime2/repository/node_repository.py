@@ -5,6 +5,7 @@ from sqlite3 import IntegrityError
 from typing import List, Optional
 
 from pime2.entity import NodeEntity
+from pime2.config import get_me_conf
 
 
 class NodeRepository:
@@ -13,18 +14,21 @@ class NodeRepository:
     def __init__(self, connection):
         self.connection = connection
 
-    def create_node(self, node : NodeEntity):
+    def create_node(self, node: NodeEntity):
         """Saves a node in database"""
         cursor = self.connection.cursor()
-        query = 'INSERT INTO nodes(name,ip,port) VALUES(?,?,?);'
+        # TODO make insert/update dynamically
+        query = 'INSERT INTO nodes(name,ip,port,sensor_skills,actuator_skills) VALUES(?,?,?,?,?);'
         logging.debug('Executing SQL query: "%s"', query)
+        logging.debug('Values inserted: name:<%s> ip:<%s> port:<%s> sensor_skills:<%s> actuator_skills: <%s>',
+                      node.name, node.ip, node.port, node.sensor_skills, node.actuator_skills)
         try:
-            cursor.execute(query, (node.name, node.ip, node.port))
-            logging.debug('Values inserted: name:<%s> ip:<%s> port:<%s>', node.name, node.ip, node.port)
-        except IntegrityError as ex:
-            logging.debug('Skipping node creation: Node with name "%s" exists already. Please only give unique names. Error: %s', node.name, ex)
-        finally:
+            cursor.execute(query, (
+                node.name, node.ip, node.port, ",".join(node.sensor_skills), ",".join(node.actuator_skills),))
             self.commit()
+        except IntegrityError:
+            logging.debug("Integrity error during insert detected")
+        finally:
             cursor.close()
 
     def read_node_by_name(self, name: str) -> Optional[NodeEntity]:
@@ -40,7 +44,8 @@ class NodeRepository:
                 logging.debug('No node with name "%s" exists.', name)
                 return None
             logging.debug('Query executed. Result: %s', node_in_database)
-            result_node = NodeEntity(node_in_database[1], node_in_database[2], node_in_database[3])
+            result_node = NodeEntity(node_in_database[1], node_in_database[2], node_in_database[3],
+                                     str(node_in_database[4]).split(","), str(node_in_database[5]).split(","))
 
             return result_node
         finally:
@@ -55,38 +60,44 @@ class NodeRepository:
         try:
             cursor.execute(query)
             nodes_in_database = cursor.fetchall()
-            if nodes_in_database is None:
+            if len(nodes_in_database) == 0 or nodes_in_database is None:
                 logging.debug('No nodes existing.')
                 return []
             logging.debug('Query executed. Result: %s', nodes_in_database)
-            result__list = []
+            result_list = []
             for node in nodes_in_database:
-                result__list.append(NodeEntity(node[1], node[2], node[3]))
-            return result__list
+                sensor_skills = [] if list(node[4]).__len__() == 0 else node[4].split(",")
+                actuator_skills = [] if list(node[5]).__len__() == 0 else node[5].split(",")
+                result_list.append(NodeEntity(node[1], node[2], node[3], sensor_skills, actuator_skills))
+            return result_list
         finally:
             cursor.close()
 
-    def update_node(self, node : NodeEntity)-> NodeEntity:
+    def update_node(self, node: NodeEntity):
         """Updates a specific node"""
         cursor = self.connection.cursor()
         query = """
         UPDATE nodes
-        SET ip = ?, port = ?
+        SET ip = ?, port = ?, sensor_skills = ?, actuator_skills = ?
         WHERE name = ?; 
         """
-        if self.check_in_database(node.name):
-            logging.debug('Current node: <%s>', node)
-            logging.debug('Executing UPDATE SQL query: "%s"', query)
-            logging.debug('Updating values to: ip:<%s> port:<%s>', node.ip, node.port)
-            cursor.execute(query, (node.ip, node.port, node.name))
-            self.commit()
-            logging.debug('Updated record.')
+        try:
+            if self.check_in_database(node.name):
+                logging.debug('Current node: <%s>', node)
+                logging.debug('Executing UPDATE SQL query: "%s"', query)
+                logging.debug('Updating values to: ip:<%s> port:<%s> sensor_skills:<%s> actuator_skills: <%s>', node.ip,
+                              node.port, node.sensor_skills, node.actuator_skills)
+                cursor.execute(query, (
+                    node.ip, node.port, ",".join(node.sensor_skills), ",".join(node.actuator_skills), node.name))
+                self.commit()
+                logging.debug('Updated record.')
+            else:
+                logging.debug('Can not update non existing node with name "%s".', node.name)
+                raise sqlite3.Error("Can not update non existing node")
+        finally:
             cursor.close()
-        else:
-            logging.debug('Can not update non existing node with name "%s".', node.name)
-            raise sqlite3.Error("Can not update non existing node")
 
-    def delete_node_by_name(self, name : str):
+    def delete_node_by_name(self, name: str):
         """Deletes a specific node by its name"""
         cursor = self.connection.cursor()
         if self.check_in_database(name):
@@ -112,9 +123,11 @@ class NodeRepository:
 
     def get_node_id_by_name(self, name) -> Optional[int]:
         """Gets the id of the node by its name"""
+        # TODO this method could be the same as self.read_node_by_name?
         cursor = self.connection.cursor()
         query = 'SELECT id FROM nodes WHERE name = ?;'
         logging.debug('Executing SELECT SQL query: "%s" with name:<%s>', query, name)
+
         try:
             cursor.execute(query, (name,))
             node_id = cursor.fetchone()
@@ -133,3 +146,22 @@ class NodeRepository:
     def check_in_database(self, name: str) -> bool:
         """Checks if a node with a specific name is in database"""
         return self.read_node_by_name(name) is not None
+
+    def read_all_neighbors(self) -> List[NodeEntity]:
+        """Return every node except the own device node from the database as a list"""
+        cursor = self.connection.cursor()
+        query = 'SELECT * FROM nodes WHERE name != ?;'
+        logging.debug('Executing SELECT SQL query: "%s"', query)
+        cursor.execute(query, (get_me_conf().instance_id,))
+        try:
+            neighbors = cursor.fetchall()
+            if neighbors is None:
+                logging.debug('No nodes existing.')
+                return None
+            logging.debug('Query executed. Result: %s', neighbors)
+        finally:
+            cursor.close()
+        result_list = []
+        for node in neighbors:
+            result_list.append(NodeEntity(node[1], node[2], node[3], node[4], node[5]))
+        return result_list

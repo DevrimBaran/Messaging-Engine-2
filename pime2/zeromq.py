@@ -5,7 +5,7 @@ import logging
 import zmq
 from zmq.asyncio import Poller
 
-from pime2.flow import FlowManager, FlowOperationManager
+from pime2.flow import FlowManager, FlowValidationService, FlowOperationManager
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.router import router_loop
 from pime2.push_queue import get_push_queue

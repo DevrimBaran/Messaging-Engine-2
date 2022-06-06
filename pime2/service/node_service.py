@@ -1,11 +1,12 @@
 import json
-from typing import Optional, List
 
-from pime2.config import get_me_conf
+from typing import List, Optional
+
 from pime2.database import get_db_connection
 from pime2.entity import NodeEntity
 from pime2.repository.node_repository import NodeRepository
 from pime2.mapper.node_mapper import NodeMapper
+from pime2.config import get_me_conf
 
 
 class NodeService:
@@ -18,7 +19,7 @@ class NodeService:
 
     def entity_to_json(self, node: NodeEntity) -> str:
         """Convert node entity to a json"""
-        return json.dumps(node.__dict__)
+        return json.dumps(node.__dict__, default=str)
 
     def json_to_entity(self, node_json: str) -> NodeEntity:
         """Convert json to a node entity"""
@@ -84,5 +85,4 @@ class NodeService:
 
     def get_all_neighbor_nodes(self) -> List[NodeEntity]:
         """Get all nodes except the own node"""
-        node_list = self.get_neighbors_as_entity()
-        return node_list
+        return self.node_repository.read_all_nodes()
