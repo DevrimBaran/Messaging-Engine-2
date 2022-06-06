@@ -6,6 +6,7 @@ from pime2.config import load_app_config
 from pime2.flow import flow_validation_service
 from pime2.entity import FlowOperationEntity, FlowEntity
 from pime2.repository.node_repository import NodeRepository
+from pime2.service.node_service import NodeService
 
 
 class MyTestCase(unittest.TestCase):
@@ -20,12 +21,12 @@ class MyTestCase(unittest.TestCase):
         load_app_config("me.yaml")
         cls.connection = database.create_connection("testDatabase.db")
         cls.node_repo = NodeRepository(cls.connection)
-        database.create_default_tables(cls.connection)
+        database.create_default_tables(cls.connection, NodeService())
 
     def test_valid_flow_validation(self):
         self.node_repo.delete_all()
 
-        database.create_default_tables(self.connection)
+        database.create_default_tables(self.connection, NodeService())
 
         sql_insert_testdata = """INSERT INTO nodes (name, ip, port)
                                             VALUES 
