@@ -46,10 +46,12 @@ class FlowMessageEntity:
     """
     id: str
     flow_name: str
+    flow_id: str
     src_created_at: datetime.datetime
     sent_at: datetime.datetime
-    last_operation: Optional[str]
+    last_operation: str
     next_operation: str
     payload: str
+    original_payload: str
     count: int
     history: List['FlowMessageEntity']

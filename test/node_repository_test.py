@@ -106,16 +106,8 @@ class NodeRepositoryTest(unittest.TestCase):
         with self.assertRaises(Error):
             self.node_repo.delete_node_by_name("Test")
 
-    def test_get_node_id_by_name(self):
-        node_list = self.get_node_list()
-        for node in node_list:
-            self.node_repo.create_node(node)
-        result_id = self.node_repo.get_node_id_by_name("node1")
-        self.assertEqual(1, result_id)
-        self.assertIsNone(self.node_repo.get_node_id_by_name("Test"))
-
     def test_check_in_database(self):
-        node_list =self.get_node_list()
+        node_list = self.get_node_list()
         for node in node_list:
             self.node_repo.create_node(node)
         self.assertEqual(True, self.node_repo.check_in_database("node1"))

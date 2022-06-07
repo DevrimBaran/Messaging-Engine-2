@@ -1,3 +1,4 @@
+import ipaddress
 import json
 import logging
 from json import JSONDecodeError
@@ -5,6 +6,7 @@ from json import JSONDecodeError
 import re
 from aiocoap import resource, Message, Code
 
+from pime2 import NAME_REGEX, CHAINED_NAME_REGEX
 from pime2.mapper.node_mapper import NodeMapper
 from pime2.message import NodeCreateResultMessage
 from pime2.push_queue import get_push_queue
@@ -78,22 +80,29 @@ class Node(resource.Resource):
             "ip",
             "port",
         ]
-        ipv4_regex = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-        name_regex = "^[a-zA-Z0-9_.-]{3,128}$"
-        chained_name_regex = r"^[a-zA-Z0-9_.-]{3,128}(\s*,\s*[a-zA-Z0-9_.-]{3,128})*,?$"
 
         node = json.loads(request.payload)
         for i in required_fields:
             if i not in node or node[i] is None:
                 return False
-        ipv4_regex_res = re.match(ipv4_regex, node["ip"])
-        name_regex_res = re.match(name_regex, node["name"])
+        name_regex_res = re.match(NAME_REGEX, node["name"])
         node_match_res = 0 < node["port"] <= 65535
 
-        are_fields_valid = ipv4_regex_res and name_regex_res and node_match_res
+        are_fields_valid = name_regex_res and node_match_res
         if not are_fields_valid:
             return False
 
+        is_ip_valid = False
+        try:
+            ipaddress.ip_address(node["ip"])
+            is_ip_valid = True
+        except ValueError:
+            is_ip_valid = False
+
+        if not is_ip_valid:
+            return False
+
         for i in ["sensor_skills", "actuator_skills"]:
-            if i in node and len(node[i]) > 0 and not re.match(chained_name_regex, node[i]):
+            if i in node and len(node[i]) > 0 and not re.match(CHAINED_NAME_REGEX, node[i]):
                 return False
+        return True
