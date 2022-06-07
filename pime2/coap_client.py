@@ -10,12 +10,12 @@ TIMEOUT = 0.5
 # TODO: globals()["numbers"].REQUEST_TIMEOUT = 1.0
 # globals()["numbers"].MAX_RETRANSMIT = 0
 
+
 async def ping(destination):
     """
     Ping Implementation
     takes an IP as destination and sends a get request to its hello endpoint
     """
-    logging.debug("Created Client Context")
     client_context = await Context.create_client_context()
     logging.info("Sending Ping request")
     code = Code.GET
@@ -38,7 +38,6 @@ async def send_message(destination, endpoint, payload, code):
     Send message with an arbitrary payload to a specific destination and endpoint.
     Takes an IP as destination, an endpoint of the destination and the payload to send
     """
-    logging.debug("Created Client Context")
     client_context = await Context.create_client_context()
     logging.info("Sending Message request")
     uri = 'coap://' + destination + '/' + endpoint

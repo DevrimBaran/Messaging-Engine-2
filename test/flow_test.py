@@ -25,10 +25,6 @@ class TestAppConfiguration(unittest.TestCase):
         self.assertEqual("log", flow.ops[1].process)
         self.assertIsNone(flow.ops[1].output)
 
-    def test_flow_message_model_works(self):
-        fm = FlowMessageEntity(uuid.uuid4().hex, "flow_name", datetime.now(), datetime.now(), None, "log", "", 1, [])
-        self.assertIsNotNone(fm)
-
 
 if __name__ == '__main__':
     unittest.main()

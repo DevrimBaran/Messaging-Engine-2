@@ -143,6 +143,7 @@ class FlowManager:
         """
         is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
         if not is_valid:
+            logging.warning("Validate flow message: %s", validation_msgs)
             self.cancel_flow(flow, flow_message)
             return False
         return True
@@ -184,10 +185,13 @@ class FlowManager:
         """
         logging.info("Send FlowMessage to %s:%s", node.ip, node.port)
 
-        await send_message(f"{node.ip}:{node.port}", "flow-message",
-                           json.dumps(flow_message.__dict__, default=str), aiocoap.Code.GET)
+        success = await send_message(f"{node.ip}:{node.port}", "flow-message",
+                                     json.dumps(flow_message.__dict__, default=str), aiocoap.Code.PUT)
 
-        logging.info("Send FlowMessage finished")
+        if not success:
+            logging.error("PROBLEM Sending FlowMessage to %s:%s/flow-message", node.ip, node.port)
+        else:
+            logging.info("SUCCESS Sending FlowMessage to %s:%s/flow-message", node.ip, node.port)
 
     def get_available_flows_for_sensor(self, sensor_type: SensorType) -> List[FlowEntity]:
         """

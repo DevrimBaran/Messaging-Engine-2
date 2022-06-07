@@ -58,10 +58,12 @@ async def startup_pull_queue(context):
             if socket in dict(events):
                 msg = await socket.recv_multipart()
                 try:
-                    await asyncio.wait_for(router_loop(msg, flow_manager), timeout=60)
+                    await asyncio.wait_for(router_loop(msg, flow_manager), timeout=600)
                 except asyncio.exceptions.TimeoutError:
                     logging.warning("Message processing timeout reached!")
                 except Exception as ex:
                     logging.error("Message processing inner exception: %s", ex)
         except Exception as e:
             logging.error("Message processing outer exception: %s", e)
+        finally:
+            logging.debug("A single router loop has finished")
