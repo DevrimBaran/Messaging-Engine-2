@@ -45,8 +45,8 @@ class FlowManager:
         """
         flow = FlowEntity("test_flow1", [
             FlowOperationEntity("first_step", "sensor_temperature", None, None),
-            FlowOperationEntity("second_step", None, "log", None),
-            FlowOperationEntity("third_step", None, "log", None),
+            FlowOperationEntity("second_step", None, "log", None, "11111111"),
+            FlowOperationEntity("third_step", None, "log", None, "222222222"),
             FlowOperationEntity("last_step", None, None, "exit"),
         ])
         return [flow]
@@ -189,13 +189,13 @@ class FlowManager:
         """
         logging.info("Send FlowMessage to %s:%s", node.ip, node.port)
 
-        success = await send_message(f"{node.ip}:{node.port}", "flow-message",
+        success = await send_message(f"{node.ip}:{node.port}", "flow-messages",
                                      json.dumps(flow_message.__dict__, default=str), aiocoap.Code.PUT)
 
         if not success:
-            logging.error("PROBLEM Sending FlowMessage to %s:%s/flow-message", node.ip, node.port)
+            logging.error("PROBLEM Sending FlowMessage to %s:%s/flow-messages", node.ip, node.port)
         else:
-            logging.info("SUCCESS Sending FlowMessage to %s:%s/flow-message", node.ip, node.port)
+            logging.info("SUCCESS Sending FlowMessage to %s:%s/flow-messages", node.ip, node.port)
 
     def get_available_flows_for_sensor(self, sensor_type: SensorType) -> List[FlowEntity]:
         """

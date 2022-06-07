@@ -37,6 +37,7 @@ class FlowMessage(resource.Resource):
 
         try:
             node = json.loads(request.payload)
+            logging.debug("received dict on flow-messages endpoint: %s", node)
             is_valid = await self.is_request_valid(node)
             if not is_valid:
                 return Message(payload=b"INVALID REQUEST, MISSING OR INVALID PROPERTY", code=Code.BAD_REQUEST)
@@ -98,7 +99,9 @@ class FlowMessage(resource.Resource):
                 return await self.is_request_valid(i)
 
         # check if the payload is a valid base64 string (ascii chars + strlen == 0 mod 4)
-        if not re.match(BASE64_REGEX, str(node["payload"]).encode("ascii")):
+        s = str(node["payload"])
+        match = re.match(BASE64_REGEX, s)
+        if not match:
             logging.debug("Invalid base64 payload received")
             return False
 

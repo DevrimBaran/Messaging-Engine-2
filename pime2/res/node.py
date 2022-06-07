@@ -1,3 +1,4 @@
+import ipaddress
 import json
 import logging
 from json import JSONDecodeError
@@ -84,12 +85,21 @@ class Node(resource.Resource):
         for i in required_fields:
             if i not in node or node[i] is None:
                 return False
-        ipv4_regex_res = re.match(IPV4_REGEX, node["ip"])
         name_regex_res = re.match(NAME_REGEX, node["name"])
         node_match_res = 0 < node["port"] <= 65535
 
-        are_fields_valid = ipv4_regex_res and name_regex_res and node_match_res
+        are_fields_valid = name_regex_res and node_match_res
         if not are_fields_valid:
+            return False
+
+        is_ip_valid = False
+        try:
+            ipaddress.ip_address(node["ip"])
+            is_ip_valid = True
+        except ValueError as ve:
+            is_ip_valid = False
+
+        if not is_ip_valid:
             return False
 
         for i in ["sensor_skills", "actuator_skills"]:
