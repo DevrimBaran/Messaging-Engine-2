@@ -1,4 +1,3 @@
-import base64
 import json
 import uuid
 from datetime import datetime
@@ -16,8 +15,9 @@ class FlowMessageBuilder:
                             sensor_result: dict) -> FlowMessageEntity:
         """Build first message of a flow"""
         started_at = datetime.now()
+        payload = base64_encode(json.dumps(sensor_result))
         return FlowMessageEntity(uuid.uuid4().hex, flow.name, uuid.uuid4().hex, started_at, started_at, last_operation,
-                                 next_operation, base64_encode(json.dumps(sensor_result)), 1, [])
+                                 next_operation, payload, payload, 1, [])
 
     def build_next_message(self, flow: FlowEntity, flow_message: FlowMessageEntity, result: dict, last_operation: str,
                            next_operation: str):
@@ -27,7 +27,7 @@ class FlowMessageBuilder:
 
         return FlowMessageEntity(uuid.uuid4().hex, flow.name, flow_message.flow_id, flow_message.src_created_at,
                                  datetime.now(), last_operation, next_operation, base64_encode(json.dumps(result)),
-                                 1, old_history)
+                                 flow_message.original_payload, 1, old_history)
 
     def build_redirection_message(self, flow_message: FlowMessageEntity):
         """Build a redirection/copy message and append current flow message"""
@@ -37,4 +37,4 @@ class FlowMessageBuilder:
         return FlowMessageEntity(uuid.uuid4().hex, flow_message.flow_name, flow_message.flow_id,
                                  flow_message.src_created_at, datetime.now(),
                                  flow_message.last_operation, flow_message.next_operation,
-                                 flow_message.payload, 1, old_history)
+                                 flow_message.payload, flow_message.original_payload, 1, old_history)

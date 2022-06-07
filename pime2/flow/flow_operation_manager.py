@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
 
@@ -7,6 +7,7 @@ from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
 class FlowOperationManager:
     """
     This class handles the execution of a single flow operation step.
+    You should make sure the flow is validated before using the following methods.
 
     """
 
@@ -85,14 +86,15 @@ class FlowOperationManager:
 
         return []
 
-    def execute_operation(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str):
+    async def execute_operation(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str) -> Optional[Dict]:
         """
-        Method to execute an operation of a flow message defined by the step
+        Method to execute an operation of a flow message defined by the step.
+        The returned dictionary is the input value is the payload for the next flow message.
 
         :param flow:
         :param flow_message:
         :param step:
-        :return:
+        :return: Optional[Dict]
         """
         if flow_message.flow_name != flow.name:
             logging.warning("Invalid flow_message for flow received. Invalid names: flow: %s, flow message: %s",
@@ -108,6 +110,7 @@ class FlowOperationManager:
                 logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
                              flow_operation, flow_message.payload)
                 # TODO: execute operation
+                return {}
         if not is_executed:
             logging.error("No operation executed in flow %s with step %s", flow.name, step)
         return None

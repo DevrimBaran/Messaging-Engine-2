@@ -1,7 +1,7 @@
 import asyncio
 import json
 import logging
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 import aiocoap
 
@@ -130,7 +130,9 @@ class FlowManager:
             return
 
         # build flow message
-        next_msg = self.flow_message_builder.build_next_message(flow, flow_message, result, current_step, next_step)
+        next_msg = self.flow_message_builder.build_next_message(flow, flow_message,
+                                                                result if result is not None else {}, current_step,
+                                                                next_step)
 
         await self.send_message_to_nodes(flow, next_msg, nodes)
 
@@ -172,7 +174,7 @@ class FlowManager:
             self.cancel_flow(flow, flow_message, "step is not final")
             return
 
-        self.flow_operation_manager.execute_operation(flow, flow_message, final_step)
+        await self.flow_operation_manager.execute_operation(flow, flow_message, final_step)
 
         logging.info("FINISHED FLOW %s:%s", flow.name, flow_message.flow_id)
 
@@ -213,7 +215,7 @@ class FlowManager:
         return out
 
     async def execute_step(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str,
-                           nodes: List[NodeEntity]) -> (bool, dict):
+                           nodes: List[NodeEntity]) -> (bool, Optional[Dict]):
         """
         Helper method to execute a single step locally and remote.
         If the execution was also locally, the return value is true, else false.
@@ -230,9 +232,9 @@ class FlowManager:
 
         is_executed_locally = len(list(filter(lambda x: not self.node_service.is_node_remote(x), nodes_of_step))) > 0
         if is_executed_locally:
-            result = self.flow_operation_manager.execute_operation(flow, flow_message, step)
+            result = await self.flow_operation_manager.execute_operation(flow, flow_message, step)
             return True, result
-        return False, {}
+        return False, None
 
     async def send_message_to_nodes(self, flow: FlowEntity, message: FlowMessageEntity, nodes: List[NodeEntity],
                                     execute_local=True):

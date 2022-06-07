@@ -52,5 +52,6 @@ class FlowMessageEntity:
     last_operation: str
     next_operation: str
     payload: str
+    original_payload: str
     count: int
     history: List['FlowMessageEntity']
