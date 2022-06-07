@@ -9,7 +9,7 @@ from pime2.repository.node_repository import NodeRepository
 from pime2.service.node_service import NodeService
 
 
-class MyTestCase(unittest.TestCase):
+class FlowValidationText(unittest.TestCase):
     node_repo: NodeRepository = None
     connection = None
 
