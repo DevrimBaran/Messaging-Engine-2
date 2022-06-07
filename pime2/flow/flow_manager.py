@@ -7,7 +7,6 @@ import aiocoap
 
 from pime2 import MESSAGE_SENDING_REMOTE_TIMEOUT
 from pime2.coap_client import send_message
-from pime2.config import get_me_conf
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
 from pime2.flow.flow_validation_service import FlowValidationService
