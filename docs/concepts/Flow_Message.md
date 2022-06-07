@@ -6,6 +6,7 @@
 {
   "id": "message_uuid",
   "flow_name": "flow_name",
+  "flow_id": "flow_id",
   "src_created_at": "datetime",
   "last_operation": "last_op_name",
   "next_operation": "next_op_name",

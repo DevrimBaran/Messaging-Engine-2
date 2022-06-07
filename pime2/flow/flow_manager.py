@@ -1,7 +1,7 @@
 import asyncio
 import json
 import logging
-from typing import List
+from typing import List, Optional
 
 import aiocoap
 
@@ -27,11 +27,10 @@ class FlowManager:
         self.flow_operation_manager = flow_operation_manager
         self.flow_message_builder = flow_message_builder
         self.node_service = node_service
-        self.startup()
 
     def get_nodes(self) -> List[NodeEntity]:
         """
-        This methods provides a list of currently known nodes.
+        This method provides a list of currently known nodes.
 
         :return:
         """
@@ -62,12 +61,10 @@ class FlowManager:
         neighbors = self.get_nodes()
 
         # validate
-        is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
+        is_valid = await self.validate_flow(flow, None)
         if not is_valid:
-            logging.error("Problem with flow '%s'", flow.name)
-            for i in validation_msgs:
-                logging.error("Validation message: %s", i)
             return
+
         # detect first step
         first_step = flow.ops[0].name if len(flow.ops) >= 1 else None
         if first_step is None:
@@ -101,11 +98,8 @@ class FlowManager:
         :return:
         """
         # validate
-        is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
+        is_valid = await self.validate_flow(flow)
         if not is_valid:
-            logging.error("Problem with flow '%s'")
-            for i in validation_msgs:
-                logging.error("Validation message: '%s'", i)
             return
 
         # detect current step and execute
@@ -137,6 +131,20 @@ class FlowManager:
 
         await self.send_message_to_nodes(flow, next_msg, nodes)
 
+    async def validate_flow(self, flow: FlowEntity, flow_message: Optional[FlowMessageEntity] = None):
+        """
+        If this method returns False, the execution of this flow (message) can be stopped
+
+        :param flow_message:
+        :param flow:
+        :return:
+        """
+        is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
+        if not is_valid:
+            self.cancel_flow(flow, flow_message)
+            return False
+        return True
+
     async def finish_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity):
         """
         Method to execute the last operation of a flow
@@ -146,11 +154,8 @@ class FlowManager:
         :return:
         """
         # validate
-        is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
+        is_valid = await self.validate_flow(flow)
         if not is_valid:
-            logging.error("Problem with flow '%s'")
-            for i in validation_msgs:
-                logging.error("Validation message: '%s'", i)
             return
 
         # detect current step and execute
@@ -197,20 +202,6 @@ class FlowManager:
                 out.append(f)
         return out
 
-    def startup(self):
-        """
-        This method is called at the end of the constructor to do prepare the flow managers work.
-        :return:
-        """
-        node = self.node_service.get_own_node()
-        if node is None:
-            # Create own entry
-            logging.info("FlowManager: Creating self node")
-            me_conf = get_me_conf()
-            self.node_service.put_node(NodeEntity(me_conf.instance_id, me_conf.host, me_conf.port))
-        else:
-            logging.info("FlowManager: Self node exists")
-
     async def execute_step(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str,
                            nodes: List[NodeEntity]) -> (bool, dict):
         """
@@ -249,3 +240,12 @@ class FlowManager:
         if len(node_tasks) == 0:
             return
         await asyncio.wait(node_tasks, return_when=asyncio.ALL_COMPLETED, timeout=20)
+
+    def cancel_flow(self, flow: FlowEntity, flow_message: Optional[FlowMessageEntity] = None):
+        """
+        Method to cancel a flow
+        :param flow:
+        :param flow_message:
+        :return:
+        """
+        logging.info("Cancelled flow %s with message %s", flow, flow_message)
