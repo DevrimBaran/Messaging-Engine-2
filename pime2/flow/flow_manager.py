@@ -46,6 +46,7 @@ class FlowManager:
         flow = FlowEntity("test_flow1", [
             FlowOperationEntity("first_step", "sensor_temperature", None, None),
             FlowOperationEntity("second_step", None, "log", None),
+            FlowOperationEntity("third_step", None, "log", None),
             FlowOperationEntity("last_step", None, None, "exit"),
         ])
         return [flow]
