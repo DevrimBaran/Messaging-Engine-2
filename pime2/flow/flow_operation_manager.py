@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
 
@@ -7,6 +7,7 @@ from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
 class FlowOperationManager:
     """
     This class handles the execution of a single flow operation step.
+    You should make sure the flow is validated before using the following methods.
 
     """
 
@@ -25,22 +26,25 @@ class FlowOperationManager:
                 return f.name
         return None
 
-    def detect_next_step(self, flow: FlowEntity, flow_message: FlowMessageEntity) -> Optional[str]:
+    def detect_next_step(self, flow: FlowEntity, current_step: str) -> Optional[str]:
         """
         Detect next step
 
         :param flow:
-        :param flow_message:
+        :param current_step:
         :return:
         """
-        if flow_message.flow_name != flow.name:
-            return None
         take_this = False
+        i = 0
         for f in flow.ops:
+            i += 1
             if take_this:
                 return f.name
-            if f.name.lower() == flow_message.next_operation.lower():
+            if f.name.lower() == current_step.lower():
+                # return next or last
                 take_this = True
+                if len(flow.ops) == i:
+                    return f.name
         return None
 
     def detect_second_step(self, flow: FlowEntity) -> Optional[str]:
@@ -57,6 +61,8 @@ class FlowOperationManager:
     def detect_nodes_of_step(self, flow: FlowEntity, step: str, nodes: List[NodeEntity]) -> List[NodeEntity]:
         """
         Method to detect which nodes are affected by the given step.
+        TODO: Consider skills here (ME-44?)
+
         :param flow:
         :param step:
         :param nodes:
@@ -74,20 +80,21 @@ class FlowOperationManager:
                 node_list = []
                 for name in where_clause.split(","):
                     for node in nodes:
-                        if node.name == name:
+                        if node.name == name.strip():
                             node_list.append(node)
                 return node_list
 
         return []
 
-    def execute_operation(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str):
+    async def execute_operation(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str) -> Optional[Dict]:
         """
-        Method to execute an operation of a flow message defined by the step
+        Method to execute an operation of a flow message defined by the step.
+        The returned dictionary is the input value is the payload for the next flow message.
 
         :param flow:
         :param flow_message:
         :param step:
-        :return:
+        :return: Optional[Dict]
         """
         if flow_message.flow_name != flow.name:
             logging.warning("Invalid flow_message for flow received. Invalid names: flow: %s, flow message: %s",
@@ -97,12 +104,15 @@ class FlowOperationManager:
         for f in flow.ops:
             if f.name.lower() == step.lower():
                 flow_operation_name = f.name.lower()
+                flow_operation = f.process
                 is_executed = True
-                logging.info("FlowOperationManager: EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
-                             f.process, flow_message.payload)
+
+                logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
+                             flow_operation, flow_message.payload)
                 # TODO: execute operation
+                return {}
         if not is_executed:
-            logging.error("FlowOperationManager: No operation executed in flow %s with step %s", flow.name, step)
+            logging.error("No operation executed in flow %s with step %s", flow.name, step)
         return None
 
     def is_last_step(self, flow: FlowEntity, current_step: str) -> bool:

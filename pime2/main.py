@@ -13,7 +13,7 @@ from pime2.push_queue import init_push_queue
 from pime2.sensor_listener import startup_sensor_listener
 from pime2.service.node_service import NodeService
 from pime2.silent import startup_silent_task
-from pime2.zmq import startup_pull_queue, startup_push_queue
+from pime2.zeromq import startup_pull_queue, startup_push_queue
 
 
 async def pime_run(config: MEConfiguration):

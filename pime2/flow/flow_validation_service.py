@@ -12,7 +12,7 @@ class FlowValidationService:
     def is_flow_valid(self, flow: FlowEntity) -> (bool, List[str]):
         """
         Method to check if a flow is valid.
-        TODO: Not yet implemented
+        TODO: Not yet implemented, ME-46
 
         :param flow:
         :return:
@@ -20,5 +20,4 @@ class FlowValidationService:
         if len(flow.ops) == 0:
             return False, ["Got flow without operations!"]
 
-        # TODO implement
         return True, []

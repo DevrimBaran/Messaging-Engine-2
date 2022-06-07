@@ -3,19 +3,17 @@ import asyncio
 import logging
 from aiocoap import Code, Context, Message
 
-TIMEOUT = 0.5
-
-
 # workaround for timeout
 # TODO: globals()["numbers"].REQUEST_TIMEOUT = 1.0
 # globals()["numbers"].MAX_RETRANSMIT = 0
+from pime2 import NEIGHBOR_DISCOVER_PING_TIMEOUT
+
 
 async def ping(destination):
     """
     Ping Implementation
     takes an IP as destination and sends a get request to its hello endpoint
     """
-    logging.info("Created Client Context")
     client_context = await Context.create_client_context()
     logging.info("Sending Ping request")
     code = Code.GET
@@ -23,7 +21,8 @@ async def ping(destination):
     request = Message(code=code, uri=uri)
     logging.debug("Request: code= %s \turi=  %s", code, uri)
     try:
-        response = await asyncio.wait_for(client_context.request(request).response, timeout=TIMEOUT)
+        response = await asyncio.wait_for(client_context.request(request).response,
+                                          timeout=NEIGHBOR_DISCOVER_PING_TIMEOUT)
         logging.debug("Response: %s", response)
     except Exception as exception:
         logging.error('Ping failed! Exception: %s', exception)
@@ -38,17 +37,16 @@ async def send_message(destination, endpoint, payload, code):
     Send message with an arbitrary payload to a specific destination and endpoint.
     Takes an IP as destination, an endpoint of the destination and the payload to send
     """
-    logging.info("Created Client Context")
     client_context = await Context.create_client_context()
     logging.info("Sending Message request")
     uri = 'coap://' + destination + '/' + endpoint
-    request = Message(code=code, uri=uri, payload=payload)
+    request = Message(code=code, uri=uri, payload=bytes(payload.encode("utf-8")))
     logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
     try:
         response = await client_context.request(request).response
         logging.debug("Response: %s", response)
-    except Exception as exception:
-        logging.error('Sending Message failed! Exception: %s', exception)
+    except Exception as ex:
+        logging.error('Sending Message to %s/%s failed! Exception: %s', destination, endpoint, ex)
         return False
     else:
         logging.info('Message Request successful: %s\n%r', response.code, response.payload)

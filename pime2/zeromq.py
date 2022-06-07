@@ -1,12 +1,11 @@
-# pylint: disable=broad-except
+# pylint: disable=broad-except,no-member
 import asyncio
 import logging
 
 import zmq
-from aiocoap import Context
 from zmq.asyncio import Poller
 
-from pime2.coap_client import CoapClient
+from pime2 import ROUTER_LOOP_TASK_TIMEOUT
 from pime2.flow import FlowManager, FlowValidationService, FlowOperationManager
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.router import router_loop
@@ -52,20 +51,20 @@ async def startup_pull_queue(context):
 
     # load and instantiate flow manager
     flow_manager = FlowManager(FlowValidationService(), FlowOperationManager(),
-                               FlowMessageBuilder(), NodeService(), CoapClient(await Context.create_client_context()))
+                               FlowMessageBuilder(), NodeService())
 
     while True:
         try:
             events = await poller.poll()
             if socket in dict(events):
                 msg = await socket.recv_multipart()
-                future = asyncio.wait([asyncio.create_task(router_loop(msg, flow_manager))], timeout=30.0)
                 try:
-                    await future
+                    await asyncio.wait_for(router_loop(msg, flow_manager), timeout=ROUTER_LOOP_TASK_TIMEOUT)
                 except asyncio.exceptions.TimeoutError:
                     logging.warning("Message processing timeout reached!")
                 except Exception as ex:
-                    logging.error("Message processing inner exception: %s, %s", ex, future)
-
+                    logging.error("Message processing inner exception: %s", ex)
         except Exception as e:
             logging.error("Message processing outer exception: %s", e)
+        finally:
+            logging.debug("A single router loop has finished")
