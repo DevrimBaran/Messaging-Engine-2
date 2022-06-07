@@ -32,7 +32,7 @@ class DatabaseTest(unittest.TestCase):
                                         ('node2', "10.10.10.2", 5683),
                                         ('node3', "10.10.10.3", 5683);"""
 
-        sql_select_testdata = """SELECT name, ip, port FROM nodes;"""
+        sql_select_testdata = """SELECT name, ip, port FROM nodes ORDER BY id;"""
 
         cursor = self.connection.cursor()
         cursor.execute(sql_insert_testdata)
@@ -46,7 +46,9 @@ class DatabaseTest(unittest.TestCase):
 
         self.assertEqual(
             [(conf.instance_id, conf.host, conf.port),
-             ('node1', '10.10.10.1', 5683), ('node2', "10.10.10.2", 5683), ('node3', "10.10.10.3", 5683)],
+             ('node1', '10.10.10.1', 5683),
+             ('node2', "10.10.10.2", 5683),
+             ('node3', "10.10.10.3", 5683)],
             result)
 
     @classmethod
