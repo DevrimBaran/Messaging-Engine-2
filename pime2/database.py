@@ -63,7 +63,7 @@ def create_default_tables(connection, node_service):
         own_me_node = node_service.get_own_node()
         if own_me_node is None:
             conf = get_me_conf()
-            # TODO: add sensor skills for own record
+            # TODO: ME-44 add sensor skills for own record
             node_service.put_node(NodeEntity(conf.instance_id, conf.host, conf.port))
 
     except Error:

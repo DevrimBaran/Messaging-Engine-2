@@ -38,7 +38,7 @@ class FlowManager:
     def get_flows(self) -> List[FlowEntity]:
         """
         This methods provides a list of currently known nodes.
-        FIXME: This method will be replaced with a db access in a later step.
+        FIXME: This method will be replaced with a db access in a later step. (ME-46)
 
         :return:
         """

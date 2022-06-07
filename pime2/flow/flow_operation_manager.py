@@ -60,7 +60,7 @@ class FlowOperationManager:
     def detect_nodes_of_step(self, flow: FlowEntity, step: str, nodes: List[NodeEntity]) -> List[NodeEntity]:
         """
         Method to detect which nodes are affected by the given step.
-        TODO: Consider skills here
+        TODO: Consider skills here (ME-44?)
 
         :param flow:
         :param step:
