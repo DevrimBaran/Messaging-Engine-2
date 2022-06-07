@@ -3,6 +3,7 @@ import json
 import uuid
 from datetime import datetime
 
+from pime2.common import base64_encode
 from pime2.entity import FlowMessageEntity, FlowEntity
 
 
@@ -16,15 +17,7 @@ class FlowMessageBuilder:
         """Build first message of a flow"""
         started_at = datetime.now()
         return FlowMessageEntity(uuid.uuid4().hex, flow.name, uuid.uuid4().hex, started_at, started_at, last_operation,
-                                 next_operation, self.base64_encode(json.dumps(sensor_result)), 1, [])
-
-    def base64_encode(self, raw_text: str) -> str:
-        """base64 utility"""
-        return str(base64.b64encode(raw_text.encode("ascii")))
-
-    def base64_decode(self, raw_text: str) -> str:
-        """base64 utility"""
-        return str(base64.b64decode(raw_text.encode("ascii")))
+                                 next_operation, base64_encode(json.dumps(sensor_result)), 1, [])
 
     def build_next_message(self, flow: FlowEntity, flow_message: FlowMessageEntity, result: dict, last_operation: str,
                            next_operation: str):
@@ -33,7 +26,7 @@ class FlowMessageBuilder:
         old_history.append(flow_message)
 
         return FlowMessageEntity(uuid.uuid4().hex, flow.name, flow_message.flow_id, flow_message.src_created_at,
-                                 datetime.now(), last_operation, next_operation, self.base64_encode(json.dumps(result)),
+                                 datetime.now(), last_operation, next_operation, base64_encode(json.dumps(result)),
                                  1, old_history)
 
     def build_redirection_message(self, flow_message: FlowMessageEntity):

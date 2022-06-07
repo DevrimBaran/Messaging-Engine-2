@@ -5,6 +5,7 @@ import logging
 import zmq
 from zmq.asyncio import Poller
 
+from pime2 import ROUTER_LOOP_TASK_TIMEOUT
 from pime2.flow import FlowManager, FlowValidationService, FlowOperationManager
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.router import router_loop
@@ -58,7 +59,7 @@ async def startup_pull_queue(context):
             if socket in dict(events):
                 msg = await socket.recv_multipart()
                 try:
-                    await asyncio.wait_for(router_loop(msg, flow_manager), timeout=600)
+                    await asyncio.wait_for(router_loop(msg, flow_manager), timeout=ROUTER_LOOP_TASK_TIMEOUT)
                 except asyncio.exceptions.TimeoutError:
                     logging.warning("Message processing timeout reached!")
                 except Exception as ex:

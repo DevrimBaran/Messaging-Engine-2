@@ -1,4 +1,3 @@
-import base64
 import datetime
 import json
 import logging
@@ -9,6 +8,7 @@ import re
 from aiocoap import resource, Message, Code
 
 from pime2 import NAME_REGEX, BASE64_REGEX
+from pime2.common import base64_decode
 from pime2.mapper.flow_mapper import FlowMapper
 from pime2.message import FlowMessageResultMessage
 from pime2.push_queue import get_push_queue
@@ -102,7 +102,7 @@ class FlowMessage(resource.Resource):
             logging.debug("Invalid base64 payload received")
             return False
 
-        payload_content = base64.b64decode(str(node["payload"]).encode("ascii"))
+        payload_content = base64_decode(node["payload"])
         try:
             json.loads(payload_content)
         except JSONDecodeError:

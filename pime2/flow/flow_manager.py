@@ -5,6 +5,7 @@ from typing import List, Optional
 
 import aiocoap
 
+from pime2 import MESSAGE_SENDING_REMOTE_TIMEOUT
 from pime2.coap_client import send_message
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
@@ -248,7 +249,7 @@ class FlowManager:
                     await self.execute_flow(flow, message, nodes)
         if len(node_tasks) == 0:
             return
-        await asyncio.wait(node_tasks, return_when=asyncio.ALL_COMPLETED, timeout=20)
+        await asyncio.wait(node_tasks, return_when=asyncio.ALL_COMPLETED, timeout=MESSAGE_SENDING_REMOTE_TIMEOUT)
 
     def cancel_flow(self, flow: FlowEntity, flow_message: Optional[FlowMessageEntity] = None, additional_msg: str = ""):
         """
