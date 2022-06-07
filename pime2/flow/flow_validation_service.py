@@ -39,6 +39,7 @@ def is_flow_valid(flow: FlowEntity) -> (bool, str):
             if_input_defined = True
             if count_input > 1:
                 return False, "Only one input is allowed in a flow!"
+        # TODO: Implement check if skills defined in json are in db. Wait till add skill to own node is implemented.
         if op.process not in process_ops and op.process:
             return False, "Wrong input for process!"
         if not re.match(pattern, op.name):
