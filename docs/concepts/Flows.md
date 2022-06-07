@@ -119,5 +119,7 @@
 
 - `exit`: exit flow without further action (the only case when no `where` is required, see in Example above)
 - `actuator_* <args>`: for all supported actuators
-    - `led`
-    - `speaker`
+  - `led` 
+    - `args`: One optional argument (Default is `True` to turn on LED, `False` to turn in off)
+  - `speaker`
+    - `args`: Three optional arguments (Has one input for duration and two for the pitch. Default is `2.0` for duration in seconds and `0.0005` for both inputs for the pitch)

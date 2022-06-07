@@ -1,8 +1,10 @@
 instance_id: 123456678
 loglevel: DEBUG
 is_debug: false
+is_neighbor_discovery_enabled: false
 host: 127.0.0.1
 port: 5683
+database: "pime_database.db"
 read_interval: 3.0
 sensors:
   - name: "Button-Sensor"
@@ -18,7 +20,10 @@ actuators:
   - name: "LED-Actuator"
     type: led
     gpio1: 15
-    gpio2: 16
+    is_test_mode: true
+  - name: "Speaker2"
+    type: speaker
+    gpio1: 15
     is_test_mode: true
   - name: "Speaker-Actuator"
     type: speaker
