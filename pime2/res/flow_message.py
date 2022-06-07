@@ -8,6 +8,7 @@ from typing import List
 import re
 from aiocoap import resource, Message, Code
 
+from pime2 import NAME_REGEX, BASE64_REGEX
 from pime2.mapper.flow_mapper import FlowMapper
 from pime2.message import FlowMessageResultMessage
 from pime2.push_queue import get_push_queue
@@ -65,9 +66,6 @@ class FlowMessage(resource.Resource):
             "payload",
             "count",
         ]
-        # TODO: use regex as constant
-        name_regex = "^[a-zA-Z0-9_.-]{3,128}$"
-
         for i in required_fields:
             if i not in node or node[i] is None:
                 logging.debug("Missing field in flow message: '%s'", i)
@@ -80,7 +78,7 @@ class FlowMessage(resource.Resource):
             "next_operation",
         ]
         for namelike_field in name_regex_fields:
-            if not re.match(name_regex, node[namelike_field]):
+            if not re.match(NAME_REGEX, node[namelike_field]):
                 logging.debug("Invalid name like field '%s'", namelike_field)
                 return False
 
@@ -100,8 +98,7 @@ class FlowMessage(resource.Resource):
                 return await self.is_request_valid(i)
 
         # check if the payload is a valid base64 string (ascii chars + strlen == 0 mod 4)
-        base64_regex = b"^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$"
-        if not re.match(base64_regex, str(node["payload"]).encode("ascii")):
+        if not re.match(BASE64_REGEX, str(node["payload"]).encode("ascii")):
             logging.debug("Invalid base64 payload received")
             return False
 
