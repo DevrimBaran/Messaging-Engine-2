@@ -1,0 +1,28 @@
+{
+  "name": "test_cep_flow_2",
+  "ops": [
+    {
+      "name": "sensor_read",
+      "input": "sensor_button",
+      "where": "me2_first"
+    },
+    {
+      "name": "cep_intercepted",
+      "process": "cep_intercept",
+      "where": "me2_second",
+      "args": {
+        "expression": "x=true and y=true",
+        "variables":  { 
+          "x": "button1",
+          "y": "button2"
+         }
+      }
+    },
+    {
+      "name": "led_call",
+      "output": "actuator_led",
+      "where": "me2_third"
+    }
+  ]
+}
+  
