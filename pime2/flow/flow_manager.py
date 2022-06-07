@@ -11,7 +11,7 @@ from pime2.coap_client import send_message
 from pime2.common import base64_decode
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
-from pime2.flow.flow_validation_service import FlowValidationService
+from pime2.flow.flow_validation_service import is_flow_valid
 from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
 from pime2.sensor.sensor import SensorType
 from pime2.service.node_service import NodeService
@@ -23,9 +23,8 @@ class FlowManager:
     Flow step operations are executed by FlowOperationManager.
     """
 
-    def __init__(self, flow_validation_service: FlowValidationService, flow_operation_manager: FlowOperationManager,
+    def __init__(self, flow_operation_manager: FlowOperationManager,
                  flow_message_builder: FlowMessageBuilder, node_service: NodeService):
-        self.flow_validation_service = flow_validation_service
         self.flow_operation_manager = flow_operation_manager
         self.flow_message_builder = flow_message_builder
         self.node_service = node_service
@@ -148,7 +147,7 @@ class FlowManager:
         :param flow:
         :return:
         """
-        is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
+        is_valid, validation_msgs = is_flow_valid(flow)
         if not is_valid:
             logging.warning("Validate flow message: %s", validation_msgs)
             self.cancel_flow(flow, flow_message)
