@@ -1,5 +1,5 @@
 instance_id: 222222222
-loglevel: DEBUG
+loglevel: INFO
 database: me2.db
 is_debug: false
 host: 0.0.0.0

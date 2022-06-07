@@ -18,7 +18,7 @@ async def router_loop(msg, manager: FlowManager):
     :return:
     """
     received_object = json.loads(msg[0])
-    logging.info("received message json: %s", received_object)
+    logging.debug("Received message json: %s", received_object)
 
     # "message_type" and "message_content" are required here
     if "message_type" in received_object and "message_content" in received_object \

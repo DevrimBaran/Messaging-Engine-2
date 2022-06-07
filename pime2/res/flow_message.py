@@ -37,7 +37,7 @@ class FlowMessage(resource.Resource):
 
         try:
             node = json.loads(request.payload)
-            logging.debug("received dict on flow-messages endpoint: %s", node)
+            logging.debug("Received payload on flow-messages endpoint: %s", node)
             is_valid = await self.is_request_valid(dict(node))
             if not is_valid:
                 return Message(payload=b"INVALID REQUEST, MISSING OR INVALID PROPERTY", code=Code.BAD_REQUEST)

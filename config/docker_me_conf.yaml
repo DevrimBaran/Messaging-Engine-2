@@ -1,5 +1,5 @@
-instance_id: 11111111
-loglevel: DEBUG
+instance_id: 111111111
+loglevel: INFO
 database: me2.db
 is_debug: false
 host: 0.0.0.0
