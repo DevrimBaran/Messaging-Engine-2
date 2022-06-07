@@ -6,7 +6,7 @@ from json import JSONDecodeError
 import re
 from aiocoap import resource, Message, Code
 
-from pime2 import NAME_REGEX, IPV4_REGEX, CHAINED_NAME_REGEX
+from pime2 import NAME_REGEX, CHAINED_NAME_REGEX
 from pime2.mapper.node_mapper import NodeMapper
 from pime2.message import NodeCreateResultMessage
 from pime2.push_queue import get_push_queue
@@ -96,7 +96,7 @@ class Node(resource.Resource):
         try:
             ipaddress.ip_address(node["ip"])
             is_ip_valid = True
-        except ValueError as ve:
+        except ValueError:
             is_ip_valid = False
 
         if not is_ip_valid:
