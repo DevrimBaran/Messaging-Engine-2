@@ -57,6 +57,7 @@ class FlowMessage(resource.Resource):
         required_fields = [
             "id",
             "flow_name",
+            "flow_id",
             "src_created_at",
             "last_operation",
             "next_operation",
@@ -74,6 +75,7 @@ class FlowMessage(resource.Resource):
         name_regex_fields = [
             "id",
             "flow_name",
+            "flow_id",
             "last_operation",
             "next_operation",
         ]

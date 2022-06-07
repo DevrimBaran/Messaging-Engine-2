@@ -25,24 +25,25 @@ class FlowOperationManager:
                 return f.name
         return None
 
-    def detect_next_step(self, flow: FlowEntity, flow_message: FlowMessageEntity) -> Optional[str]:
+    def detect_next_step(self, flow: FlowEntity, current_step: str) -> Optional[str]:
         """
         Detect next step
 
         :param flow:
-        :param flow_message:
+        :param current_step:
         :return:
         """
-        if flow_message.flow_name != flow.name:
-            return None
         take_this = False
         i = 0
         for f in flow.ops:
             i += 1
             if take_this:
                 return f.name
-            if f.name.lower() == flow_message.last_operation.lower():
+            if f.name.lower() == current_step.lower():
+                # return next or last
                 take_this = True
+                if len(flow.ops) == i:
+                    return f.name
         return None
 
     def detect_second_step(self, flow: FlowEntity) -> Optional[str]:
@@ -59,6 +60,8 @@ class FlowOperationManager:
     def detect_nodes_of_step(self, flow: FlowEntity, step: str, nodes: List[NodeEntity]) -> List[NodeEntity]:
         """
         Method to detect which nodes are affected by the given step.
+        TODO: Consider skills here
+
         :param flow:
         :param step:
         :param nodes:
@@ -102,11 +105,11 @@ class FlowOperationManager:
                 flow_operation = f.process
                 is_executed = True
 
-                logging.info("FlowOperationManager: EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
+                logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
                              flow_operation, flow_message.payload)
                 # TODO: execute operation
         if not is_executed:
-            logging.error("FlowOperationManager: No operation executed in flow %s with step %s", flow.name, step)
+            logging.error("No operation executed in flow %s with step %s", flow.name, step)
         return None
 
     def is_last_step(self, flow: FlowEntity, current_step: str) -> bool:

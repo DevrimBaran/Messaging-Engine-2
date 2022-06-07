@@ -16,6 +16,7 @@ class FlowMapper:
         :return:
         """
         return FlowMessageEntity(str(node["id"]).strip(), str(node["flow_name"]).strip(),
+                                 str(node["flow_id"]).strip(),
                                  datetime.datetime.fromisoformat(node["src_created_at"]),
                                  datetime.datetime.fromisoformat(node["sent_at"]),
                                  str(node["last_operation"]).strip(), str(node["next_operation"]).strip(),

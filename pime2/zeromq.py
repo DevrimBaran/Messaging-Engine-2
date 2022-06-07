@@ -65,5 +65,3 @@ async def startup_pull_queue(context):
                     logging.error("Message processing inner exception: %s", ex)
         except Exception as e:
             logging.error("Message processing outer exception: %s", e)
-        finally:
-            logging.info("Message processing finished")

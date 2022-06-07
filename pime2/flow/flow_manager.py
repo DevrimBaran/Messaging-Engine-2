@@ -6,7 +6,6 @@ from typing import List, Optional
 import aiocoap
 
 from pime2.coap_client import send_message
-from pime2.config import get_me_conf
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
 from pime2.flow.flow_validation_service import FlowValidationService
@@ -85,6 +84,9 @@ class FlowManager:
 
         # build flow message
         msg = self.flow_message_builder.build_start_message(flow, first_step, step, result)
+
+        logging.info("START FLOW: %s:%s", msg.flow_name, msg.flow_id)
+
         # and send message to nodes
         await self.send_message_to_nodes(flow, msg, nodes)
 
@@ -116,7 +118,7 @@ class FlowManager:
             return
 
         # detect next step and delegate
-        next_step = self.flow_operation_manager.detect_next_step(flow, flow_message)
+        next_step = self.flow_operation_manager.detect_next_step(flow, current_step)
         if next_step is None:
             logging.error("Could not detect next step of flow: %s", flow.name)
             return
@@ -163,11 +165,14 @@ class FlowManager:
         if final_step is None:
             logging.error("Problem detecting current step of flow '%s'", flow.name)
             return
-        # TODO: Check if this is really the last step
+        # check if this is really the last step
+        if not self.flow_operation_manager.is_last_step(flow, final_step):
+            self.cancel_flow(flow, flow_message, "step is not final")
+            return
 
         self.flow_operation_manager.execute_operation(flow, flow_message, final_step)
-        logging.info("Finished flow")
-        return
+
+        logging.info("FINISHED FLOW %s:%s", flow.name, flow_message.flow_id)
 
     async def send_flow_message(self, flow_message: FlowMessageEntity, node: NodeEntity):
         """
@@ -241,11 +246,12 @@ class FlowManager:
             return
         await asyncio.wait(node_tasks, return_when=asyncio.ALL_COMPLETED, timeout=20)
 
-    def cancel_flow(self, flow: FlowEntity, flow_message: Optional[FlowMessageEntity] = None):
+    def cancel_flow(self, flow: FlowEntity, flow_message: Optional[FlowMessageEntity] = None, additional_msg: str = ""):
         """
         Method to cancel a flow
+        :param additional_msg:
         :param flow:
         :param flow_message:
         :return:
         """
-        logging.info("Cancelled flow %s with message %s", flow, flow_message)
+        logging.info("Cancelled flow %s with message %s. %s", flow, flow_message, additional_msg)
