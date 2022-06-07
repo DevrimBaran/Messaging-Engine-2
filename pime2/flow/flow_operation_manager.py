@@ -1,6 +1,7 @@
 import logging
 from typing import List, Optional, Dict
 
+from pime2.common import base64_decode
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
 
 
@@ -108,7 +109,7 @@ class FlowOperationManager:
                 is_executed = True
 
                 logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
-                             flow_operation, flow_message.payload)
+                             flow_operation, base64_decode(flow_message.payload))
                 # TODO: execute operation
                 return {}
         if not is_executed:

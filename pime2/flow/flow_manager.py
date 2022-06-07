@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import json
 import logging
 from typing import List, Optional, Dict
@@ -189,8 +190,23 @@ class FlowManager:
         """
         logging.info("Send FlowMessage to %s:%s", node.ip, node.port)
 
+        def default_encoder(obj):
+            if isinstance(obj, FlowMessageEntity):
+                tl_msg = obj.__dict__
+                history_list = []
+                for history_msg in obj.history:
+                    history_list.append(history_msg.__dict__)
+
+                tl_msg["history"] = history_list
+                return tl_msg
+            if isinstance(obj, datetime.datetime):
+                return str(obj)
+            return json.JSONEncoder().default(obj)
+
+        current_payload = json.dumps(flow_message.__dict__, default=default_encoder)
+        logging.debug("Flow-Message payload to send: %s", current_payload)
         success = await send_message(f"{node.ip}:{node.port}", "flow-messages",
-                                     json.dumps(flow_message.__dict__, default=str), aiocoap.Code.PUT)
+                                     current_payload, aiocoap.Code.PUT)
 
         if not success:
             logging.error("PROBLEM Sending FlowMessage to %s:%s/flow-messages", node.ip, node.port)

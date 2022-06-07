@@ -54,6 +54,5 @@ async def router_loop(msg, manager: FlowManager):
             await manager.execute_flow(selected_flow[0], FlowMapper().json_to_message_entity(flow_message),
                                        manager.get_nodes())
 
-        logging.info("Received message json: %s", received_object)
     else:
         logging.error("Problem with received message: %s", received_object)
