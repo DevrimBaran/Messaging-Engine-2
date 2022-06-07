@@ -2,7 +2,7 @@ import json
 import logging
 from json import JSONDecodeError
 
-import regex
+import re
 from aiocoap import resource, Message, Code
 
 from pime2.mapper.node_mapper import NodeMapper
@@ -86,8 +86,8 @@ class Node(resource.Resource):
         for i in required_fields:
             if i not in node or node[i] is None:
                 return False
-        ipv4_regex_res = regex.match(ipv4_regex, node["ip"])
-        name_regex_res = regex.match(name_regex, node["name"])
+        ipv4_regex_res = re.match(ipv4_regex, node["ip"])
+        name_regex_res = re.match(name_regex, node["name"])
         node_match_res = 0 < node["port"] <= 65535
 
         are_fields_valid = ipv4_regex_res and name_regex_res and node_match_res
@@ -95,7 +95,7 @@ class Node(resource.Resource):
             return False
 
         for i in ["sensor_skills", "actuator_skills"]:
-            if i in node and len(node[i]) > 0 and not regex.match(chained_name_regex, node[i]):
+            if i in node and len(node[i]) > 0 and not re.match(chained_name_regex, node[i]):
                 return False
 
     async def handle_incoming_node(self, request) -> Message:
@@ -131,8 +131,8 @@ class Node(resource.Resource):
         for i in required_fields:
             if i not in node or node[i] is None:
                 return False
-        ipv4_regex_res = regex.match(ipv4_regex, node["ip"])
-        name_regex_res = regex.match(name_regex, node["name"])
+        ipv4_regex_res = re.match(ipv4_regex, node["ip"])
+        name_regex_res = re.match(name_regex, node["name"])
         node_match_res = 0 < node["port"] <= 65535
 
         are_fields_valid = ipv4_regex_res and name_regex_res and node_match_res
@@ -140,5 +140,5 @@ class Node(resource.Resource):
             return False
 
         for i in ["sensor_skills", "actuator_skills"]:
-            if i in node and len(node[i]) > 0 and not regex.match(chained_name_regex, node[i]):
+            if i in node and len(node[i]) > 0 and not re.match(chained_name_regex, node[i]):
                 return False

@@ -5,7 +5,7 @@ import logging
 from json import JSONDecodeError
 from typing import List
 
-import regex
+import re
 from aiocoap import resource, Message, Code
 
 from pime2.mapper.flow_mapper import FlowMapper
@@ -78,7 +78,7 @@ class FlowMessage(resource.Resource):
             "next_operation",
         ]
         for namelike_field in name_regex_fields:
-            if not regex.match(name_regex, node[namelike_field]):
+            if not re.match(name_regex, node[namelike_field]):
                 logging.debug("Invalid name like field '%s'", namelike_field)
                 return False
 
@@ -99,7 +99,7 @@ class FlowMessage(resource.Resource):
 
         # check if the payload is a valid base64 string (ascii chars + strlen == 0 mod 4)
         base64_regex = b"^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$"
-        if not regex.match(base64_regex, str(node["payload"]).encode("ascii")):
+        if not re.match(base64_regex, str(node["payload"]).encode("ascii")):
             logging.debug("Invalid base64 payload received")
             return False
 
