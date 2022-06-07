@@ -31,19 +31,19 @@ class HallSensor(SingleGpioSensor):
             # start sensor listening - the conditional import is important to support non-raspi development environments
             from RPi import GPIO
             if GPIO.input(self.sensor) == GPIO.HIGH:
-                logging.info("No Magnetic field detected")
+                logging.debug("No Magnetic field detected")
                 magnet = False
             else:
-                logging.info("Magnetic field detected")
+                logging.debug("Magnetic field detected")
                 magnet = True
             return HallSensorResult(magnet)
         # hall sensor dummy
         magnet = random.randint(0, 1)
         if magnet == 0:
-            logging.info("No magnet detected")
+            logging.debug("No magnet detected")
             magnet = False
         else:
-            logging.info("Magnet detected")
+            logging.debug("Magnet detected")
             magnet = True
         return HallSensorResult(magnet)
 

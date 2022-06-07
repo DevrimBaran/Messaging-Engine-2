@@ -17,7 +17,11 @@ class NodeRepository:
     def create_node(self, node: NodeEntity):
         """Saves a node in database"""
         cursor = self.connection.cursor()
-        # TODO make insert/update dynamically
+
+        # delete a node with an existing name like this to avoid old data
+        if self.check_in_database(node.name):
+            self.delete_node_by_name(node.name)
+
         query = 'INSERT INTO nodes(name,ip,port,sensor_skills,actuator_skills) VALUES(?,?,?,?,?);'
         logging.debug('Executing SQL query: "%s"', query)
         logging.debug('Values inserted: name:<%s> ip:<%s> port:<%s> sensor_skills:<%s> actuator_skills: <%s>',
@@ -121,24 +125,6 @@ class NodeRepository:
         logging.debug('Deleted all records from table "node"')
         cursor.close()
 
-    def get_node_id_by_name(self, name) -> Optional[int]:
-        """Gets the id of the node by its name"""
-        # TODO this method could be the same as self.read_node_by_name?
-        cursor = self.connection.cursor()
-        query = 'SELECT id FROM nodes WHERE name = ?;'
-        logging.debug('Executing SELECT SQL query: "%s" with name:<%s>', query, name)
-
-        try:
-            cursor.execute(query, (name,))
-            node_id = cursor.fetchone()
-            if node_id is None:
-                logging.debug('No node with name "%s" exists.', name)
-                return None
-            logging.debug('Query executed. Result: id:<%s>', node_id[0])
-            return node_id[0]
-        finally:
-            cursor.close()
-
     def commit(self):
         """Commits the database transactions"""
         self.connection.commit()
@@ -153,13 +139,15 @@ class NodeRepository:
         query = 'SELECT * FROM nodes WHERE name != ?;'
         logging.debug('Executing SELECT SQL query: "%s"', query)
         cursor.execute(query, (get_me_conf().instance_id,))
-        neighbors = cursor.fetchall()
-        if neighbors is None:
-            logging.debug('No nodes existing.')
-            return None
-        logging.debug('Query executed. Result: %s', neighbors)
-        cursor.close()
-        result__list = []
+        try:
+            neighbors = cursor.fetchall()
+            if neighbors is None:
+                logging.debug('No nodes existing.')
+                return None
+            logging.debug('Query executed. Result: %s', neighbors)
+        finally:
+            cursor.close()
+        result_list = []
         for node in neighbors:
-            result__list.append(NodeEntity(node[1], node[2], node[3], node[4], node[5]))
-        return result__list
+            result_list.append(NodeEntity(node[1], node[2], node[3], node[4], node[5]))
+        return result_list

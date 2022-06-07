@@ -8,10 +8,10 @@ class SensorType(Enum):
     """
     Enum to declare which sensor types are supported.
     """
-    TEMPERATURE = 1
-    BUTTON = 2
+    TEMPERATURE = "TEMPERATURE"
+    BUTTON = "BUTTON"
     # Hall sensors detect magnetic fields
-    HALL = 3
+    HALL = "HALL"
 
 
 class Sensor(Operator, ABC):

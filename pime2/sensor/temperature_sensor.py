@@ -48,7 +48,7 @@ class TemperatureSensor(SingleGpioSensor):
                 temp_c = self.sensor.temperature
                 if temp_c is not None:
                     # pylint: disable=consider-using-f-string
-                    logging.info("Temp:{0:0.1f}°C".format(temp_c))
+                    logging.debug("Temp:{0:0.1f}°C".format(temp_c))
                     temperature = temp_c
             except RuntimeError as error:
                 if len(error.args) > 0:
@@ -63,7 +63,7 @@ class TemperatureSensor(SingleGpioSensor):
             return TemperatureSensorResult(None)
         # Temperature sensor dummy logic
         random_temperature = float(random.randint(-50, 50) + random.random())
-        logging.info("Temp:%.1f°C", random_temperature)
+        logging.debug("Temp:%.1f°C", random_temperature)
         return TemperatureSensorResult(random_temperature)
 
     def open(self):

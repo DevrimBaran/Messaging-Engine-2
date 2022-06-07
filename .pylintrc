@@ -146,7 +146,8 @@ disable=print-statement,
         useless-super-delegation,
         fixme,
         too-few-public-methods,
-        R0801
+        R0801,
+        C0103
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -510,10 +511,10 @@ known-third-party=enchant
 [DESIGN]
 
 # Maximum number of arguments for function / method.
-max-args=5
+max-args=7
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=10
+max-attributes=16
 
 # Maximum number of boolean expressions in an if statement.
 max-bool-expr=5
@@ -531,7 +532,7 @@ max-parents=7
 max-public-methods=20
 
 # Maximum number of return / yield for function / method body.
-max-returns=6
+max-returns=9
 
 # Maximum number of statements in function / method body.
 max-statements=50
