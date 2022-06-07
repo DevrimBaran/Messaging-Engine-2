@@ -1,4 +1,5 @@
 import json
+from json import JSONDecodeError
 
 from typing import List, Optional
 
@@ -49,9 +50,12 @@ class NodeService:
             self.node_repository.delete_node_by_name(node.name)
             return True
         if isinstance(node, str):
-            node = self.json_to_entity(node)
-            self.node_repository.delete_node_by_name(node.name)
-            return True
+            try:
+                node = self.json_to_entity(node)
+                self.node_repository.delete_node_by_name(node.name)
+                return True
+            except JSONDecodeError:
+                return False
         return False
 
     def get_all_nodes(self) -> List[NodeEntity]:
