@@ -12,7 +12,6 @@
   "sent_at": "datetime",
   "payload": "payload_base64",
   "original_payload": "payload_base64",
-  "count": "i",
   "history": FlowMessage[]
 }
 ```
