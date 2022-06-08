@@ -50,10 +50,14 @@ def create_default_tables(connection, node_service):
                                     port int NOT NULL,
                                     sensor_skills varchar(255),
                                     actuator_skills varchar(255));"""
-
+    sql_create_flows_table = """CREATE TABLE IF NOT EXISTS flows (
+                                    id integer PRIMARY KEY,
+                                    name varchar(255) NOT NULL UNIQUE,
+                                    ops text);"""
     cursor = connection.cursor()
     try:
         cursor.execute(sql_create_nodes_table)
+        cursor.execute(sql_create_flows_table)
         connection.commit()
         logging.info("Successfully created all default tables")
         node_service.create_own_node()
