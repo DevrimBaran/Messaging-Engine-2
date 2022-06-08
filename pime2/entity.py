@@ -23,11 +23,13 @@ class FlowOperationEntity:
     """
     name: str
     # one of "input", "process" and "output" are not blank
-    input: Optional[str]
-    process: Optional[str]
-    output: Optional[str]
+    input: str
+    process: Optional[str] = field(default=None)
+    output: Optional[str] = field(default=None)
+    join: Optional[str] = field(default=None)
+    args: Optional[str] = field(default=None)
     where: str = "*"
-    args: str = ""
+    
 
 
 @dataclass
@@ -36,7 +38,7 @@ class FlowEntity:
     This class represents a datastructure to store a flow which can be handled by ME2
     """
     name: str
-    ops: List[FlowOperationEntity]
+    ops: List[FlowOperationEntity]  = field(default_factory=lambda: [])
 
 
 @dataclass
