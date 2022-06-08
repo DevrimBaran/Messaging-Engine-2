@@ -90,7 +90,6 @@ def create_own_node(node_service):
             logging.error("Faulty configuration. Error: <%s>", err)
         finally:
             own_me_node = NodeEntity(conf.instance_id, conf.host, conf.port,sensor_skills,actuator_skills)
-            logging.info("Creating own me node: <%s>", own_me_node)
             node_service.put_node(own_me_node)
             logging.info("Created own node successfully!")
     else:
