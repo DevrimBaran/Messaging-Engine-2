@@ -67,6 +67,7 @@ class FlowMessage(resource.Resource):
             "last_operation",
             "sent_at",
             "payload",
+            "original_payload",
         ]
         for i in required_fields:
             if i not in node or node[i] is None:
