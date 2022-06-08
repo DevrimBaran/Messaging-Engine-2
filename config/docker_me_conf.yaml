@@ -1,12 +1,13 @@
-instance_id: 123456678
-loglevel: DEBUG
+instance_id: 111111111
+loglevel: INFO
+database: me2.db
 is_debug: false
-host: 127.0.0.1
+host: 0.0.0.0
 port: 5683
 read_interval: 5.0
 sensors:
-  - name: "Button-Sensor"
-    type: button
-    pin1: 12
-    pin2: 13
-    is_test_mode: true
+#  - name: "Button-Sensor"
+#    type: button
+#    pin1: 12
+#    pin2: 13
+#    is_test_mode: true

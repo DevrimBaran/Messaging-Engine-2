@@ -1,12 +1,14 @@
 import asyncio
+import datetime
 import json
 import logging
-from typing import List, Optional, Dict
+from typing import List, Optional
 
 import aiocoap
 
 from pime2 import MESSAGE_SENDING_REMOTE_TIMEOUT
 from pime2.coap_client import send_message
+from pime2.common import base64_decode
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
 from pime2.flow.flow_validation_service import FlowValidationService
@@ -45,7 +47,8 @@ class FlowManager:
         """
         flow = FlowEntity("test_flow1", [
             FlowOperationEntity("first_step", "sensor_temperature", None, None),
-            FlowOperationEntity("second_step", None, "log", None),
+            FlowOperationEntity("second_step", None, "log", None, "111111111"),
+            FlowOperationEntity("third_step", None, "log", None, "222222222"),
             FlowOperationEntity("last_step", None, None, "exit"),
         ])
         return [flow]
@@ -72,19 +75,19 @@ class FlowManager:
             return
 
         # detect next step
-        step = self.flow_operation_manager.detect_second_step(flow)
-        if step is None:
+        step_name = self.flow_operation_manager.detect_second_step(flow)
+        if step_name is None:
             logging.error("Could not detect second step of flow: %s", flow.name)
             return
         # detect nodes of next step and send new flow message
-        nodes = self.flow_operation_manager.detect_nodes_of_step(flow, step, neighbors)
+        nodes = self.flow_operation_manager.detect_nodes_of_step(flow, step_name, neighbors)
 
         if nodes is None or len(nodes) == 0:
-            logging.error("No nodes can be found for the next flow operation. Cancelling flow.")
+            logging.error("No nodes can be found for the next flow operation '%s'. Cancelling flow.", step_name)
             return
 
         # build flow message
-        msg = self.flow_message_builder.build_start_message(flow, first_step, step, result)
+        msg = self.flow_message_builder.build_start_message(flow, first_step, step_name, result)
 
         logging.info("START FLOW: %s:%s", msg.flow_name, msg.flow_id)
 
@@ -126,12 +129,13 @@ class FlowManager:
         # detect nodes of next step and send new flow message
         nodes = self.flow_operation_manager.detect_nodes_of_step(flow, next_step, neighbors)
         if nodes is None or len(nodes) == 0:
-            logging.error("No nodes can be found for the next flow operation. Cancelling flow.")
+            logging.error("No nodes can be found for the next flow operation '%s'. Cancelling flow.", next_step)
             return
 
         # build flow message
         next_msg = self.flow_message_builder.build_next_message(flow, flow_message,
-                                                                result if result is not None else {}, current_step,
+                                                                result if result is not None else "",
+                                                                current_step,
                                                                 next_step)
 
         await self.send_message_to_nodes(flow, next_msg, nodes)
@@ -174,9 +178,10 @@ class FlowManager:
             self.cancel_flow(flow, flow_message, "step is not final")
             return
 
-        await self.flow_operation_manager.execute_operation(flow, flow_message, final_step)
+        result = await self.flow_operation_manager.execute_operation(flow, flow_message, final_step)
 
-        logging.info("FINISHED FLOW %s:%s", flow.name, flow_message.flow_id)
+        logging.info("FINISHED FLOW %s:%s, result: %s", flow.name, flow_message.flow_id,
+                     base64_decode(result) if result is not None else "")
 
     async def send_flow_message(self, flow_message: FlowMessageEntity, node: NodeEntity):
         """
@@ -188,13 +193,28 @@ class FlowManager:
         """
         logging.info("Send FlowMessage to %s:%s", node.ip, node.port)
 
-        success = await send_message(f"{node.ip}:{node.port}", "flow-message",
-                                     json.dumps(flow_message.__dict__, default=str), aiocoap.Code.PUT)
+        def default_encoder(obj):
+            if isinstance(obj, FlowMessageEntity):
+                tl_msg = obj.__dict__
+                history_list = []
+                for history_msg in obj.history:
+                    history_list.append(history_msg.__dict__)
+
+                tl_msg["history"] = history_list
+                return tl_msg
+            if isinstance(obj, datetime.datetime):
+                return str(obj)
+            return json.JSONEncoder().default(obj)
+
+        current_payload = json.dumps(flow_message.__dict__, default=default_encoder)
+        logging.debug("Flow-Message payload to send: %s", current_payload)
+        success = await send_message(f"{node.ip}:{node.port}", "flow-messages",
+                                     current_payload, aiocoap.Code.PUT)
 
         if not success:
-            logging.error("PROBLEM Sending FlowMessage to %s:%s/flow-message", node.ip, node.port)
+            logging.error("PROBLEM Sending FlowMessage to %s:%s/flow-messages", node.ip, node.port)
         else:
-            logging.info("SUCCESS Sending FlowMessage to %s:%s/flow-message", node.ip, node.port)
+            logging.info("SUCCESS Sending FlowMessage to %s:%s/flow-messages", node.ip, node.port)
 
     def get_available_flows_for_sensor(self, sensor_type: SensorType) -> List[FlowEntity]:
         """
@@ -215,10 +235,12 @@ class FlowManager:
         return out
 
     async def execute_step(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str,
-                           nodes: List[NodeEntity]) -> (bool, Optional[Dict]):
+                           nodes: List[NodeEntity]) -> (bool, Optional[str]):
         """
-        Helper method to execute a single step locally and remote.
-        If the execution was also locally, the return value is true, else false.
+        Helper method to execute a single step (= flow operation) locally and remote.
+        If the execution was also locally, the first return value is true, else false.
+        Remote executions do not have a result.
+
         :param flow:
         :param flow_message:
         :param step:

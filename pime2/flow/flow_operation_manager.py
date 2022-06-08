@@ -1,6 +1,7 @@
 import logging
-from typing import List, Optional, Dict
+from typing import List, Optional
 
+from pime2.common import base64_decode
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
 
 
@@ -86,10 +87,11 @@ class FlowOperationManager:
 
         return []
 
-    async def execute_operation(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str) -> Optional[Dict]:
+    async def execute_operation(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str) -> Optional[str]:
         """
         Method to execute an operation of a flow message defined by the step.
-        The returned dictionary is the input value is the payload for the next flow message.
+        The returned str is the base64 encoded output value of this operation, and it is the payload
+        for the next flow message.
 
         :param flow:
         :param flow_message:
@@ -108,9 +110,10 @@ class FlowOperationManager:
                 is_executed = True
 
                 logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
-                             flow_operation, flow_message.payload)
+                             flow_operation, base64_decode(flow_message.payload))
+
                 # TODO: execute operation
-                return {}
+                return flow_message.payload
         if not is_executed:
             logging.error("No operation executed in flow %s with step %s", flow.name, step)
         return None

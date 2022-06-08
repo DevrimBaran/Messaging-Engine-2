@@ -9,7 +9,7 @@ services:
     networks:
       me2devnet:
     ports:
-      - "5690:5683"
+      - "127.0.0.1:5690:5683/udp"
     volumes:
       - ./config/docker_me_conf.yaml:/usr/src/app/me.yaml
     cap_add:
@@ -24,27 +24,27 @@ services:
     networks:
       me2devnet:
     ports:
-      - "5691:5683"
+      - "127.0.0.1:5691:5683/udp"
     volumes:
       - ./config/docker_me_conf2.yaml:/usr/src/app/me.yaml
     cap_add:
       - net_raw
       - net_admin
 
-  me2_third:
-    build:
-      context: .
-    image: me2
-    container_name: me2_third
-    networks:
-      me2devnet:
-    ports:
-      - "5692:5683"
-    volumes:
-      - ./config/docker_me_conf2.yaml:/usr/src/app/me.yaml
-    cap_add:
-      - net_raw
-      - net_admin
+#  me2_third:
+#    build:
+#      context: .
+#    image: me2
+#    container_name: me2_third
+#    networks:
+#      me2devnet:
+#    ports:
+#      - "5692:5683"
+#    volumes:
+#      - ./config/docker_me_conf2.yaml:/usr/src/app/me.yaml
+#    cap_add:
+#      - net_raw
+#      - net_admin
 
 networks:
   me2devnet:

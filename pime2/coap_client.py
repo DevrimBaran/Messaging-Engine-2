@@ -40,7 +40,7 @@ async def send_message(destination, endpoint, payload, code):
     client_context = await Context.create_client_context()
     logging.info("Sending Message request")
     uri = 'coap://' + destination + '/' + endpoint
-    request = Message(code=code, uri=uri, payload=bytes(payload.encode("utf-8")))
+    request = Message(code=code, uri=uri, payload=bytes(str(payload).encode("utf-8")))
     logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
     try:
         response = await client_context.request(request).response
