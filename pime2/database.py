@@ -44,17 +44,24 @@ def create_default_tables(connection, node_service):
     :return:
     """
 
-    sql_create_nodes_table = """CREATE TABLE IF NOT EXISTS nodes (
+    sql_create_table_nodes = """CREATE TABLE IF NOT EXISTS nodes (
+    sql_create_table_nodes = """CREATE TABLE IF NOT EXISTS nodes (
                                     id integer PRIMARY KEY,
                                     name varchar(255) NOT NULL UNIQUE,
                                     ip varchar(60) NOT NULL,
                                     port int NOT NULL,
                                     sensor_skills varchar(255),
                                     actuator_skills varchar(255));"""
+    sql_create_table_executions = """CREATE TABLE IF NOT EXISTS message_executions (
+                                id integer PRIMARY KEY,
+                                flow_id varchar(255) NOT NULL,
+                                message_id varchar(255) NOT NULL UNIQUE,
+                                created_at DATETIME DEFAULT 'now');"""
 
     cursor = connection.cursor()
     try:
-        cursor.execute(sql_create_nodes_table)
+        cursor.execute(sql_create_table_nodes)
+        cursor.execute(sql_create_table_executions)
         connection.commit()
         logging.info("Successfully created all default tables")
         node_service.create_own_node()
