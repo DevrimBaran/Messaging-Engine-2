@@ -1,6 +1,9 @@
+import json
 import logging
 from typing import List, Optional
 
+from pime2.actuator.actuator import ActuatorType
+from pime2.actuator.actuator_manager import ActuatorManager
 from pime2.common import base64_decode
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
 
@@ -109,10 +112,24 @@ class FlowOperationManager:
                 flow_operation = f.process
                 is_executed = True
 
+                payload = base64_decode(flow_message.payload)
                 logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
-                             flow_operation, base64_decode(flow_message.payload))
+                             flow_operation, payload)
 
-                # TODO: execute operation
+                if f.is_process():
+                    if f.process == "cep_operation":
+                        # TODO: execute cep operation
+                        pass
+                    if f.process == "log":
+                        logging.info("LOG OPERATION: %s", json.loads(payload))
+
+                if f.is_output():
+                    manager = ActuatorManager()
+                    if f.output == "actuator_led":
+                        manager.one_time_trigger(ActuatorType.LED)
+                    if f.output == "actuator_speaker":
+                        manager.one_time_trigger(ActuatorType.SPEAKER)
+
                 return flow_message.payload
         if not is_executed:
             logging.error("No operation executed in flow %s with step %s", flow.name, step)

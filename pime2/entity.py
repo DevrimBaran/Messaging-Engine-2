@@ -29,6 +29,18 @@ class FlowOperationEntity:
     where: str = "*"
     args: str = ""
 
+    def is_input(self) -> bool:
+        """utility"""
+        return self.input is not None and self.process is None and self.output is None
+
+    def is_process(self) -> bool:
+        """utility"""
+        return self.input is None and self.process is not None and self.output is None
+
+    def is_output(self) -> bool:
+        """utility"""
+        return self.input is None and self.process is None and self.output is not None
+
 
 @dataclass
 class FlowEntity:
