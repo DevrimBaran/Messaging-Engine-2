@@ -75,7 +75,6 @@ def create_own_node(node_service):
     if own_me_node is None:
         logging.info("Own node not existing. Creating own node.")
         conf = get_me_conf()
-        # TODO: ME-44 add sensor skills for own record
         sensor_skills = []
         actuator_skills = []
         try:
