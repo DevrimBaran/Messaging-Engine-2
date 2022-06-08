@@ -91,7 +91,6 @@ class NodeService:
     def create_own_node(self):
         """
         This method creates the own device node
-        :param node_service: NodeService
         :return:
         """
         own_me_node = self.get_own_node()
