@@ -105,10 +105,10 @@ class NodeService:
             try:
                 for sensor in conf.available_sensors():
                     sensor_skills.append(sensor.name)
-                logging.info("Loading sensors.")
+                logging.info("Loaded sensors.")
                 for actuator in conf.available_actuators():
                     actuator_skills.append(actuator.name)
-                logging.info("Loading actuators.")
+                logging.info("Loaded actuators.")
             except RuntimeError as err:
                 logging.error("Faulty configuration. Error: <%s>", err)
             finally:
