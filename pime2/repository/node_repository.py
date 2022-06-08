@@ -7,7 +7,6 @@ from typing import List, Optional
 from pime2.entity import NodeEntity
 from pime2.config import get_me_conf
 
-
 class NodeRepository:
     """Implements node repository class"""
 
