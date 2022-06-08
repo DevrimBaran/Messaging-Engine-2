@@ -1,5 +1,6 @@
 import json
 import logging
+from json import JSONDecodeError
 from typing import List, Optional
 
 from pime2.database import get_db_connection
