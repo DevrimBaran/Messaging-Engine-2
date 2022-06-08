@@ -1,10 +1,9 @@
-# pylint: disable=consider-using-enumerate
-# pylint: disable=keyword-arg-before-vararg
+# pylint: disable=consider-using-enumerate,keyword-arg-before-vararg
 import logging
 import sys
 from typing import List
 
-from pime2.config import MEConfiguration
+from pime2.config import get_me_conf
 from pime2.actuator.actuator import ActuatorType
 
 
@@ -13,9 +12,9 @@ class ActuatorManager:
     Simple actuator manager to activate and close actuators
     """
 
-    def __init__(self, config: MEConfiguration):
+    def __init__(self):
         try:
-            self.actuators = config.available_actuators()
+            self.actuators = get_me_conf().available_actuators
         except RuntimeError as config_error:
             logging.error("Problem with actuator configuration: '%s'", config_error)
             sys.exit(1)

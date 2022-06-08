@@ -87,22 +87,15 @@ class MEConfiguration:
             for actuator_config in config_yaml['actuators']:
                 self.actuators.append(OperatorConfiguration(actuator_config))
 
-    def available_sensors(self) -> List[Sensor]:
-        """
-        Method to get sensor objects defined in the app's configuration.
-        Could raise a RuntimeError, if there is something wrongly configured.
-        :return:
-        """
-        return load_sensors(self)
+        self.available_sensors: List[Sensor] = []
+        self.available_actuators: List[Actuator] = []
 
-    def available_actuators(self) -> List[Actuator]:
-        """
-        Method to get actuator objects defined in the app's configuration.
-        Could raise a RuntimeError, if there is something wrongly configured.
-        :return:
-        """
-        return load_actuators(self)
+        self.load_operators()
 
+    def load_operators(self):
+        """load available operators"""
+        self.available_sensors = load_sensors(self)
+        self.available_actuators = load_actuators(self)
 
 class OperatorConfiguration:
     """
