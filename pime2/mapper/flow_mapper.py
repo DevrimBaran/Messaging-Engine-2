@@ -29,7 +29,7 @@ class FlowMapper:
 
     def json_to_flow_operation(self, json_str: str) -> FlowOperationEntity | List[FlowOperationEntity]:
         json_obj = json.loads(json_str)
-        result=[]
+        result = []
         if len(json_obj) == 1 and isinstance(json_obj, list):
             result.append(from_dict(data_class=FlowOperationEntity, data=json_obj[0]))
         elif len(json_obj) > 1 and isinstance(json_obj, list):
@@ -43,8 +43,8 @@ class FlowMapper:
     def flow_operation_to_json(self, flow_ops: FlowOperationEntity | List[FlowOperationEntity]) -> str:
         result = []
         if isinstance(flow_ops, FlowOperationEntity):
-            result = json.dumps(flow_ops)
-        elif isinstance(flow_ops, List[FlowOperationEntity]):
+            result = json.dumps(flow_ops.__dict__)
+        elif isinstance(flow_ops, List):
             for flow_op in flow_ops:
                 result.append(flow_op.__dict__)
             result = json.dumps(result)
