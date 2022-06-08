@@ -2,6 +2,7 @@ import sys
 import sqlite3
 import logging
 from sqlite3 import Error, Connection
+from pime2.actuator.actuator import Actuator
 
 from pime2.entity import NodeEntity
 from pime2.config import get_me_conf
@@ -64,7 +65,17 @@ def create_default_tables(connection, node_service):
         if own_me_node is None:
             conf = get_me_conf()
             # TODO: ME-44 add sensor skills for own record
-            node_service.put_node(NodeEntity(conf.instance_id, conf.host, conf.port))
+            sensor_skills = []
+            actuator_skills = []
+            try:
+                for sensor in conf.available_sensors():
+                    sensor_skills.append(sensor.name)
+                for actuator in conf.available_actuators():
+                    sensor_skills.append(actuator.name)
+            except RuntimeError as err:
+                logging.error("Faulty configuration. Error: <%s>", err)
+            finally:
+                node_service.put_node(NodeEntity(conf.instance_id, conf.host, conf.port,sensor_skills,actuator_skills))
 
     except Error:
         logging.exception("An error occurred while creating the default tables")
