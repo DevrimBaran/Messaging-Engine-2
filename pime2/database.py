@@ -60,28 +60,42 @@ def create_default_tables(connection, node_service):
         cursor.execute(sql_create_nodes_table)
         connection.commit()
         logging.info("Successfully created all default tables")
-
-        own_me_node = node_service.get_own_node()
-        if own_me_node is None:
-            conf = get_me_conf()
-            # TODO: ME-44 add sensor skills for own record
-            sensor_skills = []
-            actuator_skills = []
-            try:
-                for sensor in conf.available_sensors():
-                    sensor_skills.append(sensor.name)
-                for actuator in conf.available_actuators():
-                    sensor_skills.append(actuator.name)
-            except RuntimeError as err:
-                logging.error("Faulty configuration. Error: <%s>", err)
-            finally:
-                node_service.put_node(NodeEntity(conf.instance_id, conf.host, conf.port,sensor_skills,actuator_skills))
-
+        create_own_node(node_service)
     except Error:
         logging.exception("An error occurred while creating the default tables")
     finally:
         cursor.close()
 
+def create_own_node(node_service):
+    """
+    This method creates the own device node
+    :param node_service: NodeService
+    :return:
+    """
+    own_me_node = node_service.get_own_node()
+    if own_me_node is None:
+        logging.info("Own node not existing. Creating own node.")
+        conf = get_me_conf()
+        # TODO: ME-44 add sensor skills for own record
+        sensor_skills = []
+        actuator_skills = []
+        try:
+            for sensor in conf.available_sensors():
+                sensor_skills.append(sensor.name)
+            logging.info("Loading sensors.")
+            for actuator in conf.available_actuators():
+                actuator_skills.append(actuator.name)
+            logging.info("Loading actuators.")
+        except RuntimeError as err:
+            logging.error("Faulty configuration. Error: <%s>", err)
+        finally:
+            own_me_node = NodeEntity(conf.instance_id, conf.host, conf.port,sensor_skills,actuator_skills)
+            logging.info("Creating own me node: <%s>", own_me_node)
+            node_service.put_node(own_me_node)
+            logging.info("Created own node successfully!")
+    else:
+        node_service.put_node(own_me_node)
+        logging.info("Created own node successfully!")
 
 def get_db_connection():
     """
