@@ -42,7 +42,7 @@ class FlowEntity:
 @dataclass
 class FlowMessageEntity:
     """
-    This class represents a flow message entity
+    This class represents a flow message entity.
     """
     id: str
     flow_name: str
@@ -52,5 +52,4 @@ class FlowMessageEntity:
     last_operation: str
     payload: str
     original_payload: str
-    count: int
     history: List['FlowMessageEntity']

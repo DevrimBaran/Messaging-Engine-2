@@ -67,7 +67,6 @@ class FlowMessage(resource.Resource):
             "last_operation",
             "sent_at",
             "payload",
-            "count",
         ]
         for i in required_fields:
             if i not in node or node[i] is None:
@@ -90,10 +89,6 @@ class FlowMessage(resource.Resource):
             except ValueError:
                 logging.debug("Invalid date in field %s", datetimelike_field)
                 return False
-
-        if not isinstance(node["count"], int):
-            logging.debug("Invalid integer value for 'count'")
-            return False
 
         if "history" in node and node["history"] is not None and isinstance(node["history"], List):
             for i in node["history"]:

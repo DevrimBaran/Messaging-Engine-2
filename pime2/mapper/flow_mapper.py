@@ -1,6 +1,5 @@
-import datetime
-
 from pime2.entity import FlowMessageEntity
+from pime2.flow.flow_message_builder import FlowMessageBuilder
 
 
 class FlowMapper:
@@ -8,18 +7,11 @@ class FlowMapper:
     Message to map objects around flows
     """
 
-    def json_to_message_entity(self, node: dict) -> FlowMessageEntity:
+    def json_to_message_entity(self, flow: dict) -> FlowMessageEntity:
         """
         The input node dict needs to be a valid flow message entity
 
-        :param node:
+        :param flow:
         :return:
         """
-        return FlowMessageEntity(str(node["id"]).strip(), str(node["flow_name"]).strip(),
-                                 str(node["flow_id"]).strip(),
-                                 datetime.datetime.fromisoformat(node["src_created_at"]),
-                                 datetime.datetime.fromisoformat(node["sent_at"]),
-                                 str(node["last_operation"]).strip(),
-                                 str(node["payload"]).strip(), str(node["original_payload"]).strip(),
-                                 int(node["count"]),
-                                 node["history"] if "history" in node else [])
+        return FlowMessageBuilder().from_valid_dict(flow)
