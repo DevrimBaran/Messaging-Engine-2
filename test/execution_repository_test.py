@@ -6,28 +6,17 @@ import pime2.database as db
 from pime2.config import load_app_config
 from pime2.repository.execution_repository import ExecutionRepository
 
-from pime2.service.node_service import NodeService
+from test.generic import GenericDatabaseTest
 
 
-class ExecutionRepositoryTest(unittest.TestCase):
-    connection = None
+class ExecutionRepositoryTest(GenericDatabaseTest):
     exec_repo = None
 
     @classmethod
     def setUp(cls):
-        if os.path.exists("testDatabase.db"):
-            db.disconnect(cls.connection)
-            os.remove("testDatabase.db")
-        cls.connection = db.create_connection("testDatabase.db")
-        load_app_config("me.yaml")
+        super().setUp()
         cls.exec_repo = ExecutionRepository(cls.connection)
-        db.create_default_tables(cls.connection, NodeService())
         cls.exec_repo.delete_all()
-
-    @classmethod
-    def tearDownClass(cls):
-        db.disconnect(cls.connection)
-        os.remove("testDatabase.db")
 
     def test_register(self):
         self.exec_repo.register_execution("test", "test")
