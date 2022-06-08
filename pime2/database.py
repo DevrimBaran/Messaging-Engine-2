@@ -3,9 +3,6 @@ import sqlite3
 import logging
 from sqlite3 import Error, Connection
 
-from pime2.entity import NodeEntity
-from pime2.config import get_me_conf
-
 DB_CONNECTION: Connection
 
 
