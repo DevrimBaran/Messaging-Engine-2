@@ -65,7 +65,6 @@ class FlowMessage(resource.Resource):
             "flow_id",
             "src_created_at",
             "last_operation",
-            "next_operation",
             "sent_at",
             "payload",
             "count",
@@ -79,7 +78,6 @@ class FlowMessage(resource.Resource):
             "flow_name",
             "flow_id",
             "last_operation",
-            "next_operation",
         ]
         for namelike_field in name_regex_fields:
             if not re.match(NAME_REGEX, node[namelike_field]):
