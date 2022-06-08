@@ -14,8 +14,8 @@ class NodeMapper:
         name = json_obj['name']
         ip_addr = json_obj['ip']
         port = json_obj['port']
-        sensor_skills = json_obj['sensor_skills']
-        actuator_skills = json_obj['actuator_skills']
+        sensor_skills = [] if "sensor_skills" not in json_obj else json_obj["sensor_skills"]
+        actuator_skills = [] if "actuator_skills" not in json_obj else json_obj["actuator_skills"]
         node = NodeEntity(name, ip_addr, port, sensor_skills, actuator_skills)
         logging.info("JSON to entity : <%s>", node)
         return node
