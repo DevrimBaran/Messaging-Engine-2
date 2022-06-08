@@ -2,7 +2,6 @@ import sys
 import sqlite3
 import logging
 from sqlite3 import Error, Connection
-from pime2.actuator.actuator import Actuator
 
 from pime2.entity import NodeEntity
 from pime2.config import get_me_conf
