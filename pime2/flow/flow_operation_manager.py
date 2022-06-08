@@ -1,8 +1,10 @@
+from http.client import OK
 import logging
 from typing import List, Optional
 
 from pime2.common import base64_decode
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
+from pime2.flow.cep_flow import cep_executer
 
 
 class FlowOperationManager:
@@ -102,11 +104,16 @@ class FlowOperationManager:
             logging.warning("Invalid flow_message for flow received. Invalid names: flow: %s, flow message: %s",
                             flow.name, flow_message.flow_name)
             return None
-        is_executed = False
+        is_executed = False  
         for f in flow.ops:
             if f.name.lower() == step.lower():
                 flow_operation_name = f.name.lower()
                 flow_operation = f.process
+
+                if (flow_operation == "cep_intercept" and not cep_executer(flow_message.payload)):
+                    logging.info("CEP evaluation failed. No operation will be executed in flow %s with step %s", flow.name, step)
+                    return None
+
                 is_executed = True
 
                 logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
