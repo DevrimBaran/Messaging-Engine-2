@@ -94,8 +94,75 @@ class MEConfiguration:
 
     def load_operators(self):
         """load available operators"""
-        self.available_sensors = load_sensors(self)
-        self.available_actuators = load_actuators(self)
+        self.available_sensors = self.load_sensors()
+        self.available_actuators = self.load_actuators()
+
+    def load_sensors(self) -> List[Sensor]:
+        """
+        This method maps the textual configuration of available sensors to internal classes.
+        This is called during application bootstrap process. If there are problem with the configuration the user
+        provided, this method should raise RuntimeErrors with detailed error information for the user.
+        :param config:
+        :return:
+        """
+        active_sensors: List[Sensor] = []
+        for sensor in self.sensors:
+            # basic validation
+            if len(str(sensor.name).strip()) == 0:
+                raise RuntimeError("Empty name of a sensor detected")
+            if sensor.gpio1 == 0 or len(str(sensor.gpio1).strip()) == 0:
+                raise RuntimeError("Empty or invalid port detected in property 'gpio1'")
+
+            sensor_type = str(sensor.type).upper()
+            if sensor.is_test_mode:
+                logging.info("Using test mode for sensor of type '%s' and name '%s'", sensor_type, sensor.name)
+
+            if sensor_type == SensorType.BUTTON.name:
+                if sensor.gpio2 == 0 or len(str(sensor.gpio2).strip()) == 0:
+                    raise RuntimeError("Empty or invalid port detected in property 'gpio2'")
+
+                active_sensors.append(
+                    ButtonSensor(sensor.name,
+                                 DualGpioOperatorArguments(sensor.gpio1, sensor.gpio2, sensor.is_test_mode)))
+            elif sensor_type == SensorType.HALL.name:
+                active_sensors.append(
+                    HallSensor(sensor.name, SingleGpioOperatorArguments(sensor.gpio1, sensor.is_test_mode)))
+            elif sensor_type == SensorType.TEMPERATURE.name:
+                active_sensors.append(
+                    TemperatureSensor(sensor.name, SingleGpioOperatorArguments(sensor.gpio1, sensor.is_test_mode)))
+            else:
+                raise RuntimeError("Unknown sensor type '{]'", sensor_type)
+        return active_sensors
+
+    def load_actuators(self) -> List[Actuator]:
+        """
+        This method maps the textual configuration of available actuators to internal classes.
+        This is called during application bootstrap process. If there are problem with the configuration the user
+        provided, this method should raise RuntimeErrors with detailed error information for the user.
+        :return:
+        """
+        active_actuators: List[Actuator] = []
+        for actuator in self.actuators:
+            # basic validation
+            if len(str(actuator.name).strip()) == 0:
+                raise RuntimeError("Empty name of a actuator detected")
+            if actuator.gpio1 == 0 or len(str(actuator.gpio1).strip()) == 0:
+                raise RuntimeError("Empty or invalid port detected in property 'gpio1'")
+
+            actuator_type = str(actuator.type).upper()
+            if actuator.is_test_mode:
+                logging.info("Using test mode for actuator of type '%s' and name '%s'", actuator_type, actuator.name)
+
+            if actuator_type == ActuatorType.LED.name:
+                active_actuators.append(
+                    Led(actuator.name, SingleGpioOperatorArguments(actuator.gpio1, actuator.is_test_mode)))
+            elif actuator_type == ActuatorType.SPEAKER.name:
+                active_actuators.append(
+                    Speaker(actuator.name, SingleGpioOperatorArguments(actuator.gpio1, actuator.is_test_mode)))
+            else:
+                raise RuntimeError("Unknown sensor type '{]'", actuator_type)
+        return active_actuators
+
 
 class OperatorConfiguration:
     """
@@ -158,71 +225,3 @@ def get_me_conf() -> MEConfiguration:
     :return:
     """
     return ME_CONF
-
-
-def load_sensors(config: MEConfiguration) -> List[Sensor]:
-    """
-    This method maps the textual configuration of available sensors to internal classes.
-    This is called during application bootstrap process. If there are problem with the configuration the user
-    provided, this method should raise RuntimeErrors with detailed error information for the user.
-    :param config:
-    :return:
-    """
-    active_sensors: List[Sensor] = []
-    for sensor in config.sensors:
-        # basic validation
-        if len(str(sensor.name).strip()) == 0:
-            raise RuntimeError("Empty name of a sensor detected")
-        if sensor.gpio1 == 0 or len(str(sensor.gpio1).strip()) == 0:
-            raise RuntimeError("Empty or invalid port detected in property 'gpio1'")
-
-        sensor_type = str(sensor.type).upper()
-        if sensor.is_test_mode:
-            logging.info("Using test mode for sensor of type '%s' and name '%s'", sensor_type, sensor.name)
-
-        if sensor_type == SensorType.BUTTON.name:
-            if sensor.gpio2 == 0 or len(str(sensor.gpio2).strip()) == 0:
-                raise RuntimeError("Empty or invalid port detected in property 'gpio2'")
-
-            active_sensors.append(
-                ButtonSensor(sensor.name, DualGpioOperatorArguments(sensor.gpio1, sensor.gpio2, sensor.is_test_mode)))
-        elif sensor_type == SensorType.HALL.name:
-            active_sensors.append(
-                HallSensor(sensor.name, SingleGpioOperatorArguments(sensor.gpio1, sensor.is_test_mode)))
-        elif sensor_type == SensorType.TEMPERATURE.name:
-            active_sensors.append(
-                TemperatureSensor(sensor.name, SingleGpioOperatorArguments(sensor.gpio1, sensor.is_test_mode)))
-        else:
-            raise RuntimeError("Unknown sensor type '{]'", sensor_type)
-    return active_sensors
-
-
-def load_actuators(config: MEConfiguration) -> List[Actuator]:
-    """
-    This method maps the textual configuration of available actuators to internal classes.
-    This is called during application bootstrap process. If there are problem with the configuration the user
-    provided, this method should raise RuntimeErrors with detailed error information for the user.
-    :param config:
-    :return:
-    """
-    active_actuators: List[Actuator] = []
-    for actuator in config.actuators:
-        # basic validation
-        if len(str(actuator.name).strip()) == 0:
-            raise RuntimeError("Empty name of a actuator detected")
-        if actuator.gpio1 == 0 or len(str(actuator.gpio1).strip()) == 0:
-            raise RuntimeError("Empty or invalid port detected in property 'gpio1'")
-
-        actuator_type = str(actuator.type).upper()
-        if actuator.is_test_mode:
-            logging.info("Using test mode for actuator of type '%s' and name '%s'", actuator_type, actuator.name)
-
-        if actuator_type == ActuatorType.LED.name:
-            active_actuators.append(
-                Led(actuator.name, SingleGpioOperatorArguments(actuator.gpio1, actuator.is_test_mode)))
-        elif actuator_type == ActuatorType.SPEAKER.name:
-            active_actuators.append(
-                Speaker(actuator.name, SingleGpioOperatorArguments(actuator.gpio1, actuator.is_test_mode)))
-        else:
-            raise RuntimeError("Unknown sensor type '{]'", actuator_type)
-    return active_actuators
