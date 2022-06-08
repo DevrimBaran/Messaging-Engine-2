@@ -109,12 +109,10 @@ class NodeService:
                 for actuator in conf.available_actuators():
                     actuator_skills.append(actuator.name)
                 logging.info("Loaded actuators.")
-            except RuntimeError as err:
-                logging.error("Faulty configuration. Error: <%s>", err)
-            finally:
-                own_me_node = NodeEntity(conf.instance_id, conf.host, conf.port,sensor_skills,actuator_skills)
+                own_me_node = NodeEntity(conf.instance_id, conf.host, conf.port, sensor_skills, actuator_skills)
                 self.put_node(own_me_node)
                 logging.info("Created own node successfully!")
+            except RuntimeError as err:
+                logging.error("Faulty configuration. Error: <%s>", err)
         else:
-            self.put_node(own_me_node)
-            logging.info("Created own node successfully!")
+            logging.info("Own node exists already!")
