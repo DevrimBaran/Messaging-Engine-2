@@ -104,10 +104,12 @@ class NodeService:
             actuator_skills = []
             try:
                 for sensor in conf.available_sensors():
-                    sensor_skills.append(sensor.name)
+                    if sensor.type not in sensor_skills:
+                        sensor_skills.append(sensor.sensor_type)
                 logging.info("Loaded sensors.")
                 for actuator in conf.available_actuators():
-                    actuator_skills.append(actuator.name)
+                    if actuator.type not in actuator_skills:
+                        actuator_skills.append(actuator.actuator_type)
                 logging.info("Loaded actuators.")
                 own_me_node = NodeEntity(conf.instance_id, conf.host, conf.port, sensor_skills, actuator_skills)
                 self.put_node(own_me_node)
