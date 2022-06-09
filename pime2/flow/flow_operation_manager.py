@@ -5,7 +5,6 @@ from typing import List, Optional
 from pime2.actuator.actuator import ActuatorType
 from pime2.actuator.actuator_manager import ActuatorManager
 from pime2.common import base64_decode
-from pime2.database import get_db_connection
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
 from pime2.repository.execution_repository import ExecutionRepository
 
@@ -16,7 +15,6 @@ class FlowOperationManager:
     You should make sure the flow is validated before using the following methods.
 
     """
-    execution_repository = ExecutionRepository(get_db_connection())
 
     @staticmethod
     def detect_current_step(flow: FlowEntity, flow_message: FlowMessageEntity) -> Optional[str]:
@@ -98,12 +96,14 @@ class FlowOperationManager:
         return []
 
     @staticmethod
-    async def execute_operation(flow: FlowEntity, flow_message: FlowMessageEntity, step: str) -> Optional[str]:
+    async def execute_operation(flow: FlowEntity, flow_message: FlowMessageEntity, step: str,
+                                execution_repository: ExecutionRepository) -> Optional[str]:
         """
         Method to execute an operation of a flow message defined by the step.
         The returned str is the base64 encoded output value of this operation, and it is the payload
         for the next flow message.
 
+        :param execution_repository:
         :param flow:
         :param flow_message:
         :param step:
@@ -127,8 +127,6 @@ class FlowOperationManager:
                                   flow_message.id, flow_message.flow_id)
                 else:
                     # first execution
-                    is_executed = True
-
                     payload = base64_decode(flow_message.payload)
                     logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
                                  flow_operation, payload)
