@@ -90,8 +90,6 @@ class MEConfiguration:
         self.available_sensors: List[Sensor] = []
         self.available_actuators: List[Actuator] = []
 
-        self.load_operators()
-
     def load_operators(self):
         """load available operators"""
         self.available_sensors = self.load_sensors()

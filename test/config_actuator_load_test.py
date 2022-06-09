@@ -10,6 +10,7 @@ class TestAppConfigurationActuatorLoad(unittest.TestCase):
         is_exceptional = False
         try:
             config = pime2.config.load_app_config("./test/fixtures/me_valid_actuator_speaker.yaml")
+            config.load_operators()
         except RuntimeError:
             is_exceptional = True
         self.assertFalse(is_exceptional)
@@ -23,6 +24,7 @@ class TestAppConfigurationActuatorLoad(unittest.TestCase):
         is_exceptional = False
         try:
             config = pime2.config.load_app_config("./test/fixtures/me_valid_actuator_led.yaml")
+            config.load_operators()
         except RuntimeError:
             is_exceptional = True
         self.assertFalse(is_exceptional)

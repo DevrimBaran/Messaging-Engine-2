@@ -10,6 +10,7 @@ class TestAppConfigurationSensorLoad(unittest.TestCase):
         is_exceptional = False
         try:
             config = pime2.config.load_app_config("./test/fixtures/me_valid_with_operators_button.yaml")
+            config.load_operators()
         except RuntimeError:
             is_exceptional = True
         self.assertFalse(is_exceptional)
@@ -23,6 +24,7 @@ class TestAppConfigurationSensorLoad(unittest.TestCase):
         is_exceptional = False
         try:
             config = pime2.config.load_app_config("./test/fixtures/me_valid_with_operators_hall.yaml")
+            config.load_operators()
         except RuntimeError:
             is_exceptional = True
         self.assertFalse(is_exceptional)
@@ -36,6 +38,7 @@ class TestAppConfigurationSensorLoad(unittest.TestCase):
         is_exceptional = False
         try:
             config = pime2.config.load_app_config("./test/fixtures/me_valid_with_operators_temperature.yaml")
+            config.load_operators()
         except RuntimeError:
             is_exceptional = True
         self.assertFalse(is_exceptional)
