@@ -11,7 +11,7 @@ from pime2.coap_client import send_message
 from pime2.common import base64_decode
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
-from pime2.flow.flow_validation import is_flow_valid
+from pime2.flow.flow_validation import is_flow_valid, is_flow_executable
 from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
 from pime2.sensor.sensor import SensorType
 from pime2.service.node_service import NodeService
@@ -148,6 +148,14 @@ class FlowManager:
             logging.warning("INVALID FLOW '%s': %s", flow.name, validation_msgs)
             self.cancel_flow(flow, flow_message)
             return False
+
+        # check if the flow is executable
+        if not is_flow_executable(flow, self.node_service):
+            logging.warning("CANNOT EXECUTE FLOW '%s': %s. Neighbors or skills are missing.",
+                            flow.name, validation_msgs)
+            self.cancel_flow(flow, flow_message)
+            return False
+
         return True
 
     async def finish_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity):
