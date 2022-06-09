@@ -118,13 +118,6 @@ class FlowOperationManager:
                 flow_operation_name = f.name.lower()
                 flow_operation = f.process
 
-                if flow_operation == "cep_intercept":
-                    logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
-                    if not cep_executer(f.args.expression, f.args.variables, flow_message.payload):
-                        logging.info("CEP evaluation failed.")
-                        logging.debug("No operation will be executed in flow %s with step %s", flow.name, step)
-                        return None
-
                 is_executed = True
 
                 payload = base64_decode(flow_message.payload)
@@ -133,8 +126,11 @@ class FlowOperationManager:
 
                 if f.is_process():
                     if f.process == "cep_operation":
-                        # TODO: execute cep operation
-                        pass
+                        logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
+                        if not cep_executer(f.args.expression, f.args.variables, flow_message.payload):
+                            logging.debug("CEP evaluation failed in flow %s with step %s", flow.name, step)
+                            return None
+
                     if f.process == "log":
                         logging.info("LOG OPERATION: %s", json.loads(payload))
 
