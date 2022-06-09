@@ -1,9 +1,10 @@
 import asyncio
 import json
 import logging
-from typing import List
 
 import pime2.config
+from pime2.actuator.actuator_manager import ActuatorManager
+from pime2.config import get_me_conf
 from pime2.message import SensorResultMessage
 from pime2.push_queue import get_push_queue
 from pime2.sensor.sensor import Sensor
@@ -37,7 +38,7 @@ async def listen_sensor(sensor: Sensor):
         )
 
 
-async def startup_sensor_listener(sensors: List[Sensor]):
+async def startup_operator_listener():
     """
     start asyncio tasks and wait for them to complete.
     Should be called in main asyncio run().
@@ -45,8 +46,14 @@ async def startup_sensor_listener(sensors: List[Sensor]):
     :param sensors:
     :return:
     """
+    # load actuators
+    conf = get_me_conf()
+    am = ActuatorManager()
+    for actuator in conf.available_actuators:
+        am.open(actuator.actuator_type)
 
     # init sensors
+    sensors = conf.available_sensors
     for sensor in sensors:
         sensor.open()
 

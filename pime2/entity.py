@@ -1,7 +1,7 @@
 # pylint: disable=C0103
 import datetime
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Dict, Union
 
 
 @dataclass
@@ -15,6 +15,15 @@ class NodeEntity:
     sensor_skills: List[str] = field(default_factory=lambda: [])
     actuator_skills: List[str] = field(default_factory=lambda: [])
 
+    def has_skill(self, skill_name: str) -> bool:
+        """
+        Check if a Node can execute a single string.
+        :param skill_name:
+        :return:
+        """
+        # TODO implement
+        return True
+
 
 @dataclass
 class FlowOperationEntity:
@@ -27,7 +36,19 @@ class FlowOperationEntity:
     process: Optional[str]
     output: Optional[str]
     where: str = "*"
-    args: str = ""
+    args: Union[str, Dict] = ""
+
+    def is_input(self) -> bool:
+        """utility"""
+        return self.input is not None and self.process is None and self.output is None
+
+    def is_process(self) -> bool:
+        """utility"""
+        return self.input is None and self.process is not None and self.output is None
+
+    def is_output(self) -> bool:
+        """utility"""
+        return self.input is None and self.process is None and self.output is not None
 
 
 @dataclass
@@ -42,7 +63,7 @@ class FlowEntity:
 @dataclass
 class FlowMessageEntity:
     """
-    This class represents a flow message entity
+    This class represents a flow message entity.
     """
     id: str
     flow_name: str
@@ -50,8 +71,6 @@ class FlowMessageEntity:
     src_created_at: datetime.datetime
     sent_at: datetime.datetime
     last_operation: str
-    next_operation: str
     payload: str
     original_payload: str
-    count: int
     history: List['FlowMessageEntity']

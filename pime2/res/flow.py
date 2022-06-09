@@ -16,7 +16,6 @@ class Flow(resource.Resource):
         """
         return aiocoap.Message(payload=b"Flow")
 
-
     async def render_put(self, request):
         """
         handle get request for /flows
@@ -24,5 +23,5 @@ class Flow(resource.Resource):
         :param request:
         :return:
         """
-        # TODO: validate pime2.flow.flow_validation_service.FlowValidationService.is_flow_valid
+        # TODO: validate with is_flow_valid
         return aiocoap.Message(payload=b"Flow")
