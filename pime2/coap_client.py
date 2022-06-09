@@ -1,4 +1,3 @@
-# pylint: disable=broad-except
 import asyncio
 import logging
 from aiocoap import Code, Context, Message

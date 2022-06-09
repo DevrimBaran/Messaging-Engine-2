@@ -66,24 +66,27 @@ def is_flow_valid(flow: FlowEntity) -> (bool, str):
     op_names_set = set(op_names)
     if len(op_names_set) != len(op_names):
         return False, "Operation names need to be unique per flow!"
-    return True
+    return True, ""
 
 
-def is_flow_executable(flow: FlowEntity, node_service: NodeService) -> bool:
+def is_flow_step_executable(flow: FlowEntity, step: str, node_service: NodeService) -> bool:
     """
     Checks: Are there nodes for all operations of the flow?
     """
     for op in flow.ops:
-        if op.is_input() and not node_service.get_own_node().has_skill(op.input):
-            logging.debug("No sensor skill '%s' known", op.input)
-            return False
-        elif op.is_output() and op.output.strip().lower() != "exit" \
-                and not node_service.get_own_node().has_skill(op.output):
-            # "exit" output operation is allowed on all me 2
-            logging.debug("No actuator skill '%s' known", op.output)
-            return False
+        if op.name.lower() == step.lower():
+            if op.is_input():
+                if not node_service.get_own_node().has_skill(op.input):
+                    logging.debug("No sensor skill '%s' known", op.input)
+                    return False
+            else:
+                if op.is_output() and op.output.strip().lower() != "exit" \
+                        and not node_service.get_own_node().has_skill(op.output):
+                    # "exit" output operation is allowed on all me 2
+                    logging.debug("No actuator skill '%s' known", op.output)
+                    return False
 
-        if len(FlowOperationManager.detect_nodes_of_step(flow, op.name, node_service.get_all_nodes())) == 0:
-            logging.debug("No executable node found for operation name '%s'", op.name)
-            return False
+            if len(FlowOperationManager.detect_nodes_of_step(flow, op.name, node_service.get_all_nodes())) == 0:
+                logging.debug("No executable node found for operation name '%s'", op.name)
+                return False
     return True

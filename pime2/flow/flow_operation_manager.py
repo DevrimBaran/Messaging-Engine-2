@@ -110,6 +110,7 @@ class FlowOperationManager:
             logging.warning("Invalid flow_message for flow received. Invalid names: flow: %s, flow message: %s",
                             flow.name, flow_message.flow_name)
             return None
+
         is_executed = False
         for f in flow.ops:
             if f.name.lower() == step.lower():

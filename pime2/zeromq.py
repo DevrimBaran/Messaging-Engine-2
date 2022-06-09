@@ -1,4 +1,4 @@
-# pylint: disable=broad-except,no-member
+# pylint: disable=no-member
 import asyncio
 import logging
 
@@ -51,6 +51,7 @@ async def startup_pull_queue(context):
 
     # load and instantiate flow manager
     flow_manager = FlowManager(NodeService())
+    conf = get_me_conf()
 
     while True:
         try:
@@ -63,9 +64,11 @@ async def startup_pull_queue(context):
                     logging.warning("Message processing timeout reached!")
                 except Exception as ex:
                     logging.error("Message processing inner exception: %s", ex)
-                    if get_me_conf().is_debug:
+                    if conf.is_debug:
                         raise RuntimeError("Problem executing ME2") from ex
         except Exception as e:
-            logging.error("Message processing outer exception: %s", e)
+            logging.error("Message processing exception: %s", e)
+            if conf.is_debug:
+                raise RuntimeError("Problem during execution of ME2") from e
         finally:
             logging.debug("A single router loop has finished")

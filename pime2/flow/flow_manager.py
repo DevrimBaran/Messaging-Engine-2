@@ -11,7 +11,7 @@ from pime2.coap_client import send_message
 from pime2.common import base64_decode
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
-from pime2.flow.flow_validation import is_flow_valid, is_flow_executable
+from pime2.flow.flow_validation import is_flow_valid, is_flow_step_executable
 from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
 from pime2.sensor.sensor import SensorType
 from pime2.service.node_service import NodeService
@@ -149,13 +149,6 @@ class FlowManager:
             self.cancel_flow(flow, flow_message)
             return False
 
-        # check if the flow is executable
-        if not is_flow_executable(flow, self.node_service):
-            logging.warning("CANNOT EXECUTE FLOW '%s': %s. Neighbors or skills are missing.",
-                            flow.name, validation_msgs)
-            self.cancel_flow(flow, flow_message)
-            return False
-
         return True
 
     async def finish_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity):
@@ -180,6 +173,13 @@ class FlowManager:
         if not FlowOperationManager.is_last_step(flow, final_step):
             self.cancel_flow(flow, flow_message, "step is not final")
             return
+
+        # check if the flow is executable
+        if not is_flow_step_executable(flow, final_step, self.node_service):
+            logging.warning("CANNOT EXECUTE FLOW '%s'. Neighbors or skills are missing in final step '%s'.",
+                            flow.name, final_step)
+            self.cancel_flow(flow, flow_message)
+            return False
 
         result = await FlowOperationManager.execute_operation(flow, flow_message, final_step)
 
@@ -257,6 +257,13 @@ class FlowManager:
 
         is_executed_locally = len(list(filter(lambda x: not self.node_service.is_node_remote(x), nodes_of_step))) > 0
         if is_executed_locally:
+            # check if the flow is executable
+            if not is_flow_step_executable(flow, step, self.node_service):
+                logging.warning("CANNOT EXECUTE FLOW '%s'. Neighbors or skills are missing in step '%s'.",
+                                flow.name, step)
+                self.cancel_flow(flow, flow_message)
+                return False
+
             result = await FlowOperationManager.execute_operation(flow, flow_message, step)
             return True, result
         return False, None

@@ -27,4 +27,7 @@ if __name__ == "__main__":
     logging.info("Loaded app's configuration from '%s' successfully", CONFIG_FILE)
 
     # start application
-    asyncio.run(pime_run(config))
+    try:
+        asyncio.run(pime_run(config))
+    except:
+        logging.error("ME2 exited.")

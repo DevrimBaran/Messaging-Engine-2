@@ -5,7 +5,7 @@ from pime2 import NAME_REGEX, database
 from pime2.config import load_app_config
 from pime2.database import create_connection
 from pime2.entity import FlowOperationEntity, FlowEntity
-from pime2.flow.flow_validation import is_flow_valid, is_flow_executable
+from pime2.flow.flow_validation import is_flow_valid, is_flow_step_executable
 from pime2.repository.node_repository import NodeRepository
 from pime2.service.node_service import NodeService
 
@@ -50,7 +50,7 @@ class FlowValidationTest(unittest.TestCase):
                     FlowOperationEntity("op_name3", None, "cep_intercept", None, "node1")]
         flow = FlowEntity("test_flow", flow_ops)
         self.assertEqual(True, is_flow_valid(flow))
-        self.assertEqual(True, is_flow_executable(flow, NodeService()))
+        self.assertEqual(True, is_flow_step_executable(flow, NodeService()))
 
     def test_invalid_flow_validation(self):
         test_name = "op_name"
@@ -109,7 +109,7 @@ class FlowValidationTest(unittest.TestCase):
                       FlowOperationEntity(test_name2, None, test_process_op, None, "*"),
                       FlowOperationEntity(test_name3, None, None, test_output_op2, "test")]
         flow10 = FlowEntity("test_flow", flow_ops10)
-        self.assertEqual(False, is_flow_executable(flow10, node_service))
+        self.assertEqual(False, is_flow_step_executable(flow10, node_service))
         flow_ops11 = [FlowOperationEntity(test_name, test_op_name, None, None, "*"),
                       FlowOperationEntity(test_name, None, test_process_op, None, "*"),
                       FlowOperationEntity(test_name3, None, None, test_output_op2)]
@@ -160,7 +160,7 @@ class FlowValidationTest(unittest.TestCase):
             FlowOperationEntity("op_name2", None, "log", None),
             FlowOperationEntity("op_name3", None, None, "exit"),
         ])
-        self.assertTrue(is_flow_executable(flow, node_service))
+        self.assertTrue(is_flow_step_executable(flow, node_service))
 
 
 if __name__ == '__main__':
