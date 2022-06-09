@@ -146,8 +146,8 @@ disable=print-statement,
         useless-super-delegation,
         fixme,
         too-few-public-methods,
-        R0801,
-        C0103,
+        duplicate-code,
+        invalid-name,
         broad-except
 
 # Enable the message, report, category or checker with the given id(s). You can

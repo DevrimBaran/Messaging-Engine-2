@@ -27,7 +27,7 @@ class Sensor(Operator, ABC):
     @abstractmethod
     def read(self) -> DualGpioCommonResult:
         """
-        Read data from sensor and write ot to the output.
+        Read data from sensor and write to the output.
         Very time critical.
         :return:
         """
@@ -46,7 +46,7 @@ class DualGpioSensor(Sensor, ABC):
     @abstractmethod
     def read(self) -> DualGpioCommonResult:
         """
-        Read data from sensor and write ot to the output.
+        Read data from sensor and write to the output.
         Very time critical.
         :return:
         """
@@ -65,7 +65,7 @@ class SingleGpioSensor(Sensor, ABC):
     @abstractmethod
     def read(self) -> SingleGpioCommonResult:
         """
-        Read data from sensor and write ot to the output.
+        Read data from sensor and write to the output.
         Very time critical.
         :return:
         """

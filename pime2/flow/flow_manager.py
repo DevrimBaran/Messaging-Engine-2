@@ -61,7 +61,7 @@ class FlowManager:
                 FlowOperationEntity("sensor_read", "sensor_temperature", None, None, "me2_first"),
                 FlowOperationEntity("cep_intercept", None, "cep_intercept", None, "me2_second", {
                     "expression": "x > 30",
-                    "variables": {"x": "temperature"}
+                    "variables": {"x": "result"}
                 }),
                 FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
             ]),
@@ -69,7 +69,7 @@ class FlowManager:
                 FlowOperationEntity("sensor_read", "sensor_button", None, None, "me2_first"),
                 FlowOperationEntity("cep_intercepted", None, "cep_intercept", None, "me2_second", {
                     "expression": "x=true and y=true",
-                    "variables": {"x": "button1", "y": "button2"}
+                    "variables": {"x": "gpio_1_result", "y": "gpio_2_result"}
                 }),
                 FlowOperationEntity("led_call", None, None, "actuator_led", "me2_third"),
             ]),
