@@ -17,7 +17,7 @@ def cep_executer(expression, variables, payload) :
     if final_expression:
         try:
             return eval(final_expression)
-        except SyntaxError as ex:
+        except Exception as ex:
             logging.error("Invalid CEP expression!: %s", ex)
     return False
 
