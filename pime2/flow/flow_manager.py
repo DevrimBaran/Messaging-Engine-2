@@ -144,6 +144,10 @@ class FlowManager:
             logging.info("Flow is not executed locally.")
             return
 
+        if result is None:
+            self.cancel_flow(flow, flow_message, "CEP invalid!")
+            return
+
         # detect next step and delegate
         next_step = FlowOperationManager.detect_next_step(flow, current_step)
         if next_step is None:
@@ -289,7 +293,7 @@ class FlowManager:
                 logging.warning("CANNOT EXECUTE FLOW '%s'. Neighbors or skills are missing in step '%s'.",
                                 flow.name, step)
                 self.cancel_flow(flow, flow_message)
-                return False
+                return False, None
 
             result = await FlowOperationManager.execute_operation(flow, flow_message, step)
             return True, result
