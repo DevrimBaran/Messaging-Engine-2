@@ -43,6 +43,7 @@ def create_default_tables(connection, node_service):
     :param connection: connection to the database
     :return:
     """
+
     sql_create_nodes_table = """CREATE TABLE IF NOT EXISTS nodes (
                                     id integer PRIMARY KEY,
                                     name varchar(255) NOT NULL UNIQUE,

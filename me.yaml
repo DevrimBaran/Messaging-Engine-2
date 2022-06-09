@@ -7,16 +7,16 @@ port: 5683
 database: "pime_database.db"
 read_interval: 3.0
 sensors:
-  - name: "ButtonSensor"
+  - name: "sensor_button"
     type: button
     gpio1: 12
     gpio2: 13
     is_test_mode: true
-  - name: "MagnetSensor"
+  - name: "sensor_hall"
     type: hall
     gpio1: 14
     is_test_mode: true
-  - name: "TemperatureSensor"
+  - name: "sensor_temperature"
     type: temperature
     gpio1: 18
     is_test_mode: true

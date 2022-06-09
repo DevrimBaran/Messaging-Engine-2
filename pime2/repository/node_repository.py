@@ -69,8 +69,8 @@ class NodeRepository:
             logging.debug('Query executed. Result: %s', nodes_in_database)
             result_list = []
             for node in nodes_in_database:
-                sensor_skills = [] if list(node[4]).__len__() == 0 else node[4].split(",")
-                actuator_skills = [] if list(node[5]).__len__() == 0 else node[5].split(",")
+                sensor_skills = [] if node[4] is None or len(list(node[4])) == 0 else node[4].split(",")
+                actuator_skills = [] if node[5] is None or len(list(node[5])) == 0 else node[5].split(",")
                 result_list.append(NodeEntity(node[1], node[2], node[3], sensor_skills, actuator_skills))
             return result_list
         finally:
