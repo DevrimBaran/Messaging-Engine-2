@@ -48,6 +48,12 @@ class FlowService:
         flow_list = self.flow_repository.read_all_flows()
         return flow_list
 
+    def get_all_flows_as_json(self) -> str:
+        """Get all flows as a json string"""
+        flow_list = self.flow_repository.read_all_flows()
+        flows_json_string = self.flow_mapper.flow_entity_list_to_json(flow_list)
+        return flows_json_string
+
     def delete_all_flows(self):
         """Deletes all flows from the database"""
         self.flow_repository.delete_all()
