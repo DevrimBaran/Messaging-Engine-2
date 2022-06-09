@@ -16,23 +16,32 @@ class FlowMapperTest(unittest.TestCase):
 
     def get_flow_list(self) -> List[FlowEntity]:
         return [
-            FlowEntity("flow1",[FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*', join = "join", args='Args'),FlowOperationEntity(name='Flow_op_two', input='Input', process='Process', output='Output', where='*', join = "join", args='Args'),FlowOperationEntity(name='Flow_op_three', input='Input', process='Process', output='Output', where='*', join = "join", args='Args')]),
-            FlowEntity("flow2",[FlowOperationEntity(name='Flow_op_two', input='Input', process='Process', output='Output', where='*', join = "join", args='Args'),FlowOperationEntity(name='Flow_op_three', input='Input', process='Process', output='Output', where='*', join = "join", args='Args')]),
-            FlowEntity("flow3",[FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*', join = "join", args='Args')]),
-            FlowEntity("flow4",[]),
-            FlowEntity("flow5"),
-            FlowEntity("flow6",[FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*', join = "join", args='Args'),FlowOperationEntity(name='Flow_op_two', input='Input', process='Process', output='Output', where='*', join = "join", args='Args'),FlowOperationEntity(name='Flow_op_three', input='Input', process='Process', output='Output', where='*', join = "join", args='Args')]),
-            FlowEntity("flow7",[FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*', join = "join", args='Args'),FlowOperationEntity(name='Flow_op_two', input='Input', process='Process', output='Output', where='*', join = "join", args='Args'),FlowOperationEntity(name='Flow_op_three', input='Input', process='Process', output='Output', where='*', join = "join", args='Args')])]
+            FlowEntity("flow1", [
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*', args='Args')]),
+            FlowEntity("flow2", [
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*', args='Args'),
+                FlowOperationEntity(name='Flow_op_two', output='Output', where='*', args='Args')]),
+            FlowEntity("flow3", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*'), FlowOperationEntity(name='Flow_op_two', join='Join', where='*')]),
+            FlowEntity("flow4", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*'), FlowOperationEntity(name='Flow_op_two', join='Join', where='*', args="Args")]),
+            FlowEntity("flow5", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*')]),
+            FlowEntity("flow6", [
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*',),
+                FlowOperationEntity(name='Flow_op_two', process='Process', where='*'),
+                FlowOperationEntity(name='Flow_op_three', output='Output', where='*')]),
+            FlowEntity("flow7", [
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*', args='Args'),
+                FlowOperationEntity(name='Flow_op_two', process='Process', where='*', args='Args'),
+                FlowOperationEntity(name='Flow_op_three', output='Output', where='*', args='Args')])]
 
-    def get_flow_list_json(self) -> List[str]:
+   def get_flow_list_json(self) -> List[str]:
         return [
-            '{"name": "flow1", "ops": [{"name": "Flow_op_one", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}, {"name": "Flow_op_two", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}, {"name": "Flow_op_three", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}]}',
-            '{"name": "flow2", "ops": [{"name": "Flow_op_two", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}, {"name": "Flow_op_three", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}]}',
-            '{"name": "flow3", "ops": [{"name": "Flow_op_one", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}]}',
-            '{"name": "flow4", "ops": []}',
-            '{"name": "flow5", "ops": []}',
-            '{"name": "flow6", "ops": [{"name": "Flow_op_one", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}, {"name": "Flow_op_two", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}, {"name": "Flow_op_three", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}]}',
-            '{"name": "flow7", "ops": [{"name": "Flow_op_one", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}, {"name": "Flow_op_two", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}, {"name": "Flow_op_three", "input": "Input", "process": "Process", "output": "Output", "join": "join", "args": "Args", "where": "*"}]}',
+            '{"name": "flow1", "ops": [{"name": "Flow_op_one", "input": "Input", "args": "Args", "where": "*"}]}',
+            '{"name": "flow2", "ops": [{"name": "Flow_op_one", "input": "Input", "args": "Args", "where": "*"},{"name": "Flow_op_two", "output": "Output", "args": "Args", "where": "*"}]}',
+            '{"name": "flow3", "ops": [{"name": "Flow_op_one", "input": "Input", "where": "*"},{"name": "Flow_op_two", "join": "Join", "where": "*"}]}',
+            '{"name": "flow4", "ops": [{"name": "Flow_op_one","input": "Input","where": "*"},{"name": "Flow_op_two","join": "Join","where": "*","args": "Args"}]}',
+            '{"name": "flow5", "ops": [{"name": "Flow_op_one", "input": "Input", "where": "*"}]}',
+            '{"name": "flow6","ops": [{"name": "Flow_op_one","input": "Input","where": "*"},{"name": "Flow_op_two","process": "Process","where": "*"},{"name": "Flow_op_three", "output": "Output","where": "*"}]}',
+            '{"name": "flow7", "ops": [{"name": "Flow_op_one", "input": "Input", "where": "*", "args": "Args"},{"name": "Flow_op_two", "process": "Process", "args": "Args", "where": "*"},{"name": "Flow_op_three", "output": "Output", "args": "Args", "where": "*"}]}'
         ]
 
     def get_flow_op_list(self) -> List[FlowOperationEntity]:
