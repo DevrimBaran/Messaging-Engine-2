@@ -21,11 +21,11 @@ sensors:
     gpio1: 18
     is_test_mode: true
 actuators:
-  - name: "LED-Actuator"
+  - name: "actuator_led"
     type: led
     gpio1: 15
     is_test_mode: true
-  - name: "Speaker2"
+  - name: "actuator_speaker"
     type: speaker
     gpio1: 15
     is_test_mode: true

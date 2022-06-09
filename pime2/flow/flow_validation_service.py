@@ -40,7 +40,7 @@ def is_flow_valid(flow: FlowEntity) -> (bool, str):
         if op.input not in input_ops and op.input:
             return False, "Wrong input operation!"
         if op.input is not None and op.input not in node_service.get_own_node().sensor_skills:
-            return False, "No such defined in database"
+            return False, "No such skill defined in database for input!"
         if op.input is not None:
             count_input += 1
             if_input_defined = 1
@@ -58,6 +58,8 @@ def is_flow_valid(flow: FlowEntity) -> (bool, str):
             output_exists = 1
         if op.output not in output_ops and op.output:
             return False, "Wrong input for output!"
+        if op.output is not None and op.output not in node_service.get_own_node().actuator_skills:
+            return False, "No such skill defined in database for output!"
         if len(operation_manager.detect_nodes_of_step(flow, op.name, node_service.get_all_nodes())) == 0:
             return False, "Can not execute node step execution!"
         if xor(xor(output_exists, input_exists), process_exists) != 1:
