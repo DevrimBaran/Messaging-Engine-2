@@ -27,7 +27,7 @@ class FlowMapper:
         flow = FlowEntity(flow_name, flow_ops_list)
         return flow
 
-    def json_to_flow_operation(self, json_str: str) -> FlowOperationEntity | List[FlowOperationEntity]:
+    def json_to_flow_operation(self, json_str: str):
         json_obj = json.loads(json_str)
         result = []
         if len(json_obj) == 1 and isinstance(json_obj, list):
@@ -40,7 +40,7 @@ class FlowMapper:
         
         return result
 
-    def flow_operation_to_json(self, flow_ops: FlowOperationEntity | List[FlowOperationEntity]) -> str:
+    def flow_operation_to_json(self, flow_ops) -> str:
         result = []
         if isinstance(flow_ops, FlowOperationEntity):
             result = json.dumps(flow_ops.__dict__)
@@ -50,6 +50,13 @@ class FlowMapper:
             result = json.dumps(result)
         return result
 
+    def flow_entity_list_to_json(self, flow_list: List[FlowEntity]) -> str:
+        result = []
+        for flows in flow_list:
+            result.append(json.loads(self.flow_entity_to_json(flows)))
+        flow_list_json = json.dumps(result)
+        logging.info("Entity list to json : <%s>", flow_list_json)
+        return flow_list_json
 
     def json_to_message_entity(self, node: dict) -> FlowMessageEntity:
         """
