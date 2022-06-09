@@ -58,7 +58,7 @@ class FlowEntity:
     This class represents a datastructure to store a flow which can be handled by ME2
     """
     name: str
-    ops: List[FlowOperationEntity] = field(default_factory=lambda: [])
+    ops: List[FlowOperationEntity]
 
 
 @dataclass
