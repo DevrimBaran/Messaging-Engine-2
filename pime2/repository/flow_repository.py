@@ -83,7 +83,7 @@ class FlowRepository:
                 logging.debug('Current flow: <%s>', flow)
                 logging.debug('Executing UPDATE SQL query: "%s"', query)
                 logging.debug('Updating values to: ops: <%s>', flow.ops)
-                #TODO: FlowOperation 
+                #TODO: FlowOperation
                 flow_operations = self.flow_mapper.flow_operation_to_json(flow.ops)
                 cursor.execute(query, (flow_operations, flow.name))
                 self.commit()

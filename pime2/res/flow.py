@@ -1,10 +1,7 @@
-import aiocoap
 import logging
-import json
-from aiocoap import resource, Message, Code
 from json import JSONDecodeError
-from pime2.message import FlowCreateResultMessage
-from pime2.push_queue import get_push_queue
+import aiocoap
+from aiocoap import resource, Message, Code
 from pime2.service.flow_service import FlowService
 from pime2.mapper.flow_mapper import FlowMapper
 

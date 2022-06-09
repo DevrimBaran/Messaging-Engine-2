@@ -2,8 +2,8 @@ import datetime
 import json
 import logging
 from typing import List
-from pime2.entity import FlowEntity, FlowMessageEntity, FlowOperationEntity
 from dacite import from_dict
+from pime2.entity import FlowEntity, FlowMessageEntity, FlowOperationEntity
 
 class FlowMapper:
     """
@@ -11,6 +11,11 @@ class FlowMapper:
     """
 
     def flow_entity_to_json(self, flow: FlowEntity) -> str:
+        """
+        Method which converts a flow entity to a json string
+        :param flow:
+        :return:
+        """
         seriazable_flow_dict = flow.__dict__
         flow_operations_array = seriazable_flow_dict['ops']
         seriazable_flow_operation_array = []
@@ -20,14 +25,24 @@ class FlowMapper:
         return json.dumps(seriazable_flow_dict)
 
     def json_to_flow_entity(self, json_str: str) -> FlowEntity:
+        """
+        Method which converts a json string to a flow entity
+        :param json_str:
+        :return:
+        """
         json_obj = json.loads(json_str)
-        flow_name = json_obj['name'] 
+        flow_name = json_obj['name']
         json_flow_ops_array = json_obj['ops']
         flow_ops_list = self.json_to_flow_operation(json.dumps(json_flow_ops_array))
         flow = FlowEntity(flow_name, flow_ops_list)
         return flow
 
     def json_to_flow_operation(self, json_str: str):
+        """
+        Method which converts a json string to a flow operation entity
+        :param json_str:
+        :return:
+        """
         json_obj = json.loads(json_str)
         result = []
         if len(json_obj) == 1 and isinstance(json_obj, list):
@@ -37,10 +52,14 @@ class FlowMapper:
                 result.append(from_dict(data_class=FlowOperationEntity, data=obj))
         elif isinstance(json_obj, dict):
             result = from_dict(data_class=FlowOperationEntity, data=json_obj)
-        
         return result
 
     def flow_operation_to_json(self, flow_ops) -> str:
+        """
+        Method which converts a flow operation entity to a json string
+        :param flow_ops:
+        :return:
+        """
         result = []
         if isinstance(flow_ops, FlowOperationEntity):
             result = json.dumps(flow_ops.__dict__)
@@ -51,6 +70,11 @@ class FlowMapper:
         return result
 
     def flow_entity_list_to_json(self, flow_list: List[FlowEntity]) -> str:
+        """
+        Method which converts a list of flow entities to a json string
+        :param flow_list:
+        :return:
+        """
         result = []
         for flows in flow_list:
             result.append(json.loads(self.flow_entity_to_json(flows)))

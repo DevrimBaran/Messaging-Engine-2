@@ -30,7 +30,6 @@ class FlowOperationEntity:
     # args is completely optional
     args: Optional[str] = field(default=None)
     where: str = "*"
-    
 
 
 @dataclass
