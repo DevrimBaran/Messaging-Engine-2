@@ -59,7 +59,7 @@ def create_default_tables(connection, node_service):
                                 id integer PRIMARY KEY,
                                 flow_id varchar(255) NOT NULL,
                                 message_id varchar(255) NOT NULL UNIQUE,
-                                created_at DATETIME DEFAULT 'now');"""    
+                                created_at DATETIME DEFAULT 'now');"""
     try:
         cursor = connection.cursor()
         cursor.execute(sql_create_table_nodes)
