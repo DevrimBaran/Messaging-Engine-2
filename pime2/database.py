@@ -45,7 +45,6 @@ def create_default_tables(connection, node_service):
     """
 
     sql_create_table_nodes = """CREATE TABLE IF NOT EXISTS nodes (
-    sql_create_table_nodes = """CREATE TABLE IF NOT EXISTS nodes (
                                     id integer PRIMARY KEY,
                                     name varchar(255) NOT NULL UNIQUE,
                                     ip varchar(60) NOT NULL,
@@ -69,6 +68,7 @@ def create_default_tables(connection, node_service):
         logging.exception("An error occurred while creating the default tables")
     finally:
         cursor.close()
+
 
 def get_db_connection():
     """
