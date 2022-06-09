@@ -36,10 +36,16 @@ class TestCEPFlow(unittest.TestCase):
         self.assertTrue(cep_executer(expression="7 == 7 and 3 < 5", variables={}, payload={}))
         self.assertTrue(cep_executer(expression="4 != 3 or 4 == 4", variables={}, payload={}))
         self.assertTrue(cep_executer(expression="8 >= 4 and 7 + 3 == 12 or 8 + 2 == 10 ", variables={}, payload={}))
+        self.assertTrue(cep_executer(expression="True ", variables={}, payload={}))
+        self.assertTrue(cep_executer(expression="true", variables={}, payload={}))
+        self.assertTrue(cep_executer(expression="true or false", variables={}, payload={}))
         
         self.assertFalse(cep_executer(expression="7 != 7 and 3 < 5", variables={}, payload={}))
         self.assertFalse(cep_executer(expression="4 == 3 or 4 < 2", variables={}, payload={}))
         self.assertFalse(cep_executer(expression="8 == 4 and 7 + 3 == 12 or 8 + 2 == 12 ", variables={}, payload={}))
+        self.assertFalse(cep_executer(expression="False", variables={}, payload={}))
+        self.assertFalse(cep_executer(expression="false", variables={}, payload={}))
+        self.assertFalse(cep_executer(expression="false and true", variables={}, payload={}))
 
     def test_expression_with_variables(self):
         self.assertTrue(cep_executer(expression="x + 4 == 10", variables={"x": 6}, payload={}))

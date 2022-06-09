@@ -3,8 +3,8 @@
 import logging
 import re
 
-expression_regex = "([0-9<>=!()+\-*/. ]|(and)|(or))*"
-variable_regex = "^[uvwxyz]*$"
+expression_regex = "([0-9<>=!()+\-*/. ]|(and)|(or)|(True)|(False))*"
+variable_regex = "^[uvwxyz]{1}$"
 
 # TODO: maybe only the keyword sensor_result_x with x = number of the result
 keywords = ["result", "gpio_1_result", "gpio_2_result"]
@@ -48,6 +48,10 @@ def substitute_variables(expression, variables, payload):
             raise ValueError("Invalid CEP variable!")
 
         expression = re.sub(key, str(value), expression)
+
+    expression = re.sub("true", "True", expression)
+    expression = re.sub("false", "False", expression)
+
     return expression
 
 def is_keyword(value):
