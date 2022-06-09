@@ -251,7 +251,7 @@ class FlowMapperTest(unittest.TestCase):
         flow_list_json = self.get_flow_list_json()
         flow_list_read = self.get_flow_list()
         for ind in range(len(flow_list_json)):
-            self.assertEqual(self.flow_mapper.flow_entity_to_json(flow_list_read[ind]),flow_list_json[ind])
+            self.assertEqual(self.flow_mapper.flow_entity_to_json(flow_list_read[ind]), flow_list_json[ind])
 
     def test_json_to_flow_operation(self):
         flow_op_list_json = json.loads(self.get_flow_op_list_json_str())
