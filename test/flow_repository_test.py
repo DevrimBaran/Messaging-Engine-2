@@ -32,63 +32,40 @@ class FlowRepositoryTest(unittest.TestCase):
     def get_flow_list(self) -> List[FlowEntity]:
         return [
             FlowEntity("flow1", [
-                FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_two', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_three', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args')]),
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*', args='Args')]),
             FlowEntity("flow2", [
-                FlowOperationEntity(name='Flow_op_two', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_three', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args')]),
-            FlowEntity("flow3", [
-                FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args')]),
-            FlowEntity("flow4", []),
-            FlowEntity("flow5"),
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*', args='Args'),
+                FlowOperationEntity(name='Flow_op_two', output='Output', where='*', args='Args')]),
+            FlowEntity("flow3", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*'), FlowOperationEntity(name='Flow_op_two', join='Join', where='*')]),
+            FlowEntity("flow4", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*'), FlowOperationEntity(name='Flow_op_two', join='Join', where='*', args="Args")]),
+            FlowEntity("flow5", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*')]),
             FlowEntity("flow6", [
-                FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_two', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_three', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args')]),
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*',),
+                FlowOperationEntity(name='Flow_op_two', process='Process', where='*'),
+                FlowOperationEntity(name='Flow_op_three', output='Output', where='*')]),
             FlowEntity("flow7", [
-                FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_two', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_three', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args')])]
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*', args='Args'),
+                FlowOperationEntity(name='Flow_op_two', process='Process', where='*', args='Args'),
+                FlowOperationEntity(name='Flow_op_three', output='Output', where='*', args='Args')])]
 
     def get_flow_list_update(self) -> List[FlowEntity]:
         return [
             FlowEntity("flow1", [
-                FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='x>0'),
-                FlowOperationEntity(name='Flow_op_two', input='Input', process='log', output='Output', where='*',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_three', input='Sensor', process='Process', output='Output', where='*',
-                                    join="join", args='Args')]),
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*', args='x>0'),
+                FlowOperationEntity(name='Flow_op_two', process='log', where='*', args='Args'),
+                FlowOperationEntity(name='Flow_op_three', output='Output', where='*', args='Args')]),
             FlowEntity("flow2", [
-                FlowOperationEntity(name='Flow_op_two', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_three', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args')]),
-            FlowEntity("flow3", []),
-            FlowEntity("flow4", [FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args')]),
-            FlowEntity("flow5"),
-            FlowEntity("flow6", []),
+                FlowOperationEntity(name='Flow_op_two', input='Input', output='Output', where='*', args='Args'),
+                FlowOperationEntity(name='Flow_op_three', input='Input', process='Process', where='*')]),
+            FlowEntity("flow3", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*')]),
+            FlowEntity("flow4", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*')]),
+            FlowEntity("flow5", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*')]),
+            FlowEntity("flow6", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*')]),
             FlowEntity("flow7", [
-                FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='127.0.0.1',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_two', input='Input', process='Process', output='Output', where='*',
-                                    join="join", args='Args'),
-                FlowOperationEntity(name='Flow_op_three', input='Input', process='log', output='Output', where='*',
-                                    join="join", args='Args')])]
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='127.0.0.1'),
+                FlowOperationEntity(name='Flow_op_two', process='Process', where='*', args='x > 5'),
+                FlowOperationEntity(name='Flow_op_three', output='Output', where='*')])]
+
 
     def get_simple_flow(self):
         return FlowEntity("simple_flow", [FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',join="join", args='Args')])
