@@ -139,7 +139,7 @@ class FlowOperationManager:
                             if not cep_executer(f.args.expression, f.args.variables, flow_message.payload):
                                 logging.debug("CEP evaluation failed in flow %s with step %s", flow.name, step)
                                 return None
-                            
+
                         if f.process == "log":
                             logging.info("LOG OPERATION: %s", json.loads(payload))
 
