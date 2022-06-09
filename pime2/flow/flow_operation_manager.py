@@ -110,7 +110,7 @@ class FlowOperationManager:
                 flow_operation_name = f.name.lower()
                 flow_operation = f.process
 
-                if (flow_operation == "cep_intercept" and not cep_executer(flow_message.payload)):
+                if (flow_operation == "cep_intercept" and not cep_executer(f.args.expression, f.args.variables, flow_message.payload)):
                     logging.info("CEP evaluation failed. No operation will be executed in flow %s with step %s", flow.name, step)
                     return None
 
