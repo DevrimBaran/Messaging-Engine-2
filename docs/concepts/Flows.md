@@ -52,7 +52,6 @@
 - Check if only one of the following types are allowed per `Flow`: `input`, `output`, `process`
 - Check if an instance exists with a [skill](./Skills.md) for all input/process/output operations
 - Check if each flow is executable
-- TBD
 
 ## Example
 

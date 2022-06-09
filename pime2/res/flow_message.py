@@ -81,6 +81,7 @@ class FlowMessage(resource.Resource):
             "last_operation",
             "next_operation",
         ]
+
         for namelike_field in name_regex_fields:
             if not re.match(NAME_REGEX, node[namelike_field]):
                 logging.debug("Invalid name like field '%s'", namelike_field)
