@@ -19,7 +19,7 @@ class FlowOperationManagerTest(unittest.TestCase):
                                  original_payload, [] if history is None else history)
 
     def test_is_last_step(self):
-        fm = FlowOperationManager()
+        fm = FlowOperationManager
 
         for f in [self.simple_test_flow1(), self.simple_test_flow2(), self.simple_test_flow3()]:
             self.assertFalse(fm.is_last_step(f, ""))
@@ -39,7 +39,7 @@ class FlowOperationManagerTest(unittest.TestCase):
             self.assertFalse(fm.is_last_step(f, "    LAST_step123"))
 
     def test_second_step(self):
-        fm = FlowOperationManager()
+        fm = FlowOperationManager
 
         for f in [
             self.simple_test_flow1(),
@@ -52,9 +52,8 @@ class FlowOperationManagerTest(unittest.TestCase):
                 self.assertEqual("last_step", fm.detect_second_step(f))
 
     def test_current_step(self):
-        fm = FlowOperationManager()
+        fm = FlowOperationManager
         now = datetime.datetime.now()
-        test_flow_id = uuid.uuid4().hex
 
         for f in [
             self.simple_test_flow1(),
@@ -77,7 +76,7 @@ class FlowOperationManagerTest(unittest.TestCase):
             self.assertIsNone(fm.detect_current_step(f, message))
 
     def test_next_step(self):
-        fm = FlowOperationManager()
+        fm = FlowOperationManager
 
         for f in [
             self.simple_test_flow1(),
@@ -88,7 +87,7 @@ class FlowOperationManagerTest(unittest.TestCase):
             self.assertEqual("second_step", fm.detect_next_step(f, "first_step"))
 
     def test_nodes_of_step(self):
-        fm = FlowOperationManager()
+        fm = FlowOperationManager
         nodes = [
             NodeEntity("instance1", "127.0.0.1", 5683),
             NodeEntity("instance2", "127.0.0.2", 5683),

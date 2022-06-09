@@ -15,6 +15,15 @@ class NodeEntity:
     sensor_skills: List[str] = field(default_factory=lambda: [])
     actuator_skills: List[str] = field(default_factory=lambda: [])
 
+    def has_skill(self, skill_name: str) -> bool:
+        """
+        Check if a Node can execute a single string.
+        :param skill_name:
+        :return:
+        """
+        # TODO implement
+        return True
+
 
 @dataclass
 class FlowOperationEntity:

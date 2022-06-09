@@ -15,7 +15,8 @@ class FlowOperationManager:
 
     """
 
-    def detect_current_step(self, flow: FlowEntity, flow_message: FlowMessageEntity) -> Optional[str]:
+    @staticmethod
+    def detect_current_step(flow: FlowEntity, flow_message: FlowMessageEntity) -> Optional[str]:
         """
         Method to detect the current operation: it is the next after the last
 
@@ -27,10 +28,11 @@ class FlowOperationManager:
             return None
         for f in flow.ops:
             if f.name.lower() == flow_message.last_operation.lower():
-                return self.detect_next_step(flow, flow_message.last_operation)
+                return FlowOperationManager.detect_next_step(flow, flow_message.last_operation)
         return None
 
-    def detect_next_step(self, flow: FlowEntity, current_step: str) -> Optional[str]:
+    @staticmethod
+    def detect_next_step(flow: FlowEntity, current_step: str) -> Optional[str]:
         """
         Detect next step
 
@@ -51,7 +53,8 @@ class FlowOperationManager:
                     return f.name
         return None
 
-    def detect_second_step(self, flow: FlowEntity) -> Optional[str]:
+    @staticmethod
+    def detect_second_step(flow: FlowEntity) -> Optional[str]:
         """
         Returns the name of the second flow of the given entity.
 
@@ -62,7 +65,8 @@ class FlowOperationManager:
             return None
         return flow.ops[1].name
 
-    def detect_nodes_of_step(self, flow: FlowEntity, step: str, nodes: List[NodeEntity]) -> List[NodeEntity]:
+    @staticmethod
+    def detect_nodes_of_step(flow: FlowEntity, step: str, nodes: List[NodeEntity]) -> List[NodeEntity]:
         """
         Method to detect which nodes are affected by the given step.
         TODO: Consider skills here (ME-44?)
@@ -90,7 +94,8 @@ class FlowOperationManager:
 
         return []
 
-    async def execute_operation(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str) -> Optional[str]:
+    @staticmethod
+    async def execute_operation(flow: FlowEntity, flow_message: FlowMessageEntity, step: str) -> Optional[str]:
         """
         Method to execute an operation of a flow message defined by the step.
         The returned str is the base64 encoded output value of this operation, and it is the payload
@@ -135,7 +140,8 @@ class FlowOperationManager:
             logging.error("No operation executed in flow %s with step %s", flow.name, step)
         return None
 
-    def is_last_step(self, flow: FlowEntity, current_step: str) -> bool:
+    @staticmethod
+    def is_last_step(flow: FlowEntity, current_step: str) -> bool:
         """"
         This method detects if a step is the last one in a flow
         """
