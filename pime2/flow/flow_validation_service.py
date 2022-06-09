@@ -1,4 +1,5 @@
 # pylint: disable=too-many-return-statements
+# pylint: disable=too-many-locals
 import re
 from operator import xor
 
@@ -59,8 +60,7 @@ def is_flow_valid(flow: FlowEntity) -> (bool, str):
             return False, "Wrong input for output!"
         if len(operation_manager.detect_nodes_of_step(flow, op.name, node_service.get_all_nodes())) == 0:
             return False, "Can not execute node step execution!"
-        check = xor(xor(output_exists, input_exists), process_exists)
-        if check != 1:
+        if xor(xor(output_exists, input_exists), process_exists) != 1:
             return False, "Only one of the following types are allowed per flow: 'input', 'process', 'output'!"
     if not if_output_defined:
         return False, "No output defined!"
