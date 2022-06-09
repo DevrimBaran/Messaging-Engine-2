@@ -1,0 +1,15 @@
+{
+    "name": "test_flow_1",
+    "ops": [
+        {
+        "name": "sensor_read",
+        "input": "sensor_temperature",
+        "where": "*"
+        },
+        {
+        "name": "actuator_call",
+        "output": "actuator_speaker",
+        "where": "*"
+        }
+    ]
+}

@@ -44,9 +44,12 @@
 ##### Validation
 
 - Check if `ops` has at least 2 elements
+- Check if all operation names are unique
 - Check if all operation names are known and defined in `ops`
 - Check if an instance exists for each `where`
 - Check if there exists exactly one `input` per `Flow`
+- Check if there exists at least one `output` or `process` per `Flow`
+- Check if only one of the following types are allowed per `Flow`: `input`, `output`, `process`
 - Check if an instance exists with a [skill](./Skills.md) for all input/process/output operations
 - Check if each flow is executable
 - TBD

@@ -1,8 +1,6 @@
 import json
 import unittest
-import os
 
-import pime2.database as db
 from pime2.entity import NodeEntity
 from pime2.mapper.node_mapper import NodeMapper
 
@@ -64,6 +62,7 @@ class NodeMapperTest(unittest.TestCase):
         node_list_json = self.get_json()
         self.assertEqual(json.loads("".join(node_list_json)),
                          json.loads(self.node_mapper.entity_list_to_json(node_list)))
+
 
 if __name__ == '__main__':
     unittest.main()

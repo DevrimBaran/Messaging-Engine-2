@@ -9,7 +9,7 @@ class Hello(resource.Resource):
     """
 
     def __init__(self):
-        self.node_service = NodeService()
+        self.node_service: NodeService = NodeService()
 
     async def render_get(self, request):
         """
