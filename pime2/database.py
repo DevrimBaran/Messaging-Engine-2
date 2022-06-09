@@ -60,10 +60,10 @@ def create_default_tables(connection, node_service):
                                 flow_id varchar(255) NOT NULL,
                                 message_id varchar(255) NOT NULL UNIQUE,
                                 created_at DATETIME DEFAULT 'now');"""    
-        cursor = connection.cursor()
     try:
-        cursor.execute(sql_create_nodes_table)
-        cursor.execute(sql_create_flows_table)
+        cursor = connection.cursor()
+        cursor.execute(sql_create_table_nodes)
+        cursor.execute(sql_create_table_flows)
         cursor.execute(sql_create_table_executions)
         connection.commit()
         logging.info("Successfully created all default tables")
