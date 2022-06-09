@@ -7,6 +7,7 @@ from pime2.actuator.actuator_manager import ActuatorManager
 from pime2.common import base64_decode
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
 from pime2.flow.cep_flow import cep_executer
+from pime2.repository.execution_repository import ExecutionRepository
 
 
 class FlowOperationManager:
@@ -96,12 +97,14 @@ class FlowOperationManager:
         return []
 
     @staticmethod
-    async def execute_operation(flow: FlowEntity, flow_message: FlowMessageEntity, step: str) -> Optional[str]:
+    async def execute_operation(flow: FlowEntity, flow_message: FlowMessageEntity, step: str,
+                                execution_repository: ExecutionRepository) -> Optional[str]:
         """
         Method to execute an operation of a flow message defined by the step.
         The returned str is the base64 encoded output value of this operation, and it is the payload
         for the next flow message.
 
+        :param execution_repository:
         :param flow:
         :param flow_message:
         :param step:
@@ -118,30 +121,37 @@ class FlowOperationManager:
                 flow_operation_name = f.name.lower()
                 flow_operation = f.process
 
-                is_executed = True
+                if execution_repository.is_message_executed(flow_message.flow_id, flow_message.id):
+                    # prevent duplicate operation execution
+                    logging.error("DUPLICATE FLOW OPERATION PREVENTED! %s:%s, message_id: %s flow_id: %s",
+                                  flow_operation_name, flow_operation,
+                                  flow_message.id, flow_message.flow_id)
+                else:
+                    # first execution
+                    payload = base64_decode(flow_message.payload)
+                    logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
+                                 flow_operation, payload)
+                    execution_repository.register_execution(flow_message.flow_id, flow_message.id)
 
-                payload = base64_decode(flow_message.payload)
-                logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
-                             flow_operation, payload)
+                    if f.is_process():
+                        if f.process == "cep_operation":
+                            logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
+                            if not cep_executer(f.args.expression, f.args.variables, flow_message.payload):
+                                logging.debug("CEP evaluation failed in flow %s with step %s", flow.name, step)
+                                return None
+                            
+                        if f.process == "log":
+                            logging.info("LOG OPERATION: %s", json.loads(payload))
 
-                if f.is_process():
-                    if f.process == "cep_operation":
-                        logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
-                        if not cep_executer(f.args.expression, f.args.variables, flow_message.payload):
-                            logging.debug("CEP evaluation failed in flow %s with step %s", flow.name, step)
-                            return None
+                    if f.is_output():
+                        manager = ActuatorManager()
+                        if f.output == "actuator_led":
+                            manager.one_time_trigger(ActuatorType.LED)
+                        if f.output == "actuator_speaker":
+                            manager.one_time_trigger(ActuatorType.SPEAKER)
+                    # TODO: execute operation
 
-                    if f.process == "log":
-                        logging.info("LOG OPERATION: %s", json.loads(payload))
-
-                if f.is_output():
-                    manager = ActuatorManager()
-                    if f.output == "actuator_led":
-                        manager.one_time_trigger(ActuatorType.LED)
-                    if f.output == "actuator_speaker":
-                        manager.one_time_trigger(ActuatorType.SPEAKER)
-
-                return flow_message.payload
+            return flow_message.payload
         if not is_executed:
             logging.error("No operation executed in flow %s with step %s", flow.name, step)
         return None

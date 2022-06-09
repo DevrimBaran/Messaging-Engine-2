@@ -9,10 +9,12 @@ import aiocoap
 from pime2 import MESSAGE_SENDING_REMOTE_TIMEOUT
 from pime2.coap_client import send_message
 from pime2.common import base64_decode
+from pime2.database import get_db_connection
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
 from pime2.flow.flow_validation import is_flow_valid, is_flow_step_executable
 from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
+from pime2.repository.execution_repository import ExecutionRepository
 from pime2.sensor.sensor import SensorType
 from pime2.service.node_service import NodeService
 
@@ -25,6 +27,7 @@ class FlowManager:
 
     def __init__(self, node_service: NodeService):
         self.node_service = node_service
+        self.execution_repository = ExecutionRepository(get_db_connection())
 
     def get_nodes(self) -> List[NodeEntity]:
         """
@@ -212,7 +215,7 @@ class FlowManager:
             self.cancel_flow(flow, flow_message)
             return False
 
-        result = await FlowOperationManager.execute_operation(flow, flow_message, final_step)
+        result = await FlowOperationManager.execute_operation(flow, flow_message, final_step, self.execution_repository)
 
         logging.info("FINISHED FLOW %s:%s, result: %s", flow.name, flow_message.flow_id,
                      base64_decode(result) if result is not None else "")
@@ -295,7 +298,7 @@ class FlowManager:
                 self.cancel_flow(flow, flow_message)
                 return False, None
 
-            result = await FlowOperationManager.execute_operation(flow, flow_message, step)
+            result = await FlowOperationManager.execute_operation(flow, flow_message, step, self.execution_repository)
             return True, result
         return False, None
 
