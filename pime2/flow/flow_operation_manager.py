@@ -14,7 +14,7 @@ class FlowOperationManager:
 
     def detect_current_step(self, flow: FlowEntity, flow_message: FlowMessageEntity) -> Optional[str]:
         """
-        Method to detect the next operation: it is the next after the last
+        Method to detect the current operation: it is the next after the last
 
         :param flow:
         :param flow_message:

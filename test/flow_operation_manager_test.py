@@ -15,8 +15,6 @@ class FlowOperationManagerTest(unittest.TestCase):
                     last_operation: str = "op", payload: str = "", original_payload: str = "",
                     history=None) -> FlowMessageEntity:
         """getter"""
-        if history is None:
-            history = []
         return FlowMessageEntity(msg_id, name, flow_id, src_created_at, sent_at, last_operation, payload,
                                  original_payload, [] if history is None else history)
 
