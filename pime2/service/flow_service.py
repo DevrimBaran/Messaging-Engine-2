@@ -1,6 +1,5 @@
 from json import JSONDecodeError
 from typing import List
-
 from pime2.database import get_db_connection
 from pime2.entity import FlowEntity
 from pime2.repository.flow_repository import FlowRepository
