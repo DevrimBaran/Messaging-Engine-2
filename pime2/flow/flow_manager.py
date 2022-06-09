@@ -41,13 +41,40 @@ class FlowManager:
 
         :return:
         """
-        flow = FlowEntity("test_flow1", [
-            FlowOperationEntity("first_step", "sensor_temperature", None, None),
-            FlowOperationEntity("second_step", None, "log", None, "111111111"),
-            FlowOperationEntity("third_step", None, "log", None, "222222222"),
-            FlowOperationEntity("last_step", None, None, "exit"),
-        ])
-        return [flow]
+        flows = [
+            FlowEntity("docker_flow_1", [
+                FlowOperationEntity("first_step", "sensor_temperature", None, None),
+                FlowOperationEntity("second_step", None, "log", None, "111111111"),
+                FlowOperationEntity("third_step", None, "log", None, "222222222"),
+                FlowOperationEntity("last_step", None, None, "exit"),
+            ]),
+            FlowEntity("test_flow_1", [
+                FlowOperationEntity("sensor_read", "sensor_temperature", None, None),
+                FlowOperationEntity("actuator_call", None, None, "actuator_speaker"),
+            ]),
+            FlowEntity("test_flow_2", [
+                FlowOperationEntity("sensor_read", "sensor_hall", None, None, "me2_first"),
+                FlowOperationEntity("log", None, "log", None, "me2_second"),
+                FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
+            ]),
+            FlowEntity("test_cep_flow_1", [
+                FlowOperationEntity("sensor_read", "sensor_temperature", None, None, "me2_first"),
+                FlowOperationEntity("cep_intercept", None, "cep_intercept", None, "me2_second", {
+                    "expression": "x > 30",
+                    "variables": {"x": "temperature"}
+                }),
+                FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
+            ]),
+            FlowEntity("test_cep_flow_2", [
+                FlowOperationEntity("sensor_read", "sensor_button", None, None, "me2_first"),
+                FlowOperationEntity("cep_intercepted", None, "cep_intercept", None, "me2_second", {
+                    "expression": "x=true and y=true",
+                    "variables": {"x": "button1", "y": "button2"}
+                }),
+                FlowOperationEntity("led_call", None, None, "actuator_led", "me2_third"),
+            ]),
+        ]
+        return flows
 
     async def start_flow(self, flow: FlowEntity, result: dict):
         """

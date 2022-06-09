@@ -1,7 +1,7 @@
 # pylint: disable=C0103
 import datetime
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Dict, Union
 
 
 @dataclass
@@ -36,7 +36,7 @@ class FlowOperationEntity:
     process: Optional[str]
     output: Optional[str]
     where: str = "*"
-    args: str = ""
+    args: Union[str, Dict] = ""
 
     def is_input(self) -> bool:
         """utility"""
