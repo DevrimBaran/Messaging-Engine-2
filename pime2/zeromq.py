@@ -6,6 +6,7 @@ import zmq
 from zmq.asyncio import Poller
 
 from pime2 import ROUTER_LOOP_TASK_TIMEOUT
+from pime2.config import get_me_conf
 from pime2.flow import FlowManager
 from pime2.router import router_loop
 from pime2.push_queue import get_push_queue
@@ -62,6 +63,8 @@ async def startup_pull_queue(context):
                     logging.warning("Message processing timeout reached!")
                 except Exception as ex:
                     logging.error("Message processing inner exception: %s", ex)
+                    if get_me_conf().is_debug:
+                        raise RuntimeError("Problem executing ME2") from ex
         except Exception as e:
             logging.error("Message processing outer exception: %s", e)
         finally:
