@@ -27,7 +27,7 @@ class FlowOperationEntity:
     process: Optional[str]
     output: Optional[str]
     where: str = "*"
-    args: str = ""
+    args: dict = {}
 
 
 @dataclass
