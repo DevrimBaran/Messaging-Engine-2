@@ -11,7 +11,7 @@ from pime2.coap_client import send_message
 from pime2.common import base64_decode
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
-from pime2.flow.flow_validation_service import is_flow_valid
+from pime2.flow.flow_validation import is_flow_valid
 from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
 from pime2.sensor.sensor import SensorType
 from pime2.service.node_service import NodeService
@@ -146,7 +146,7 @@ class FlowManager:
         """
         is_valid, validation_msgs = is_flow_valid(flow)
         if not is_valid:
-            logging.warning("Validate flow message: %s", validation_msgs)
+            logging.warning("INVALID FLOW '%s': %s", flow.name, validation_msgs)
             self.cancel_flow(flow, flow_message)
             return False
         return True
