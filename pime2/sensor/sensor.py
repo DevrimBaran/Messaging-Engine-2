@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 from enum import Enum
 from pime2.common.operator import Operator, DualGpioOperatorArguments, SingleGpioOperatorArguments
-from pime2.common.read_output import SingleGpioCommonResult, DualGpioCommonResult
+from pime2.common.read_output import DualGpioCommonResult, SingleGpioCommonResult
 
 
 class SensorType(Enum):
@@ -24,6 +24,14 @@ class Sensor(Operator, ABC):
         self.sensor_type = sensor_type
         self.name = name
 
+    @abstractmethod
+    def read(self) -> DualGpioCommonResult:
+        """
+        Read data from sensor and write to the output.
+        Very time critical.
+        :return:
+        """
+
 
 class DualGpioSensor(Sensor, ABC):
     """
@@ -38,7 +46,7 @@ class DualGpioSensor(Sensor, ABC):
     @abstractmethod
     def read(self) -> DualGpioCommonResult:
         """
-        Read data from sensor and write ot to the output.
+        Read data from sensor and write to the output.
         Very time critical.
         :return:
         """
@@ -57,7 +65,7 @@ class SingleGpioSensor(Sensor, ABC):
     @abstractmethod
     def read(self) -> SingleGpioCommonResult:
         """
-        Read data from sensor and write ot to the output - a single time.
+        Read data from sensor and write to the output.
         Very time critical.
         :return:
         """

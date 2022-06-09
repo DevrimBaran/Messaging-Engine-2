@@ -26,7 +26,6 @@ class Flow(resource.Resource):
         logging.info("Response JSON: %s", flow_list_json)
         return aiocoap.Message(payload=flow_list_json.encode())
 
-
     async def render_put(self, request):
         """
         handle get request for /flows

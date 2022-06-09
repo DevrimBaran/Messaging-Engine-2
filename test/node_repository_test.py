@@ -1,27 +1,18 @@
 import unittest
-import os
-import pime2.database as db
-from pime2.config import load_app_config
-from pime2.repository.node_repository import NodeRepository as repo
 from pime2.entity import NodeEntity as Node
 from sqlite3 import Error
 
-from pime2.service.node_service import NodeService
+from pime2.repository.node_repository import NodeRepository
+from test.generic import GenericDatabaseTest
 
 
-class NodeRepositoryTest(unittest.TestCase):
-    connection = None
+class NodeRepositoryTest(GenericDatabaseTest):
     node_repo = None
 
     @classmethod
     def setUp(cls):
-        if os.path.exists("testDatabase.db"):
-            db.disconnect(cls.connection)
-            os.remove("testDatabase.db")
-        cls.connection = db.create_connection("testDatabase.db")
-        load_app_config("me.yaml")
-        cls.node_repo = repo(cls.connection)
-        db.create_default_tables(cls.connection, NodeService())
+        super().setUp()
+        cls.node_repo = NodeRepository(cls.connection)
         cls.node_repo.delete_all()
 
     def get_node_list(self):
@@ -130,11 +121,6 @@ class NodeRepositoryTest(unittest.TestCase):
         self.assertEqual(node_list_update, self.node_repo.read_all_nodes())
         with self.assertRaises(Error):
             self.node_repo.update_node(Node("Test", "127.1.1.1", 5863, set("TEMP"), set("SPEAKER")))
-
-    @classmethod
-    def tearDownClass(cls):
-        db.disconnect(cls.connection)
-        os.remove("testDatabase.db")
 
 
 if __name__ == '__main__':

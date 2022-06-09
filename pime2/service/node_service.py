@@ -103,10 +103,10 @@ class NodeService:
             sensor_skills = []
             actuator_skills = []
             try:
-                for sensor in conf.available_sensors():
+                for sensor in conf.available_sensors:
                     sensor_skills.append(sensor.name)
                 logging.info("Loaded sensors.")
-                for actuator in conf.available_actuators():
+                for actuator in conf.available_actuators:
                     actuator_skills.append(actuator.name)
                 logging.info("Loaded actuators.")
                 own_me_node = NodeEntity(conf.instance_id, conf.host, conf.port, sensor_skills, actuator_skills)

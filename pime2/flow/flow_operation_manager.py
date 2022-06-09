@@ -1,8 +1,12 @@
+import json
 import logging
 from typing import List, Optional
 
+from pime2.actuator.actuator import ActuatorType
+from pime2.actuator.actuator_manager import ActuatorManager
 from pime2.common import base64_decode
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
+from pime2.repository.execution_repository import ExecutionRepository
 
 
 class FlowOperationManager:
@@ -12,9 +16,10 @@ class FlowOperationManager:
 
     """
 
-    def detect_current_step(self, flow: FlowEntity, flow_message: FlowMessageEntity) -> Optional[str]:
+    @staticmethod
+    def detect_current_step(flow: FlowEntity, flow_message: FlowMessageEntity) -> Optional[str]:
         """
-        Method to read the "next_operation"
+        Method to detect the current operation: it is the next after the last
 
         :param flow:
         :param flow_message:
@@ -23,11 +28,12 @@ class FlowOperationManager:
         if flow_message.flow_name != flow.name:
             return None
         for f in flow.ops:
-            if f.name.lower() == flow_message.next_operation.lower():
-                return f.name
+            if f.name.lower() == flow_message.last_operation.lower():
+                return FlowOperationManager.detect_next_step(flow, flow_message.last_operation)
         return None
 
-    def detect_next_step(self, flow: FlowEntity, current_step: str) -> Optional[str]:
+    @staticmethod
+    def detect_next_step(flow: FlowEntity, current_step: str) -> Optional[str]:
         """
         Detect next step
 
@@ -48,7 +54,8 @@ class FlowOperationManager:
                     return f.name
         return None
 
-    def detect_second_step(self, flow: FlowEntity) -> Optional[str]:
+    @staticmethod
+    def detect_second_step(flow: FlowEntity) -> Optional[str]:
         """
         Returns the name of the second flow of the given entity.
 
@@ -59,7 +66,8 @@ class FlowOperationManager:
             return None
         return flow.ops[1].name
 
-    def detect_nodes_of_step(self, flow: FlowEntity, step: str, nodes: List[NodeEntity]) -> List[NodeEntity]:
+    @staticmethod
+    def detect_nodes_of_step(flow: FlowEntity, step: str, nodes: List[NodeEntity]) -> List[NodeEntity]:
         """
         Method to detect which nodes are affected by the given step.
         TODO: Consider skills here (ME-44?)
@@ -87,12 +95,15 @@ class FlowOperationManager:
 
         return []
 
-    async def execute_operation(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str) -> Optional[str]:
+    @staticmethod
+    async def execute_operation(flow: FlowEntity, flow_message: FlowMessageEntity, step: str,
+                                execution_repository: ExecutionRepository) -> Optional[str]:
         """
         Method to execute an operation of a flow message defined by the step.
         The returned str is the base64 encoded output value of this operation, and it is the payload
         for the next flow message.
 
+        :param execution_repository:
         :param flow:
         :param flow_message:
         :param step:
@@ -102,23 +113,47 @@ class FlowOperationManager:
             logging.warning("Invalid flow_message for flow received. Invalid names: flow: %s, flow message: %s",
                             flow.name, flow_message.flow_name)
             return None
+
         is_executed = False
         for f in flow.ops:
             if f.name.lower() == step.lower():
                 flow_operation_name = f.name.lower()
                 flow_operation = f.process
-                is_executed = True
 
-                logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
-                             flow_operation, base64_decode(flow_message.payload))
+                if execution_repository.is_message_executed(flow_message.flow_id, flow_message.id):
+                    # prevent duplicate operation execution
+                    logging.error("DUPLICATE FLOW OPERATION PREVENTED! %s:%s, message_id: %s flow_id: %s",
+                                  flow_operation_name, flow_operation,
+                                  flow_message.id, flow_message.flow_id)
+                else:
+                    # first execution
+                    payload = base64_decode(flow_message.payload)
+                    logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
+                                 flow_operation, payload)
+                    execution_repository.register_execution(flow_message.flow_id, flow_message.id)
 
-                # TODO: execute operation
-                return flow_message.payload
+                    if f.is_process():
+                        if f.process == "cep_operation":
+                            # TODO: execute cep operation
+                            pass
+                        if f.process == "log":
+                            logging.info("LOG OPERATION: %s", json.loads(payload))
+
+                    if f.is_output():
+                        manager = ActuatorManager()
+                        if f.output == "actuator_led":
+                            manager.one_time_trigger(ActuatorType.LED)
+                        if f.output == "actuator_speaker":
+                            manager.one_time_trigger(ActuatorType.SPEAKER)
+                    # TODO: execute operation
+
+            return flow_message.payload
         if not is_executed:
             logging.error("No operation executed in flow %s with step %s", flow.name, step)
         return None
 
-    def is_last_step(self, flow: FlowEntity, current_step: str) -> bool:
+    @staticmethod
+    def is_last_step(flow: FlowEntity, current_step: str) -> bool:
         """"
         This method detects if a step is the last one in a flow
         """
