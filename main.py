@@ -29,5 +29,5 @@ if __name__ == "__main__":
     # start application
     try:
         asyncio.run(pime_run(config))
-    except:
+    except Exception:
         logging.error("ME2 exited.")
