@@ -8,6 +8,16 @@ from pime2.flow import FlowOperationManager
 
 class FlowOperationManagerTest(unittest.TestCase):
 
+    @staticmethod
+    def get_message(name: str, msg_id: str = uuid.uuid4().hex,
+                    flow_id: str = uuid.uuid4().hex, src_created_at: datetime.datetime = datetime.datetime.now(),
+                    sent_at: datetime.datetime = datetime.datetime.now(),
+                    last_operation: str = "op", payload: str = "", original_payload: str = "",
+                    history=None) -> FlowMessageEntity:
+        """getter"""
+        return FlowMessageEntity(msg_id, name, flow_id, src_created_at, sent_at, last_operation, payload,
+                                 original_payload, [] if history is None else history)
+
     def test_is_last_step(self):
         fm = FlowOperationManager()
 
@@ -49,40 +59,32 @@ class FlowOperationManagerTest(unittest.TestCase):
         for f in [
             self.simple_test_flow1(),
             self.simple_test_flow2(),
+            self.simple_test_flow3(),
         ]:
-            message = FlowMessageEntity(uuid.uuid4().hex, f.name, test_flow_id, now, now, "first_operation",
-                                        "last_step", "", "", 1,
-                                        [])
-            self.assertEqual("last_step", fm.detect_current_step(f, message))
-
-            message = FlowMessageEntity(uuid.uuid4().hex, f.name, test_flow_id, now, now, "first_op", "second_step", "",
-                                        "", 1, [])
-            self.assertEqual("second_step", fm.detect_current_step(f, message))
+            message = self.get_message(name=f.name, src_created_at=now, sent_at=now,
+                                       last_operation="first_step")
+            if len(f.ops) > 2:
+                self.assertEqual("second_step", fm.detect_current_step(f, message))
+            else:
+                self.assertEqual("last_step", fm.detect_current_step(f, message))
 
             # remove required info and result should be null
-            message = FlowMessageEntity(uuid.uuid4().hex, f.name, test_flow_id, now, now, "", "", "", "", 1, [])
+            message = self.get_message(name=f.name, src_created_at=now, sent_at=now,
+                                       last_operation="")
             self.assertIsNone(fm.detect_current_step(f, message))
-            message = FlowMessageEntity(uuid.uuid4().hex, f.name, test_flow_id, now, now, "", "unknown_step", "", "", 1,
-                                        [])
+            message = self.get_message(name=f.name, src_created_at=now, sent_at=now,
+                                       last_operation="unknown_step")
             self.assertIsNone(fm.detect_current_step(f, message))
 
     def test_next_step(self):
         fm = FlowOperationManager()
-        now = datetime.datetime.now()
-        test_flow_id = uuid.uuid4().hex
 
         for f in [
             self.simple_test_flow1(),
             self.simple_test_flow2(),
         ]:
-            message = FlowMessageEntity(uuid.uuid4().hex, f.name, test_flow_id, now, now, "first_step", "", "", "", 1,
-                                        [])
             self.assertEqual("second_step", fm.detect_next_step(f, "first_step"))
-            message = FlowMessageEntity(uuid.uuid4().hex, f.name, test_flow_id, now, now, "first_step", "last_step", "",
-                                        "", 1, [])
             self.assertEqual("second_step", fm.detect_next_step(f, "first_step"))
-            message = FlowMessageEntity(uuid.uuid4().hex, f.name, test_flow_id, now, now, "first_step", "not_important",
-                                        "", "", 1, [])
             self.assertEqual("second_step", fm.detect_next_step(f, "first_step"))
 
     def test_nodes_of_step(self):

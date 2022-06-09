@@ -65,10 +65,9 @@ class FlowMessage(resource.Resource):
             "flow_id",
             "src_created_at",
             "last_operation",
-            "next_operation",
             "sent_at",
             "payload",
-            "count",
+            "original_payload",
         ]
         for i in required_fields:
             if i not in node or node[i] is None:
@@ -79,7 +78,6 @@ class FlowMessage(resource.Resource):
             "flow_name",
             "flow_id",
             "last_operation",
-            "next_operation",
         ]
         for namelike_field in name_regex_fields:
             if not re.match(NAME_REGEX, node[namelike_field]):
@@ -92,10 +90,6 @@ class FlowMessage(resource.Resource):
             except ValueError:
                 logging.debug("Invalid date in field %s", datetimelike_field)
                 return False
-
-        if not isinstance(node["count"], int):
-            logging.debug("Invalid integer value for 'count'")
-            return False
 
         if "history" in node and node["history"] is not None and isinstance(node["history"], List):
             for i in node["history"]:

@@ -23,10 +23,8 @@ class FlowManager:
     Flow step operations are executed by FlowOperationManager.
     """
 
-    def __init__(self, flow_operation_manager: FlowOperationManager,
-                 flow_message_builder: FlowMessageBuilder, node_service: NodeService):
+    def __init__(self, flow_operation_manager: FlowOperationManager, node_service: NodeService):
         self.flow_operation_manager = flow_operation_manager
-        self.flow_message_builder = flow_message_builder
         self.node_service = node_service
 
     def get_nodes(self) -> List[NodeEntity]:
@@ -86,7 +84,7 @@ class FlowManager:
             return
 
         # build flow message
-        msg = self.flow_message_builder.build_start_message(flow, first_step, step_name, result)
+        msg = FlowMessageBuilder.build_start_message(flow, first_step, result)
 
         logging.info("START FLOW: %s:%s", msg.flow_name, msg.flow_id)
 
@@ -132,10 +130,9 @@ class FlowManager:
             return
 
         # build flow message
-        next_msg = self.flow_message_builder.build_next_message(flow, flow_message,
-                                                                result if result is not None else "",
-                                                                current_step,
-                                                                next_step)
+        next_msg = FlowMessageBuilder.build_next_message(flow, flow_message,
+                                                         result if result is not None else "",
+                                                         current_step)
 
         await self.send_message_to_nodes(flow, next_msg, nodes)
 
@@ -248,7 +245,7 @@ class FlowManager:
         """
         nodes_of_step = self.flow_operation_manager.detect_nodes_of_step(flow, step, nodes)
 
-        message = self.flow_message_builder.build_redirection_message(flow_message)
+        message = FlowMessageBuilder.build_redirection_message(flow_message)
         await self.send_message_to_nodes(flow, message, nodes_of_step, False)
 
         is_executed_locally = len(list(filter(lambda x: not self.node_service.is_node_remote(x), nodes_of_step))) > 0
