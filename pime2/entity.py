@@ -36,8 +36,6 @@ class FlowOperationEntity:
     process: Optional[str] = field(default=None)
     output: Optional[str] = field(default=None)
     join: Optional[str] = field(default=None)
-    # args is completely optional
-    args: Optional[str] = field(default=None)
     where: str = "*"
     args: Union[str, Dict] = ""
 
