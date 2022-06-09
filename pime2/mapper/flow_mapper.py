@@ -4,6 +4,9 @@ import logging
 from typing import List
 from dacite import from_dict
 from pime2.entity import FlowEntity, FlowMessageEntity, FlowOperationEntity
+from pime2.flow.flow_message_builder import FlowMessageBuilder
+
+
 
 class FlowMapper:
     """
@@ -82,18 +85,11 @@ class FlowMapper:
         logging.info("Entity list to json : <%s>", flow_list_json)
         return flow_list_json
 
-    def json_to_message_entity(self, node: dict) -> FlowMessageEntity:
+    def json_to_message_entity(self, flow: dict) -> FlowMessageEntity:
         """
         The input node dict needs to be a valid flow message entity
 
-        :param node:
+        :param flow:
         :return:
         """
-        return FlowMessageEntity(str(node["id"]).strip(), str(node["flow_name"]).strip(),
-                                 str(node["flow_id"]).strip(),
-                                 datetime.datetime.fromisoformat(node["src_created_at"]),
-                                 datetime.datetime.fromisoformat(node["sent_at"]),
-                                 str(node["last_operation"]).strip(), str(node["next_operation"]).strip(),
-                                 str(node["payload"]).strip(), str(node["original_payload"]).strip(),
-                                 int(node["count"]),
-                                 node["history"] if "history" in node else [])
+        return FlowMessageBuilder().from_valid_dict(flow)

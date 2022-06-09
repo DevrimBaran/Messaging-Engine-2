@@ -14,7 +14,8 @@ for this project.
 ## Content
 
 - [Endpoints](concepts/Endpoints.md)
-- [Network Events](concepts/Network%20Events.md)
+- [Flows](concepts/Flows.md)
+- [Flow Messages](concepts/Flow_Message.md)
 
 ## Processes
 
@@ -22,8 +23,8 @@ for this project.
 - **Data Flow Model Deployment:** A Data Flow Model is rolled out
 - **Ping Request:** Connecting to "Hello" endpoint
 - **Neighbor Provisioning:** The system gets information about a (new) PIME2-neighbor-instance
-- **Operation Provisioning:** The system gets information about the operation(s) it should work with
-- **[Message Sending](./concepts/Messaging.md):** The system receives a message with (arbitrary) payload
+- **Flow/Operation Provisioning:** The system gets information about the operation(s) it should work with
+- **[Message Sending](./concepts/Flow_Message.md):** The system receives a message with (arbitrary) payload
 - **System Health Metrics:** The system provides information about its state
 
 ## Concepts

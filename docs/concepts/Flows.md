@@ -2,6 +2,9 @@
 
 *Idea*: Use one Flow object specification for ME2 and give it to each instance which acts as described in the flow.
 
+If the Flow isn't executed exclusively locally, a ME will send a [`FlowMessage`](./Flow_Message.md) to another ME 2
+instance.
+
 ## Flow Type Description
 
 ```json
@@ -44,9 +47,12 @@
 ##### Validation
 
 - Check if `ops` has at least 2 elements
+- Check if all operation names are unique
 - Check if all operation names are known and defined in `ops`
 - Check if an instance exists for each `where`
 - Check if there exists exactly one `input` per `Flow`
+- Check if there exists at least one `output` or `process` per `Flow`
+- Check if only one of the following types are allowed per `Flow`: `input`, `output`, `process`
 - Check if an instance exists with a [skill](./Skills.md) for all input/process/output operations
 - Check if each flow is executable
 - TBD
@@ -113,13 +119,14 @@
 
 - `log`: Log the current message, useful for debugging and testing
 - `cep_intercept`: Log the current message, useful for debugging and testing
-  - `args`: CEP Flow expression
+    - `args`: CEP Flow expression
 
 ## Available Output Operation Names
 
 - `exit`: exit flow without further action (the only case when no `where` is required, see in Example above)
 - `actuator_* <args>`: for all supported actuators
-  - `led` 
-    - `args`: One optional argument (Default is `True` to turn on LED, `False` to turn in off)
-  - `speaker`
-    - `args`: Three optional arguments (Has one input for duration and two for the pitch. Default is `2.0` for duration in seconds and `0.0005` for both inputs for the pitch)
+    - `led`
+        - `args`: One optional argument (Default is `True` to turn on LED, `False` to turn in off)
+    - `speaker`
+        - `args`: Three optional arguments (Has one input for duration and two for the pitch. Default is `2.0` for
+          duration in seconds and `0.0005` for both inputs for the pitch)
