@@ -1,3 +1,5 @@
+# pylint: disable=anomalous-backslash-in-string
+# pylint: disable=eval-used
 import logging
 import re
 
@@ -12,51 +14,50 @@ def cep_executer(expression, variables, payload) :
     Checks if the cep result is True or False
     """
     final_expression = cep_validator(expression=expression, variables=variables, payload=payload)
-    if(final_expression):
-        try: 
+    if final_expression:
+        try:
             return eval(final_expression)
         except SyntaxError as ex:
-            logging.error("Invalid CEP expression!", ex)
+            logging.error("Invalid CEP expression!: %s", ex)
     return False
-    
 
 
 def cep_validator(expression, variables, payload):
     """
     Makes sure that eval evaluates only allowed expressions
     """
-    
     # check for correct expression
     try:
         # substitute variables
         expression = substitute_variables(expression, variables, payload)
-        # expression = expression.replace(" ", "")
-        if re.fullmatch(expression_regex, expression):
-            return expression
-        else:
+        if not re.fullmatch(expression_regex, expression):
             raise ValueError("Invalid CEP expression!")
+        return expression
     except (ValueError, SyntaxError):
-        #logging.info("Invalid CEP expression!: %s", expression)
+        logging.debug("Invalid CEP expression!: %s", expression)
         return False
 
 def substitute_variables(expression, variables, payload):
+    """
+    Substitutes the variables inside the expression
+    """
     for key, value in variables.items():
-        if (is_keyword(value)):
+        if is_keyword(value):
             value = payload[value]
-
-        elif (not is_allowed_variable(key)):
+        elif not is_allowed_variable(key):
             raise ValueError("Invalid CEP variable!")
 
         expression = re.sub(key, str(value), expression)
     return expression
 
 def is_keyword(value):
+    """
+    Checks if the value is a keyword from the keyword list
+    """
     return value in keywords
 
 def is_allowed_variable(variable):
+    """
+    Checks if the variable is allowed
+    """
     return re.fullmatch(variable_regex, variable)
-
-
-
-
-
