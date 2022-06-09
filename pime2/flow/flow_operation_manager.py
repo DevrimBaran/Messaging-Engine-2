@@ -112,8 +112,8 @@ class FlowOperationManager:
                 if flow_operation == "cep_intercept":
                     logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
                     if not cep_executer(f.args.expression, f.args.variables, flow_message.payload):
-                        logging.info("CEP evaluation failed. "+
-                        "No operation will be executed in flow %s with step %s", flow.name, step)
+                        logging.info("CEP evaluation failed.")
+                        logging.debug("No operation will be executed in flow %s with step %s", flow.name, step)
                         return None
 
                 is_executed = True
