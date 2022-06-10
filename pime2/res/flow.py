@@ -48,7 +48,7 @@ class Flow(resource.Resource):
             flow_json = request.payload.decode()
             flow_entity = self.flow_mapper.json_to_flow_entity(flow_json)
             self.flow_service.put_flow(flow_entity)
-            #TODO in push queue
+            #TODO FlowCreateResultMessage in push queue
             #await get_push_queue().put(FlowCreateResultMessage(flow_entity))
             return Message(payload=b"OK", code=Code.CREATED)
         except JSONDecodeError as ex:
