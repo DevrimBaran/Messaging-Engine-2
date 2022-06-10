@@ -5,7 +5,7 @@ from operator import xor
 
 from pime2 import NAME_REGEX
 from pime2.entity import FlowEntity
-from pime2.flow import FlowOperationManager
+from pime2.flow.flow_operation_manager import FlowOperationManager
 from pime2.service.node_service import NodeService
 
 

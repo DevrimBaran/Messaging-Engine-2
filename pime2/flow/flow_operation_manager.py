@@ -6,6 +6,7 @@ from pime2.actuator.actuator import ActuatorType
 from pime2.actuator.actuator_manager import ActuatorManager
 from pime2.common import base64_decode
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
+from pime2.flow.cep_flow import cep_executer
 from pime2.repository.execution_repository import ExecutionRepository
 
 
@@ -134,8 +135,11 @@ class FlowOperationManager:
 
                     if f.is_process():
                         if f.process == "cep_operation":
-                            # TODO: execute cep operation
-                            pass
+                            logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
+                            if not cep_executer(f.args.expression, f.args.variables, flow_message.payload):
+                                logging.debug("CEP evaluation failed in flow %s with step %s", flow.name, step)
+                                return None
+
                         if f.process == "log":
                             logging.info("LOG OPERATION: %s", json.loads(payload))
 
