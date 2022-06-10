@@ -1,7 +1,7 @@
-instance_id: 12345
+instance_id: "raspberrypi2"
 loglevel: DEBUG
 is_debug: true
-is_neighbor_discovery_enabled: false
+is_neighbor_discovery_enabled: true
 host: 192.168.171.55
 port: 5683
 database: "pime_database.db"
