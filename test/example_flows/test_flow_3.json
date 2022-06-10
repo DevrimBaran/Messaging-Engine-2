@@ -12,7 +12,7 @@
       "where": "me2_second",
       "args": {
         "expression": "x > 30",
-        "variables":  { "x": "temperature" }
+        "variables":  { "x": "result" }
       }
     },
     {

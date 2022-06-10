@@ -13,8 +13,8 @@
       "args": {
         "expression": "x=true and y=true",
         "variables":  { 
-          "x": "button1",
-          "y": "button2"
+          "x": "gpio_1_result",
+          "y": "gpio_2_result"
          }
       }
     },

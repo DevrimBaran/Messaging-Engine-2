@@ -36,7 +36,7 @@ class FlowOperationEntity:
     process: Optional[str]
     output: Optional[str]
     where: str = "*"
-    args: Union[str, Dict] = ""
+    args: Union[str, Dict, None] = ""
 
     def is_input(self) -> bool:
         """utility"""
