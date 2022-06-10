@@ -1,7 +1,7 @@
 import json
 import logging
 
-from pime2.flow import FlowManager
+from pime2.flow.flow_manager import FlowManager
 from pime2.mapper.flow_mapper import FlowMapper
 from pime2.message import MessageType
 from pime2.sensor.sensor import SensorType

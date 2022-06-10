@@ -231,7 +231,7 @@ class FlowManager:
                 tl_msg = obj.__dict__
                 history_list = []
                 for history_msg in obj.history:
-                    history_list.append(history_msg.__dict__)
+                    history_list.append(history_msg)
 
                 tl_msg["history"] = history_list
                 return tl_msg
