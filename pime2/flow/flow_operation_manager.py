@@ -121,40 +121,40 @@ class FlowOperationManager:
                 flow_operation_name = f.name.lower()
                 flow_operation = f.process
 
-                if execution_repository.is_message_executed(flow_message.flow_id, flow_message.id):
+                #if execution_repository.is_message_executed(flow_message.flow_id, flow_message.id):
                     # prevent duplicate operation execution
-                    logging.error("DUPLICATE FLOW OPERATION PREVENTED! %s:%s, message_id: %s flow_id: %s",
-                                  flow_operation_name, flow_operation,
-                                  flow_message.id, flow_message.flow_id)
-                else:
-                    # first execution
-                    payload = base64_decode(flow_message.payload)
-                    logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
-                                 flow_operation, payload)
-                    execution_repository.register_execution(flow_message.flow_id, flow_message.id)
+                #    logging.error("DUPLICATE FLOW OPERATION PREVENTED! %s:%s, message_id: %s flow_id: %s",
+                #                  flow_operation_name, flow_operation,
+                #                  flow_message.id, flow_message.flow_id)
+                
+                # first execution
+                payload = base64_decode(flow_message.payload)
+                logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
+                                flow_operation, payload)
+                execution_repository.register_execution(flow_message.flow_id, flow_message.id)
 
-                    if f.is_process():
-                        if f.process == "cep_operation":
-                            logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
-                            if not cep_executer(f.args.expression, f.args.variables, flow_message.payload):
-                                logging.debug("CEP evaluation failed in flow %s with step %s", flow.name, step)
-                                return None
+                if f.is_process():
+                    if f.process == "cep_operation":
+                        logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
+                        if not cep_executer(f.args.expression, f.args.variables, flow_message.payload):
+                            logging.debug("CEP evaluation failed in flow %s with step %s", flow.name, step)
+                            return None
 
-                        if f.process == "log":
-                            logging.info("LOG OPERATION: %s", json.loads(payload))
+                    if f.process == "log":
+                        logging.info("LOG OPERATION: %s", json.loads(payload))
 
-                    if f.is_output():
-                        manager = ActuatorManager()
-                        if f.output == "actuator_led":
-                            manager.one_time_trigger(ActuatorType.LED)
-                        if f.output == "actuator_speaker":
-                            manager.one_time_trigger(ActuatorType.SPEAKER)
+                if f.is_output():
+                    manager = ActuatorManager()
+                    if f.output == "actuator_led":
+                        manager.one_time_trigger(ActuatorType.LED)
+                    if f.output == "actuator_speaker":
+                        manager.one_time_trigger(ActuatorType.SPEAKER)
                     # TODO: execute operation
 
-            return flow_message.payload
+                return flow_message.payload
         if not is_executed:
             logging.error("No operation executed in flow %s with step %s", flow.name, step)
-        return None
+            return None     
 
     @staticmethod
     def is_last_step(flow: FlowEntity, current_step: str) -> bool:
