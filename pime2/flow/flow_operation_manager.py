@@ -134,9 +134,9 @@ class FlowOperationManager:
                 execution_repository.register_execution(flow_message.flow_id, flow_message.id)
 
                 if f.is_process():
-                    if f.process == "cep_operation":
+                    if f.process == "cep_intercept":
                         logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
-                        if not cep_executer(f.args.expression, f.args.variables, flow_message.payload):
+                        if not cep_executer(f.args["expression"], f.args["variables"], payload):
                             logging.debug("CEP evaluation failed in flow %s with step %s", flow.name, step)
                             return None
 

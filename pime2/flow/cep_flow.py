@@ -2,6 +2,7 @@
 # pylint: disable=eval-used
 import logging
 import re
+import json
 
 expression_regex = "([0-9<>=!()+\-*/. ]|(and)|(or)|(True)|(False))*"
 variable_regex = "^[uvwxyz]{1}$"
@@ -43,7 +44,9 @@ def substitute_variables(expression, variables, payload):
     """
     for key, value in variables.items():
         if is_keyword(value):
-            value = payload[value]
+
+            value = json.loads(payload)[value]
+
         elif not is_allowed_variable(key):
             raise ValueError("Invalid CEP variable!")
 
