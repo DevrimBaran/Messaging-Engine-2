@@ -31,7 +31,7 @@ async def ping(destination):
         return True
 
 
-async def send_message(destination, endpoint, payload, code, timeout=None):
+async def send_message(destination, endpoint, payload, code, timeout=30):
     """
     Send message with an arbitrary payload to a specific destination and endpoint.
     Takes an IP as destination, an endpoint of the destination and the payload to send
@@ -42,11 +42,8 @@ async def send_message(destination, endpoint, payload, code, timeout=None):
     request = Message(code=code, uri=uri, payload=bytes(str(payload).encode("utf-8")))
     logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
     try:
-        if(timeout):
-            response = await asyncio.wait_for(client_context.request(request).response,
+        response = await asyncio.wait_for(client_context.request(request).response,
                                                 timeout=timeout)
-        else:
-            response = await client_context.request(request).response
         logging.debug("Response: %s", response)
     except Exception as ex:
         logging.error('Sending Message to %s/%s failed! Exception: %s', destination, endpoint, ex)
