@@ -1,13 +1,12 @@
 instance_id: 111111111
-loglevel: INFO
+loglevel: DEBUG
 database: me2.db
 is_debug: false
 host: 0.0.0.0
 port: 5683
 read_interval: 5.0
 sensors:
-#  - name: "Button-Sensor"
-#    type: button
-#    pin1: 12
-#    pin2: 13
-#    is_test_mode: true
+  - name: "Button-Sensor"
+    type: temperature
+    gpio1: 12
+    is_test_mode: true

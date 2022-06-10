@@ -45,38 +45,48 @@ class FlowManager:
         :return:
         """
         flows = [
-            FlowEntity("docker_flow_1", [
-                FlowOperationEntity("first_step", "sensor_temperature", None, None),
-                FlowOperationEntity("second_step", None, "log", None, "111111111"),
-                FlowOperationEntity("third_step", None, "log", None, "222222222"),
-                FlowOperationEntity("last_step", None, None, "exit"),
+            # FlowEntity("docker_flow_1", [
+            #     FlowOperationEntity(name="sensor_read", input="sensor_temperature", process=None,
+            #                         output=None, where="111111111"),
+            #     FlowOperationEntity(name="cep_intercept", input=None, process="cep_intercept", output=None,
+            #                         where="222222222",
+            #                         args={"expression": "x > 25", "variables": {"x": "result"}}),
+            #     FlowOperationEntity(name="beep_call", input=None, process=None, output="actuator_speaker",
+            #                         where="111111111"),
+            # ])
+            FlowEntity("docker_flow_2", [
+                FlowOperationEntity(name="first_step", input="sensor_temperature"),
+                FlowOperationEntity(name="second_step", process="log", where="111111111"),
+                FlowOperationEntity(name="third_step", process="log", where="222222222"),
+                FlowOperationEntity(name="last_step", output="exit"),
             ]),
-            FlowEntity("test_flow_1", [
-                FlowOperationEntity("sensor_read", "sensor_temperature", None, None),
-                FlowOperationEntity("actuator_call", None, None, "actuator_speaker"),
-            ]),
-            FlowEntity("test_flow_2", [
-                FlowOperationEntity("sensor_read", "sensor_hall", None, None, "me2_first"),
-                FlowOperationEntity("log", None, "log", None, "me2_second"),
-                FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
-            ]),
-            FlowEntity("test_cep_flow_1", [
-                FlowOperationEntity("sensor_read", "sensor_temperature", None, None, "me2_first"),
-                FlowOperationEntity("cep_intercept", None, "cep_intercept", None, "me2_second", {
-                    "expression": "x > 30",
-                    "variables": {"x": "result"}
-                }),
-                FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
-            ]),
-            FlowEntity("test_cep_flow_2", [
-                FlowOperationEntity("sensor_read", "sensor_button", None, None, "me2_first"),
-                FlowOperationEntity("cep_intercepted", None, "cep_intercept", None, "me2_second", {
-                    "expression": "x=true and y=true",
-                    "variables": {"x": "gpio_1_result", "y": "gpio_2_result"}
-                }),
-                FlowOperationEntity("led_call", None, None, "actuator_led", "me2_third"),
-            ]),
+            # FlowEntity("test_flow_1", [
+            #     FlowOperationEntity("sensor_read", "sensor_temperature", None, None),
+            #     FlowOperationEntity("actuator_call", None, None, "actuator_speaker"),
+            # ]),
+            # FlowEntity("test_flow_2", [
+            #     FlowOperationEntity("sensor_read", "sensor_hall", None, None, "me2_first"),
+            #     FlowOperationEntity("log", None, "log", None, "me2_second"),
+            #     FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
+            # ]),
+            # FlowEntity("test_cep_flow_1", [
+            #     FlowOperationEntity("sensor_read", "sensor_temperature", None, None, "me2_first"),
+            #     FlowOperationEntity("cep_intercept", None, "cep_intercept", None, "me2_second", {
+            #         "expression": "x > 30",
+            #         "variables": {"x": "result"}
+            #     }),
+            #     FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
+            # ]),
+            # FlowEntity("test_cep_flow_2", [
+            #     FlowOperationEntity("sensor_read", "sensor_button", None, None, "me2_first"),
+            #     FlowOperationEntity("cep_intercepted", None, "cep_intercept", None, "me2_second", {
+            #         "expression": "x=true and y=true",
+            #         "variables": {"x": "gpio_1_result", "y": "gpio_2_result"}
+            #     }),
+            #     FlowOperationEntity("led_call", None, None, "actuator_led", "me2_third"),
+            # ]),
         ]
+
         return flows
 
     async def start_flow(self, flow: FlowEntity, result: dict):
@@ -111,6 +121,7 @@ class FlowManager:
         if nodes is None or len(nodes) == 0:
             logging.error("No nodes can be found for the next flow operation '%s'. Cancelling flow.", step_name)
             return
+        logging.debug("Selected %d nodes for step '%s':'%s' (%s)", len(nodes), step_name, flow.name, nodes)
 
         # build flow message
         msg = FlowMessageBuilder.build_start_message(flow, first_step, result)
@@ -147,9 +158,9 @@ class FlowManager:
             logging.info("Flow is not executed locally.")
             return
 
-        if result is None:
-            self.cancel_flow(flow, flow_message, "CEP invalid!")
-            return
+        # if result is None:
+        #     self.cancel_flow(flow, flow_message, "CEP invalid!")
+        #     return
 
         # detect next step and delegate
         next_step = FlowOperationManager.detect_next_step(flow, current_step)
@@ -157,10 +168,12 @@ class FlowManager:
             logging.error("Could not detect next step of flow: %s", flow.name)
             return
         # detect nodes of next step and send new flow message
+        logging.error("Execute step '%s' of flow '%s'.", next_step, flow.name)
         nodes = FlowOperationManager.detect_nodes_of_step(flow, next_step, neighbors)
         if nodes is None or len(nodes) == 0:
             logging.error("No nodes can be found for the next flow operation '%s'. Cancelling flow.", next_step)
             return
+        logging.debug("Selected %d nodes for step '%s':'%s' (%s)", len(nodes), next_step, flow.name, nodes)
 
         # build flow message
         next_msg = FlowMessageBuilder.build_next_message(flow, flow_message,

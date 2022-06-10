@@ -1,12 +1,12 @@
 instance_id: 222222222
-loglevel: INFO
+loglevel: DEBUG
 database: me2.db
 is_debug: false
 host: 0.0.0.0
 port: 5683
 read_interval: 3.0
-sensors:
-#  - name: "Magnet-Sensor"
-#    type: hall
-#    pin1: 14
-#    is_test_mode: true
+actuators:
+  - name: "Speaker"
+    type: speaker
+    gpio1: 14
+    is_test_mode: true
