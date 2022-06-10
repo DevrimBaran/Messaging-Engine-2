@@ -3,7 +3,7 @@ import unittest
 import uuid
 
 from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
-from pime2.flow import FlowOperationManager
+from pime2.flow.flow_operation_manager import FlowOperationManager
 
 
 class FlowOperationManagerTest(unittest.TestCase):
