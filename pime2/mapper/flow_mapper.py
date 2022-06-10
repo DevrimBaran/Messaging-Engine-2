@@ -18,13 +18,13 @@ class FlowMapper:
         :param flow:
         :return:
         """
-        seriazable_flow_dict = flow.__dict__
-        flow_operations_array = seriazable_flow_dict['ops']
-        seriazable_flow_operation_array = []
+        serializable_flow_dict = flow.__dict__
+        flow_operations_array = serializable_flow_dict['ops']
+        serializable_flow_operation_array = []
         for flow_op in flow_operations_array:
-            seriazable_flow_operation_array.append(flow_op.__dict__)
-        seriazable_flow_dict['ops'] = seriazable_flow_operation_array
-        return json.dumps(seriazable_flow_dict)
+            serializable_flow_operation_array.append(flow_op.__dict__)
+        serializable_flow_dict['ops'] = serializable_flow_operation_array
+        return json.dumps(serializable_flow_dict)
 
     def json_to_flow_entity(self, json_str: str) -> FlowEntity:
         """
