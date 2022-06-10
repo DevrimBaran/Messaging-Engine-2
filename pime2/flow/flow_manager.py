@@ -215,8 +215,12 @@ class FlowManager:
             self.cancel_flow(flow, flow_message)
             return False
 
-        result = await FlowOperationManager.execute_operation(flow, flow_message, final_step, self.execution_repository)
-
+        result = None
+        if final_step == "exit":
+            pass
+        else:
+            result = await FlowOperationManager.execute_operation(flow, flow_message, final_step,
+                                                                  self.execution_repository)
         logging.info("FINISHED FLOW %s:%s, result: %s", flow.name, flow_message.flow_id,
                      base64_decode(result) if result is not None else "")
 
@@ -235,7 +239,7 @@ class FlowManager:
                 tl_msg = obj.__dict__
                 history_list = []
                 for history_msg in obj.history:
-                    history_list.append(history_msg.__dict__)
+                    history_list.append(history_msg)
 
                 tl_msg["history"] = history_list
                 return tl_msg

@@ -7,7 +7,7 @@ from zmq.asyncio import Poller
 
 from pime2 import ROUTER_LOOP_TASK_TIMEOUT
 from pime2.config import get_me_conf
-from pime2.flow import FlowManager
+from pime2.flow.flow_manager import FlowManager
 from pime2.router import router_loop
 from pime2.push_queue import get_push_queue
 from pime2.service.node_service import NodeService
