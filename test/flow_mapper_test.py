@@ -27,7 +27,7 @@ class FlowMapperTest(unittest.TestCase):
                                  FlowOperationEntity(name='Flow_op_two', join='Join', where='*', args="Args")]),
             FlowEntity("flow5", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*')]),
             FlowEntity("flow6", [
-                FlowOperationEntity(name='Flow_op_one', input='Input', where='*', ),
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*'),
                 FlowOperationEntity(name='Flow_op_two', process='Process', where='*'),
                 FlowOperationEntity(name='Flow_op_three', output='Output', where='*')]),
             FlowEntity("flow7", [
@@ -39,13 +39,13 @@ class FlowMapperTest(unittest.TestCase):
 
     def get_flow_list_json(self) -> List[str]:
         return [
-            '{"name": "flow1", "ops": [{"name": "Flow_op_one", "input": "Input", "args": "Args", "where": "*"}]}',
-            '{"name": "flow2", "ops": [{"name": "Flow_op_one", "input": "Input", "args": "Args", "where": "*"},{"name": "Flow_op_two", "output": "Output", "args": "Args", "where": "*"}]}',
-            '{"name": "flow3", "ops": [{"name": "Flow_op_one", "input": "Input", "where": "*"},{"name": "Flow_op_two", "join": "Join", "where": "*"}]}',
-            '{"name": "flow4", "ops": [{"name": "Flow_op_one","input": "Input","where": "*"},{"name": "Flow_op_two","join": "Join","where": "*","args": "Args"}]}',
-            '{"name": "flow5", "ops": [{"name": "Flow_op_one", "input": "Input", "where": "*"}]}',
-            '{"name": "flow6","ops": [{"name": "Flow_op_one","input": "Input","where": "*"},{"name": "Flow_op_two","process": "Process","where": "*"},{"name": "Flow_op_three", "output": "Output","where": "*"}]}',
-            '{"name": "flow7", "ops": [{"name": "Flow_op_one", "input": "Input", "where": "*", "args": "Args"},{"name": "Flow_op_two", "process": "Process", "args": "Args", "where": "*"},{"name": "Flow_op_three", "output": "Output", "args": "Args", "where": "*"}]}'
+            '{"name": "flow1", "ops": [{"name": "Flow_op_one", "input": "Input", "process": null, "output": null, "join": null, "where": "*", "args": "Args"}]}',
+            '{"name": "flow2", "ops": [{"name": "Flow_op_one", "input": "Input", "process": null, "output": null, "join": null, "where": "*", "args": "Args"}, {"name": "Flow_op_two", "input": null, "process": null, "output": "Output", "join": null, "where": "*", "args": "Args"}]}',
+            '{"name": "flow3", "ops": [{"name": "Flow_op_one", "input": "Input", "process": null, "output": null, "join": null, "where": "*", "args": ""}, {"name": "Flow_op_two", "input": null, "process": null, "output": null, "join": "Join", "where": "*", "args": ""}]}',
+            '{"name": "flow4", "ops": [{"name": "Flow_op_one", "input": "Input", "process": null, "output": null, "join": null, "where": "*", "args": ""}, {"name": "Flow_op_two", "input": null, "process": null, "output": null, "join": "Join", "where": "*", "args": "Args"}]}',
+            '{"name": "flow5", "ops": [{"name": "Flow_op_one", "input": "Input", "process": null, "output": null, "join": null, "where": "*", "args": ""}]}',
+            '{"name": "flow6", "ops": [{"name": "Flow_op_one", "input": "Input", "process": null, "output": null, "join": null, "where": "*", "args": ""}, {"name": "Flow_op_two", "input": null, "process": "Process", "output": null, "join": null, "where": "*", "args": ""}, {"name": "Flow_op_three", "input": null, "process": null, "output": "Output", "join": null, "where": "*", "args": ""}]}',
+            '{"name": "flow7", "ops": [{"name": "Flow_op_one", "input": "Input", "process": null, "output": null, "join": null, "where": "*", "args": "Args"}, {"name": "Flow_op_two", "input": null, "process": "Process", "output": null, "join": null, "where": "*", "args": "Args"}, {"name": "Flow_op_three", "input": null, "process": null, "output": "Output", "join": null, "where": "*", "args": "Args"}]}'
         ]
 
 
@@ -82,7 +82,7 @@ class FlowMapperTest(unittest.TestCase):
                 "process": null,
                 "output": null,
                 "join": null,
-                "args": null,
+                "args": "",
                 "where":"*"
             },
             {
@@ -91,7 +91,7 @@ class FlowMapperTest(unittest.TestCase):
                 "process":"Process",
                 "output": null,
                 "join": null,
-                "args": null,
+                "args": "",
                 "where":"*"
             },
             {
@@ -100,7 +100,7 @@ class FlowMapperTest(unittest.TestCase):
                 "process": null,
                 "output":"Output",
                 "join": null,
-                "args": null,
+                "args": "",
                 "where":"*"
             },
             {
@@ -109,7 +109,7 @@ class FlowMapperTest(unittest.TestCase):
                 "process": null,
                 "output": null,
                 "join":"join",
-                "args": null,
+                "args": "",
                 "where":"*"
             },
             {
@@ -127,7 +127,7 @@ class FlowMapperTest(unittest.TestCase):
                 "process":"Process",
                 "output":"Output",
                 "join": null,
-                "args": null,
+                "args": "",
                 "where":"*"
             },
             {
@@ -136,7 +136,7 @@ class FlowMapperTest(unittest.TestCase):
                 "process":"Process",
                 "output": null,
                 "join":"join",
-                "args": null,
+                "args": "",
                 "where":"*"
             },
             {
@@ -163,7 +163,7 @@ class FlowMapperTest(unittest.TestCase):
                 "process": null,
                 "output":"Output",
                 "join":"join",
-                "args": null,
+                "args": "",
                 "where":"*"
             },
             {
@@ -190,7 +190,7 @@ class FlowMapperTest(unittest.TestCase):
                 "process":"Process",
                 "output":"Output",
                 "join":"join",
-                "args": null,
+                "args": "",
                 "where":"*"
             },
             {
@@ -225,19 +225,19 @@ class FlowMapperTest(unittest.TestCase):
 
     def get_flow_op_list_json(self) -> List[str]:
         return [
-            '{"name":"Flow_op_1", "input":"Input", "process": null, "output": null, "join": null, "args": null, "where":"*"}',
-            '{"name":"Flow_op_2","input":"Input","process":"Process","output": null,"join": null,"args": null,"where":"*"}',
-            '{"name":"Flow_op_3","input":"Input","process": null,"output":"Output","join": null,"args": null,"where":"*"}',
-            '{"name":"Flow_op_4","input":"Input","process": null,"output": null,"join":"join","args": null,"where":"*"}',
+            '{"name":"Flow_op_1", "input":"Input", "process": null, "output": null, "join": null, "args": "", "where":"*"}',
+            '{"name":"Flow_op_2","input":"Input","process":"Process","output": null,"join": null,"args": "","where":"*"}',
+            '{"name":"Flow_op_3","input":"Input","process": null,"output":"Output","join": null,"args": "","where":"*"}',
+            '{"name":"Flow_op_4","input":"Input","process": null,"output": null,"join":"join","args": "","where":"*"}',
             '{"name":"Flow_op_5","input":"Input","process": null,"output": null,"join": null,"args":"Args","where":"*"}',
-            '{"name":"Flow_op_6","input":"Input","process":"Process","output":"Output","join": null,"args": null,"where":"*"}',
-            '{"name":"Flow_op_7","input":"Input","process":"Process","output": null,"join":"join","args": null,"where":"*"}',
+            '{"name":"Flow_op_6","input":"Input","process":"Process","output":"Output","join": null,"args": "","where":"*"}',
+            '{"name":"Flow_op_7","input":"Input","process":"Process","output": null,"join":"join","args": "","where":"*"}',
             '{"name":"Flow_op_8","input":"Input","process":"Process","output":"Output","join":"join","args":"Args","where":"*"}',
             '{"name":"Flow_op_9","input":"Input","process":"Process","output": null,"join": null,"args":"Args","where":"*"}',
-            '{"name":"Flow_op_10","input":"Input","process": null,"output":"Output","join":"join","args": null,"where":"*"}',
+            '{"name":"Flow_op_10","input":"Input","process": null,"output":"Output","join":"join","args": "","where":"*"}',
             '{"name":"Flow_op_11","input":"Input","process": null,"output":"Output","join": null,"args":"Args","where":"*"}',
             '{"name":"Flow_op_12","input":"Input","process": null,"output": null,"join":"join","args":"Args","where":"*"}',
-            '{"name":"Flow_op_13","input":"Input","process":"Process","output":"Output","join":"join","args": null,"where":"*"}',
+            '{"name":"Flow_op_13","input":"Input","process":"Process","output":"Output","join":"join","args": "","where":"*"}',
             '{"name":"Flow_op_14","input":"Input","process":"Process","output":"Output","join": null,"args":"Args","where":"*"}',
             '{"name":"Flow_op_15","input":"Input","process":"Process","output": null,"join":"join","args":"Args","where":"*"}',
             '{"name":"Flow_op_16","input":"Input","process":"Process","output":"Output","join":"join","args":"Args","where":"*"}'
@@ -263,15 +263,17 @@ class FlowMapperTest(unittest.TestCase):
     def get_flow_message_entity(self):
         return FlowMessageEntity("message", "flow_one", "123",
                                  datetime.datetime.strptime('2020-03-20T14:28:23', '%Y-%m-%dT%H:%M:%S'),
-                                 datetime.datetime.strptime('2020-03-20T14:28:23', '%Y-%m-%dT%H:%M:%S'), "last", "next",
-                                 "payload123", "original", 2123, [])
+                                 datetime.datetime.strptime('2020-03-20T14:28:23', '%Y-%m-%dT%H:%M:%S'), "last",
+                                 "payload123", "original", [])
 
 
     def test_json_to_flow_entity(self):
         flow_list_json = self.get_flow_list_json()
         flow_list_read = self.get_flow_list()
         for ind in range(len(flow_list_json)):
-            self.assertEqual(flow_list_read[ind], self.flow_mapper.json_to_flow_entity(flow_list_json[ind]))
+            flow_expect = flow_list_read[ind]
+            flow_actual = self.flow_mapper.json_to_flow_entity(flow_list_json[ind])
+            self.assertEqual(flow_expect, flow_actual)
 
 
     def test_flow_entity_to_json(self):
