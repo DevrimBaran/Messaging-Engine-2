@@ -211,8 +211,12 @@ class FlowManager:
             self.cancel_flow(flow, flow_message)
             return False
 
-        result = await FlowOperationManager.execute_operation(flow, flow_message, final_step, self.execution_repository)
-
+        result = None
+        if final_step == "exit":
+            pass
+        else:
+            result = await FlowOperationManager.execute_operation(flow, flow_message, final_step,
+                                                                  self.execution_repository)
         logging.info("FINISHED FLOW %s:%s, result: %s", flow.name, flow_message.flow_id,
                      base64_decode(result) if result is not None else "")
 
