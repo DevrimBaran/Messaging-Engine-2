@@ -12,5 +12,6 @@ BASE64_REGEX = r"^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$"
 # Request/Response/Task timeouts
 # in seconds
 NEIGHBOR_DISCOVER_PING_TIMEOUT = 0.5
+SEND_MESSAGE_TIMEOUT = 1
 ROUTER_LOOP_TASK_TIMEOUT = 600
 MESSAGE_SENDING_REMOTE_TIMEOUT = 30
