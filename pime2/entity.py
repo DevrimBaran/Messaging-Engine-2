@@ -31,10 +31,11 @@ class FlowOperationEntity:
     This class represents a flow operation aka a flow step
     """
     name: str
-    # one of "input", "process" and "output" are not blank
-    input: Optional[str]
-    process: Optional[str]
-    output: Optional[str]
+    # one of "input", "process", "output" and "join" are not blank
+    input: Optional[str] = field(default=None)
+    process: Optional[str] = field(default=None)
+    output: Optional[str] = field(default=None)
+    join: Optional[str] = field(default=None)
     where: str = "*"
     args: Union[str, Dict, None] = ""
 

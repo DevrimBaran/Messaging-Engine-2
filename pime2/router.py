@@ -8,6 +8,7 @@ from pime2.sensor.sensor import SensorType
 from pime2.service.node_service import NodeService
 
 
+
 async def router_loop(msg, manager: FlowManager):
     """
     This method is called whenever an internal message is processed.
@@ -35,6 +36,10 @@ async def router_loop(msg, manager: FlowManager):
         elif message_type == MessageType.NODE_CREATE.value:
             NodeService().put_node(json.dumps(received_object["message_content"]))
             logging.debug("detected node create event with node: %s", received_object["message_content"])
+        elif message_type == MessageType.FLOW_CREATE.value:
+            #TODO: Put flow in database
+            #FlowService().put_flow(FlowMapper().json_to_flow_entity(received_object["message_content"]))
+            logging.debug("detected flow create event with flow: %s", received_object["message_content"])
         elif message_type == MessageType.FLOW_MESSAGE.value:
             flow_message = received_object["message_content"]
 
