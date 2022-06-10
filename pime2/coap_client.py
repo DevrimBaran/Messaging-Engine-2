@@ -5,7 +5,7 @@ from aiocoap import Code, Context, Message
 # workaround for timeout
 # TODO: globals()["numbers"].REQUEST_TIMEOUT = 1.0
 # globals()["numbers"].MAX_RETRANSMIT = 0
-from pime2 import NEIGHBOR_DISCOVER_PING_TIMEOUT, SEND_MESSAGE_TIMEOUT
+from pime2 import NEIGHBOR_DISCOVER_PING_TIMEOUT
 
 
 async def ping(destination):
@@ -31,7 +31,7 @@ async def ping(destination):
         return True
 
 
-async def send_message(destination, endpoint, payload, code):
+async def send_message(destination, endpoint, payload, code, timeout=None):
     """
     Send message with an arbitrary payload to a specific destination and endpoint.
     Takes an IP as destination, an endpoint of the destination and the payload to send
@@ -42,8 +42,11 @@ async def send_message(destination, endpoint, payload, code):
     request = Message(code=code, uri=uri, payload=bytes(str(payload).encode("utf-8")))
     logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
     try:
-        response = await asyncio.wait_for(client_context.request(request).response,
-                                            timeout=SEND_MESSAGE_TIMEOUT)
+        if(timeout):
+            response = await asyncio.wait_for(client_context.request(request).response,
+                                                timeout=timeout)
+        else:
+            response = await client_context.request(request).response
         logging.debug("Response: %s", response)
     except Exception as ex:
         logging.error('Sending Message to %s/%s failed! Exception: %s', destination, endpoint, ex)
