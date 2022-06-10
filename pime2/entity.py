@@ -37,7 +37,7 @@ class FlowOperationEntity:
     output: Optional[str] = field(default=None)
     join: Optional[str] = field(default=None)
     where: str = "*"
-    args: Union[str, Dict] = ""
+    args: Union[str, Dict, None] = ""
 
     def is_input(self) -> bool:
         """utility"""
