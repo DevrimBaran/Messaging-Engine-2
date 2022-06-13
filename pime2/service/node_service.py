@@ -2,7 +2,6 @@ import json
 import logging
 from json import JSONDecodeError
 from typing import List, Optional
-from zoneinfo import available_timezones
 
 from pime2.database import get_db_connection
 from pime2.entity import NodeEntity
@@ -90,7 +89,7 @@ class NodeService:
 
     def get_all_neighbor_nodes(self) -> List[NodeEntity]:
         """Get all nodes except the own node"""
-        return self.node_repository.read_all_nodes()
+        return list(filter(lambda x: x.name != get_me_conf().instance_id, self.node_repository.read_all_nodes()))
 
     def create_own_node(self):
         """

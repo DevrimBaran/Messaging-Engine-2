@@ -53,7 +53,7 @@ async def send_message(destination, endpoint, payload, code, timeout=30):
     logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
     try:
         response = await asyncio.wait_for(client_context.request(request).response,
-                                                timeout=timeout)
+                                          timeout=timeout)
         logging.debug("Response: %s", response)
     except Exception as ex:
         logging.error('Sending Message to %s/%s failed! Exception: %s', destination, endpoint, ex)
