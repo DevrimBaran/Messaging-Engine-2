@@ -56,6 +56,7 @@ async def router_loop(msg, manager: FlowManager):
             if len(selected_flow) > 1:
                 logging.error("PROBLEM: Multiple flows with the same name found! FlowMessage is skipped")
                 return
+            logging.debug("Start of executing external FlowMessage")
             await manager.execute_flow(selected_flow[0], FlowMapper().json_to_message_entity(flow_message),
                                        manager.get_nodes())
 

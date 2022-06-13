@@ -55,7 +55,6 @@ class NodeRepository:
         """Return every node in the database as a list"""
         cursor = self.connection.cursor()
         query = 'SELECT * FROM nodes;'
-        logging.debug('Executing SELECT SQL query: "%s"', query)
 
         try:
             cursor.execute(query)
@@ -133,7 +132,6 @@ class NodeRepository:
         """Return every node except the own device node from the database as a list"""
         cursor = self.connection.cursor()
         query = 'SELECT * FROM nodes WHERE name != ?;'
-        logging.debug('Executing SELECT SQL query: "%s"', query)
         cursor.execute(query, (get_me_conf().instance_id,))
         try:
             neighbors = cursor.fetchall()

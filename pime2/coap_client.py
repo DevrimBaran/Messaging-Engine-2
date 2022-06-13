@@ -6,6 +6,8 @@ from aiocoap import Code, Context, Message
 # TODO: globals()["numbers"].REQUEST_TIMEOUT = 1.0
 # globals()["numbers"].MAX_RETRANSMIT = 0
 from pime2 import NEIGHBOR_DISCOVER_PING_TIMEOUT
+from pime2.config import get_me_conf
+from pime2.entity import NodeEntity
 
 
 async def ping(destination):
@@ -29,6 +31,14 @@ async def ping(destination):
     else:
         logging.info('Ping successful! Response: %s\n%r', response.code, response.payload)
         return True
+
+
+async def coap_request_to_node(node: NodeEntity, endpoint, payload, code, timeout=30):
+    """wrapper for send_message"""
+    if get_me_conf().host == node.ip and get_me_conf().port == node.port:
+        logging.error("PROBLEM: CoAp message to self is not allowed!")
+        return
+    return await send_message(f"{node.ip}:{node.port}", endpoint, payload, code, timeout)
 
 
 async def send_message(destination, endpoint, payload, code, timeout=30):

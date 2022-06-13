@@ -7,7 +7,7 @@ from typing import List, Optional
 import aiocoap
 
 from pime2 import MESSAGE_SENDING_REMOTE_TIMEOUT
-from pime2.coap_client import send_message
+from pime2.coap_client import coap_request_to_node
 from pime2.common import base64_decode
 from pime2.database import get_db_connection
 from pime2.flow.flow_message_builder import FlowMessageBuilder
@@ -168,7 +168,7 @@ class FlowManager:
             logging.error("Could not detect next step of flow: %s", flow.name)
             return
         # detect nodes of next step and send new flow message
-        logging.error("Execute step '%s' of flow '%s'.", next_step, flow.name)
+        logging.info("Execute step '%s' of flow '%s'.", next_step, flow.name)
         nodes = FlowOperationManager.detect_nodes_of_step(flow, next_step, neighbors)
         if nodes is None or len(nodes) == 0:
             logging.error("No nodes can be found for the next flow operation '%s'. Cancelling flow.", next_step)
@@ -262,8 +262,8 @@ class FlowManager:
 
         current_payload = json.dumps(flow_message.__dict__, default=default_encoder)
         logging.debug("Flow-Message payload to send: %s", current_payload)
-        success = await send_message(f"{node.ip}:{node.port}", "flow-messages",
-                                     current_payload, aiocoap.Code.PUT)
+        success = await coap_request_to_node(node, "flow-messages",
+                                             current_payload, aiocoap.Code.PUT)
 
         if not success:
             logging.error("PROBLEM Sending FlowMessage to %s:%s/flow-messages", node.ip, node.port)

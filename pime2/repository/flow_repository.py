@@ -34,7 +34,6 @@ class FlowRepository:
         """Return a flow with a specific name from database"""
         cursor = self.connection.cursor()
         query = 'SELECT * FROM flows WHERE name = ?;'
-        logging.debug('Executing SELECT SQL query: "%s" with name:<%s>', query, name)
 
         try:
             cursor.execute(query, (name,))
@@ -53,7 +52,6 @@ class FlowRepository:
         """Return every flow in the database as a list"""
         cursor = self.connection.cursor()
         query = 'SELECT * FROM flows;'
-        logging.debug('Executing SELECT SQL query: "%s"', query)
 
         try:
             cursor.execute(query)
