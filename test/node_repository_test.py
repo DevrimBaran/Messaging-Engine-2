@@ -92,6 +92,7 @@ class NodeRepositoryTest(GenericDatabaseTest):
             self.node_repo.create_node(node)
         result = self.node_repo.read_all_nodes()
         self.assertEqual(node_list, result)
+        self.assertIsNotNone(self.node_repo.read_node_by_name("node1"))
         self.node_repo.delete_node_by_name("node1")
         self.assertIsNone(self.node_repo.read_node_by_name("node1"))
         with self.assertRaises(Error):
