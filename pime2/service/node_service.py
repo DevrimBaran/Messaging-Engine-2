@@ -2,12 +2,13 @@ import json
 import logging
 from json import JSONDecodeError
 from typing import List, Optional
+from zoneinfo import available_timezones
 
 from pime2.database import get_db_connection
 from pime2.entity import NodeEntity
 from pime2.repository.node_repository import NodeRepository
 from pime2.mapper.node_mapper import NodeMapper
-from pime2.config import get_me_conf
+from pime2.config import get_me_conf, load_app_config, CONFIG_FILE
 
 
 class NodeService:
@@ -99,16 +100,18 @@ class NodeService:
         own_me_node = self.get_own_node()
         if own_me_node is None:
             logging.info("Own node not existing. Creating own node.")
-            conf = get_me_conf()
+            conf = load_app_config(CONFIG_FILE)
             sensor_skills = []
             actuator_skills = []
             try:
-                for sensor in conf.available_sensors():
-                    sensor_skills.append(sensor.name)
-                logging.info("Loaded sensors.")
-                for actuator in conf.available_actuators():
-                    actuator_skills.append(actuator.name)
-                logging.info("Loaded actuators.")
+                available_sensors = conf.load_sensors()
+                for sensor in available_sensors:
+                    if sensor.sensor_type.value not in sensor_skills:
+                        sensor_skills.append("sensor_" + str(sensor.sensor_type.value).lower())
+                available_actuators = conf.load_actuators()
+                for actuator in available_actuators:
+                    if str(actuator.actuator_type.value) not in actuator_skills:
+                        actuator_skills.append("actuator_" + str(actuator.actuator_type.value).lower())
                 own_me_node = NodeEntity(conf.instance_id, conf.host, conf.port, sensor_skills, actuator_skills)
                 self.put_node(own_me_node)
                 logging.info("Created own node successfully!")

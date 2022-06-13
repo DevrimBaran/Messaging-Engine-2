@@ -1,4 +1,3 @@
-# pylint: disable=broad-except
 import json
 import logging
 import time
@@ -83,4 +82,4 @@ async def send_goodbye():
     all_neighbors = service.get_all_neighbor_nodes()
     for neighbor in all_neighbors:
         logging.info("Sending goodbye to: %s ", neighbor.name)
-        await send_message(neighbor.ip, "goodbye", own_node_json.encode(), Code.DELETE)
+        await send_message(neighbor.ip, "goodbye", own_node_json.encode(), Code.DELETE, timeout=1)
