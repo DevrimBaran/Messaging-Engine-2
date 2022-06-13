@@ -139,7 +139,7 @@ class FlowOperationManager:
                                 logging.error("Stopping flow: expression or variables are not defined")
                                 return None
                             logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
-                            if not cep_executer(f.args["expression"], f.args["variables"], payload):                                
+                            if not cep_executer(f.args["expression"], f.args["variables"], payload):
                                 logging.info("Stopping flow: CEP evaluation returned false")
                                 return None
 
