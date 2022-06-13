@@ -45,48 +45,46 @@ class FlowManager:
         :return:
         """
         flows = [
-            # FlowEntity("docker_flow_1", [
-            #     FlowOperationEntity(name="sensor_read", input="sensor_temperature", process=None,
-            #                         output=None, where="111111111"),
-            #     FlowOperationEntity(name="cep_intercept", input=None, process="cep_intercept", output=None,
-            #                         where="222222222",
-            #                         args={"expression": "x > 25", "variables": {"x": "result"}}),
-            #     FlowOperationEntity(name="beep_call", input=None, process=None, output="actuator_speaker",
-            #                         where="111111111"),
-            # ])
-            FlowEntity("docker_flow_2", [
-                FlowOperationEntity(name="first_step", input="sensor_temperature"),
+            FlowEntity("docker_flow_1", [
+                FlowOperationEntity(name="sensor_read", input="sensor_temperature", process=None,
+                                    output=None, where="111111111"),
+                # FlowOperationEntity(name="cep_intercept", input=None, process="cep_intercept", output=None,
+                #                     where="222222222",
+                #                     args={"expression": "x > 25", "variables": {"x": "result"}}),
                 FlowOperationEntity(name="second_step", process="log", where="111111111"),
                 FlowOperationEntity(name="third_step", process="log", where="222222222"),
-                FlowOperationEntity(name="last_step", output="exit"),
+                FlowOperationEntity(name="beep_call", input=None, process=None, output="actuator_speaker",
+                                    where="111111111"),
             ]),
-            # FlowEntity("test_flow_1", [
-            #     FlowOperationEntity("sensor_read", "sensor_temperature", None, None),
-            #     FlowOperationEntity("actuator_call", None, None, "actuator_speaker"),
-            # ]),
-            # FlowEntity("test_flow_2", [
-            #     FlowOperationEntity("sensor_read", "sensor_hall", None, None, "me2_first"),
-            #     FlowOperationEntity("log", None, "log", None, "me2_second"),
-            #     FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
-            # ]),
-            # FlowEntity("test_cep_flow_1", [
-            #     FlowOperationEntity("sensor_read", "sensor_temperature", None, None, "me2_first"),
-            #     FlowOperationEntity("cep_intercept", None, "cep_intercept", None, "me2_second", {
-            #         "expression": "x > 30",
-            #         "variables": {"x": "result"}
-            #     }),
-            #     FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
-            # ]),
-            # FlowEntity("test_cep_flow_2", [
-            #     FlowOperationEntity("sensor_read", "sensor_button", None, None, "me2_first"),
-            #     FlowOperationEntity("cep_intercepted", None, "cep_intercept", None, "me2_second", {
-            #         "expression": "x=true and y=true",
-            #         "variables": {"x": "gpio_1_result", "y": "gpio_2_result"}
-            #     }),
-            #     FlowOperationEntity("led_call", None, None, "actuator_led", "me2_third"),
-            # ]),
+            FlowEntity("test_flow_1", [
+                FlowOperationEntity("sensor_read", "sensor_temperature", None, None),
+                FlowOperationEntity("actuator_call", None, None, "actuator_speaker"),
+            ]),
+            FlowEntity("test_flow_2", [
+                FlowOperationEntity("sensor_read", "sensor_hall", None, None, "me2_first"),
+                FlowOperationEntity("log", None, "log", None, "me2_second"),
+                FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
+            ]),
+            FlowEntity("test_cep_flow_1", [
+                FlowOperationEntity("sensor_read", "sensor_temperature", None, None, "me2_first"),
+                FlowOperationEntity("cep_intercept", None, "cep_intercept", None, "me2_second", {
+                    "expression": "x > 30",
+                    "variables": {"x": "result"}
+                }),
+                FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
+            ]),
+            FlowEntity("test_cep_flow_2", [
+                FlowOperationEntity("sensor_read", "sensor_button", None, None, "me2_first"),
+                FlowOperationEntity("cep_intercepted", None, "cep_intercept", None, "me2_second", {
+                    "expression": "x=true and y=true",
+                    "variables": {"x": "gpio_1_result", "y": "gpio_2_result"}
+                }),
+                FlowOperationEntity("led_call", None, None, "actuator_led", "me2_third"),
+            ]),
         ]
-
+        for single_flow in flows:
+            if not is_flow_valid(single_flow):
+                logging.error("Invalid flow %s detected", single_flow.name)
         return flows
 
     async def start_flow(self, flow: FlowEntity, result: dict):

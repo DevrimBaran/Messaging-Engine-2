@@ -72,8 +72,8 @@ class Node(resource.Resource):
 
     async def is_request_valid(self, request) -> bool:
         """Validate the payload of the request whether it fits the specifications"""
-        if len(request.payload) > 2048 * 32:
-            raise JSONDecodeError(msg="Input too big", doc="request", pos=2048*32)
+        if len(request.payload) > 10240:
+            raise JSONDecodeError(msg="Input too big", doc="request", pos=10240)
 
         required_fields = [
             "name",
