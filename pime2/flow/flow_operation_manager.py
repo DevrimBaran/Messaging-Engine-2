@@ -180,6 +180,7 @@ class FlowOperationManager:
 
     @staticmethod
     def is_cep_operation(flow: FlowEntity, step: str) -> bool:
+        """method to check if a single flow operation is the cep operation or not"""
         for op in flow.ops:
             if op.name.lower() == step.lower():
                 if op.process.lower() == "cep_intercept":

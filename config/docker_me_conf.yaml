@@ -6,7 +6,7 @@ host: 0.0.0.0
 port: 5683
 read_interval: 5.0
 sensors:
-  - name: "Button-Sensor"
+  - name: "Temperature-Sensor"
     type: temperature
     gpio1: 12
     is_test_mode: true
