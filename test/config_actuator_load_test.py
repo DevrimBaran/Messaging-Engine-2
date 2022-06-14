@@ -1,10 +1,11 @@
 import unittest
+from unittest import IsolatedAsyncioTestCase
 
 import pime2.config
 import pime2.actuator.actuator
 
 
-class TestAppConfigurationActuatorLoad(unittest.TestCase):
+class TestAppConfigurationActuatorLoad(IsolatedAsyncioTestCase):
 
     async def test_actuator_load_speaker(self):
         is_exceptional = False

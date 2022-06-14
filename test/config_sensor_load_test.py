@@ -1,10 +1,11 @@
 import unittest
+from unittest import IsolatedAsyncioTestCase
 
 import pime2.config
 import pime2.sensor.sensor
 
 
-class TestAppConfigurationSensorLoad(unittest.TestCase):
+class TestAppConfigurationSensorLoad(IsolatedAsyncioTestCase):
 
     async def test_sensor_load_button(self):
         is_exceptional = False
