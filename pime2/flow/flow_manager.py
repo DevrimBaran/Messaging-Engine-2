@@ -116,7 +116,7 @@ class FlowManager:
         nodes = FlowOperationManager.detect_nodes_of_step(flow, step_name, neighbors)
 
         if nodes is None or len(nodes) == 0:
-            logging.error("No nodes can be found for the next flow operation '%s'. Cancelling flow.", step_name)
+            logging.error("No nodes can be found for the second flow operation '%s'. Cancelling flow.", step_name)
             return
         logging.debug("Selected %d nodes for step '%s':'%s' (%s)", len(nodes), step_name, flow.name, nodes)
 
@@ -165,7 +165,7 @@ class FlowManager:
             logging.error("Could not detect next step of flow: %s", flow.name)
             return
         # detect nodes of next step and send new flow message
-        logging.info("Execute step '%s' of flow '%s'.", next_step, flow.name)
+        logging.info("Ready to execute step '%s' of flow '%s'.", next_step, flow.name)
         nodes = FlowOperationManager.detect_nodes_of_step(flow, next_step, neighbors)
         if nodes is None or len(nodes) == 0:
             logging.error("No nodes can be found for the next flow operation '%s'. Cancelling flow.", next_step)

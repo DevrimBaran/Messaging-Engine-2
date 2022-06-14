@@ -7,7 +7,7 @@ from pime2.database import get_db_connection
 from pime2.entity import NodeEntity
 from pime2.repository.node_repository import NodeRepository
 from pime2.mapper.node_mapper import NodeMapper
-from pime2.config import get_me_conf, load_app_config, CONFIG_FILE
+from pime2.config import get_me_conf
 
 
 class NodeService:
@@ -99,7 +99,7 @@ class NodeService:
         own_me_node = self.get_own_node()
         if own_me_node is None:
             logging.info("Own node not existing. Creating own node.")
-            conf = load_app_config(CONFIG_FILE)
+            conf = get_me_conf()
             sensor_skills = []
             actuator_skills = []
             try:
