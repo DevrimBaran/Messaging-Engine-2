@@ -177,3 +177,11 @@ class FlowOperationManager:
             if f.name.lower() == current_step.lower() and i == total:
                 return True
         return False
+
+    @staticmethod
+    def is_cep_operation(flow: FlowEntity, step: str) -> bool:
+        for op in flow.ops:
+            if op.name.lower() == step.lower():
+                if op.process.lower() == "cep_intercept":
+                    return True
+        return False
