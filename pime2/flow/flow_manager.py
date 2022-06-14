@@ -81,9 +81,6 @@ class FlowManager:
                 FlowOperationEntity("led_call", None, None, "actuator_led", "me2_third"),
             ]),
         ]
-        for single_flow in flows:
-            if not is_flow_valid(single_flow):
-                logging.error("Invalid flow %s detected", single_flow.name)
         return flows
 
     async def start_flow(self, flow: FlowEntity, result: dict):
@@ -128,16 +125,16 @@ class FlowManager:
         # and send message to nodes
         await self.send_message_to_nodes(flow, msg, nodes)
 
-    async def execute_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity, neighbors: List[NodeEntity]):
+    async def execute_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity):
         """
         This method executes a single step. If the step is the last one of the flow, finish_flow() is called.
 
         :param flow:
         :param flow_message:
-        :param neighbors:
         :return:
         """
         # validate
+        neighbors = self.get_nodes()
         is_valid = await self.validate_flow(flow)
         if not is_valid:
             return
@@ -328,7 +325,7 @@ class FlowManager:
                 node_tasks.append(asyncio.create_task(self.send_flow_message(message, neighbor)))
             else:
                 if execute_local:
-                    await self.execute_flow(flow, message, nodes)
+                    await self.execute_flow(flow, message)
         if len(node_tasks) == 0:
             return
         await asyncio.wait(node_tasks, return_when=asyncio.ALL_COMPLETED, timeout=MESSAGE_SENDING_REMOTE_TIMEOUT)
