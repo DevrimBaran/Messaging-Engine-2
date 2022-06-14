@@ -46,8 +46,7 @@ class FlowManager:
         """
         flows = [
             FlowEntity("docker_flow_1", [
-                FlowOperationEntity(name="sensor_read", input="sensor_temperature", process=None,
-                                    output=None, where="111111111"),
+                FlowOperationEntity(name="sensor_read", input="sensor_temperature", where="111111111"),
                 # FlowOperationEntity(name="cep_intercept", input=None, process="cep_intercept", output=None,
                 #                     where="222222222",
                 #                     args={"expression": "x > 25", "variables": {"x": "result"}}),

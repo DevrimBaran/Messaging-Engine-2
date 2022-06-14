@@ -6,11 +6,11 @@ import pime2.actuator.actuator
 
 class TestAppConfigurationActuatorLoad(unittest.TestCase):
 
-    def test_actuator_load_speaker(self):
+    async def test_actuator_load_speaker(self):
         is_exceptional = False
         try:
             config = pime2.config.load_app_config("./test/fixtures/me_valid_actuator_speaker.yaml")
-            config.load_operators()
+            await config.load_operators()
         except RuntimeError:
             is_exceptional = True
         self.assertFalse(is_exceptional)
@@ -20,11 +20,11 @@ class TestAppConfigurationActuatorLoad(unittest.TestCase):
         self.assertEqual("Testactuator", actuators[0].name)
         self.assertEqual(pime2.actuator.actuator.ActuatorType.SPEAKER, actuators[0].actuator_type)
 
-    def test_actuator_load_led(self):
+    async def test_actuator_load_led(self):
         is_exceptional = False
         try:
             config = pime2.config.load_app_config("./test/fixtures/me_valid_actuator_led.yaml")
-            config.load_operators()
+            await config.load_operators()
         except RuntimeError:
             is_exceptional = True
         self.assertFalse(is_exceptional)

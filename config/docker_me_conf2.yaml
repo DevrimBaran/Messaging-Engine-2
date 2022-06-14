@@ -1,7 +1,7 @@
 instance_id: 222222222
 loglevel: DEBUG
 database: me2.db
-is_debug: false
+is_debug: true
 host: 0.0.0.0
 port: 5683
 read_interval: 3.0

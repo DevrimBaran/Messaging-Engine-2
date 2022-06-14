@@ -34,7 +34,7 @@ async def pime_run(config: MEConfiguration):
         zmq_context = Context.instance()
 
         try:
-            config.load_operators()
+            await config.load_operators()
         except RuntimeError as ex:
             logging.error("Problem loading operators from configuration file: %s", ex)
             sys.exit(1)

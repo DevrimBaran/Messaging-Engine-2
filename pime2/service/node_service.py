@@ -103,11 +103,11 @@ class NodeService:
             sensor_skills = []
             actuator_skills = []
             try:
-                available_sensors = conf.load_sensors()
+                available_sensors = conf.available_sensors
                 for sensor in available_sensors:
                     if sensor.sensor_type.value not in sensor_skills:
                         sensor_skills.append("sensor_" + str(sensor.sensor_type.value).lower())
-                available_actuators = conf.load_actuators()
+                available_actuators = conf.available_actuators
                 for actuator in available_actuators:
                     if str(actuator.actuator_type.value) not in actuator_skills:
                         actuator_skills.append("actuator_" + str(actuator.actuator_type.value).lower())

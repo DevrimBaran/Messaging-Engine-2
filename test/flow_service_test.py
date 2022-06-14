@@ -144,6 +144,5 @@ class FlowRepositoryTest(GenericDatabaseTest):
         self.assertFalse(self.flow_service.remove_flow('{"name""flow4", "ops"[]}'))
         self.assertFalse(self.flow_service.remove_flow(123))
 
-
 if __name__ == '__main__':
     unittest.main()
