@@ -2,7 +2,6 @@ import json
 import logging
 from json import JSONDecodeError
 from typing import List, Optional
-from zoneinfo import available_timezones
 
 from pime2.database import get_db_connection
 from pime2.entity import NodeEntity
