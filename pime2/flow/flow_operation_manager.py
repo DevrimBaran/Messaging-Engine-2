@@ -135,7 +135,9 @@ class FlowOperationManager:
 
                     if f.is_process():
                         if f.process == "cep_intercept":
-                            if (f.args["expression"] is None or f.args["variables"] is None):
+                            if not isinstance(f.args, dict) or \
+                               "expression" not in f.args or f.args["expression"] is None or \
+                               "variables" not in f.args or f.args["variables"] is None:
                                 logging.error("Stopping flow: expression or variables are not defined")
                                 return None
                             logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
