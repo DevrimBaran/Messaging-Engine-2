@@ -96,9 +96,9 @@ def is_flow_message_valid(flow_message: FlowMessageEntity) -> (bool, str):
     """
     Method to check if a flow is valid.
     """
-    id = []
-    if flow_message.id in id:
+    message_id = []
+    if flow_message.id in message_id:
         return False, "Flow message with same ID already exists"
     if flow_message.id:
-        id.append(flow_message.id)
+        message_id.append(flow_message.id)
     return True, ""

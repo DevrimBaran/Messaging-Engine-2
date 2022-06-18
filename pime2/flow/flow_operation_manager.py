@@ -126,7 +126,6 @@ class FlowOperationManager:
                 #    logging.error("DUPLICATE FLOW OPERATION PREVENTED! %s:%s, message_id: %s flow_id: %s",
                 #                  flow_operation_name, flow_operation,
                 #                  flow_message.id, flow_message.flow_id)
-                
                 # first execution
                 payload = base64_decode(flow_message.payload)
                 logging.info("EXECUTE OPERATION %s:%s with input: %s", flow_operation_name,
@@ -154,7 +153,7 @@ class FlowOperationManager:
                 return flow_message.payload
         if not is_executed:
             logging.error("No operation executed in flow %s with step %s", flow.name, step)
-            return None     
+            return None
 
     @staticmethod
     def is_last_step(flow: FlowEntity, current_step: str) -> bool:

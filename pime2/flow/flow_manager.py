@@ -46,7 +46,8 @@ class FlowManager:
         """
         flows = FlowEntity("raspi_flow_2", [
             FlowOperationEntity(name="sensor_read", input="sensor_temperature", where="*"),
-            FlowOperationEntity(name="cep_check", process="cep_intercept", where="*", args={"expression": "x>25", "variables": {"x": "result"}}),
+            FlowOperationEntity(name="cep_check", process="cep_intercept", where="*",
+                                args={"expression": "x>25", "variables": {"x": "result"}}),
             FlowOperationEntity(name="beep_call", output="actuator_speaker", where="*")
         ])
         return [flows]
