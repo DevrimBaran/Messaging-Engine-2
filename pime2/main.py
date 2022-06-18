@@ -30,11 +30,11 @@ async def pime_run(config: MEConfiguration):
     try:
         connection = db.create_connection(config.database)
         init_push_queue()
-        create_default_tables(connection, NodeService())
         zmq_context = Context.instance()
 
         try:
-            config.load_operators()
+            await config.load_operators()
+            create_default_tables(connection, NodeService())
         except RuntimeError as ex:
             logging.error("Problem loading operators from configuration file: %s", ex)
             sys.exit(1)

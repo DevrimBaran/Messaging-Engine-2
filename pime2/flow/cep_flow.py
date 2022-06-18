@@ -44,9 +44,7 @@ def substitute_variables(expression, variables, payload):
     """
     for key, value in variables.items():
         if is_keyword(value):
-
             value = json.loads(payload)[value]
-
         elif not is_allowed_variable(key):
             raise ValueError("Invalid CEP variable!")
 

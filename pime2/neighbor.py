@@ -5,7 +5,7 @@ import socket
 from aiocoap import Code
 from pime2.service.node_service import NodeService
 from pime2.config import get_me_conf
-from pime2.coap_client import ping, send_message
+from pime2.coap_client import ping, send_message, coap_request_to_node
 
 
 async def find_neighbors():
@@ -65,7 +65,7 @@ async def send_hello(available_ip):
     own_node = service.get_own_node()
     own_node_json = service.entity_to_json(own_node)
     for neighbor_ip in available_ip:
-        logging.info("Sending hello to %s", neighbor_ip)
+        logging.info("Sending hello to %s:5683", neighbor_ip)
         neighbor_response = await send_message(neighbor_ip, "hello", "Hello, I'm online!".encode(), Code.GET)
         neighbor_entity = service.json_to_entity(neighbor_response.payload.decode())
         service.put_node(neighbor_entity)
@@ -81,5 +81,5 @@ async def send_goodbye():
     own_node_json = json.dumps(own_node.__dict__)
     all_neighbors = service.get_all_neighbor_nodes()
     for neighbor in all_neighbors:
-        logging.info("Sending goodbye to: %s ", neighbor.name)
-        await send_message(neighbor.ip, "goodbye", own_node_json.encode(), Code.DELETE, timeout=1)
+        logging.info("Sending goodbye to: %s:%s", neighbor.name, neighbor.port)
+        await coap_request_to_node(neighbor, "goodbye", own_node_json.encode(), Code.DELETE, timeout=1)

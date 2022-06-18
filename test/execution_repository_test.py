@@ -1,9 +1,6 @@
 import unittest
-import os
 from datetime import datetime
 
-import pime2.database as db
-from pime2.config import load_app_config
 from pime2.repository.execution_repository import ExecutionRepository
 
 from test.generic import GenericDatabaseTest
