@@ -5,21 +5,16 @@ from pime2 import database
 from pime2.config import get_me_conf, load_app_config
 from pime2.repository.node_repository import NodeRepository
 from pime2.service.node_service import NodeService
+from test.generic import GenericDatabaseTest
 
 
-class DatabaseTest(unittest.TestCase):
+class DatabaseTest(GenericDatabaseTest):
     node_repo: NodeRepository = None
-    connection = None
 
     @classmethod
     def setUp(cls):
-        if os.path.exists("testDatabase.db"):
-            database.disconnect(cls.connection)
-            os.remove("testDatabase.db")
-        load_app_config("me.yaml")
-        cls.connection = database.create_connection("testDatabase.db")
+        super().setUp()
         cls.node_repo = NodeRepository(cls.connection)
-        database.create_default_tables(cls.connection, NodeService())
         cls.node_repo.delete_all()
 
     def test_create_default_tables(self):
@@ -50,11 +45,6 @@ class DatabaseTest(unittest.TestCase):
              ('node2', "10.10.10.2", 5683),
              ('node3', "10.10.10.3", 5683)],
             result)
-
-    @classmethod
-    def tearDownClass(cls):
-        database.disconnect(cls.connection)
-        os.remove("testDatabase.db")
 
 
 if __name__ == '__main__':

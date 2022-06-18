@@ -10,7 +10,7 @@ from pime2.config import get_me_conf
 class NodeRepository:
     """Implements node repository class"""
 
-    def __init__(self, connection):
+    def __init__(self, connection: sqlite3.Connection):
         self.connection = connection
 
     def create_node(self, node: NodeEntity):
