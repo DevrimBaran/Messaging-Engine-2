@@ -4,7 +4,7 @@ import re
 from operator import xor
 
 from pime2 import NAME_REGEX
-from pime2.entity import FlowEntity
+from pime2.entity import FlowEntity, FlowMessageEntity
 from pime2.flow.flow_operation_manager import FlowOperationManager
 from pime2.service.node_service import NodeService
 
@@ -90,3 +90,14 @@ def is_flow_step_executable(flow: FlowEntity, step: str, node_service: NodeServi
                 logging.debug("No executable node found for operation name '%s'", op.name)
                 return False
     return True
+
+
+def is_flow_message_valid(flow_message: FlowMessageEntity) -> (bool, str):
+    """
+    Method to check if a flow is valid.
+    """
+    id = []
+    if flow_message.id in id:
+        return False, "Flow message with same ID already exists"
+    if flow_message.id:
+        id.append(flow_message.id)
