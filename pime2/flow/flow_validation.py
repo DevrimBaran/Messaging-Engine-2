@@ -92,13 +92,15 @@ def is_flow_step_executable(flow: FlowEntity, step: str, node_service: NodeServi
     return True
 
 
-def is_flow_message_valid(flow_message: FlowMessageEntity) -> (bool, str):
+def is_flow_message_valid(flow_message: FlowMessageEntity, flow: FlowEntity) -> (bool, str):
     """
     Method to check if a flow is valid.
     """
-    message_id = []
-    if flow_message.id in message_id:
-        return False, "Flow message with same ID already exists"
-    if flow_message.id:
-        message_id.append(flow_message.id)
+    if flow_message.flow_name != flow.name:
+        return False, "Flow name from flow message does not match flow name from flow!"
+    op_names = []
+    for op in flow.ops:
+        op_names.append(op.name)
+    if flow_message.last_operation not in op_names:
+        return False, "Last operation does not exist!"
     return True, ""

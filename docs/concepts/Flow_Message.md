@@ -30,6 +30,7 @@
 - Check if `last_operation` exists
 - Check if `next_operation` exists
 - Check if `id` already exists
+- Check if `flow-name` is correct
 - Check if all necessary fields are given
 - Check if name-like fields match following regex: `r"^[a-zA-Z0-9_.-]{3,128}$"`
 - Check if date-like fields have correct date format
