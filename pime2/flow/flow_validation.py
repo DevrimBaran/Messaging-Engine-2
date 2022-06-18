@@ -101,3 +101,4 @@ def is_flow_message_valid(flow_message: FlowMessageEntity) -> (bool, str):
         return False, "Flow message with same ID already exists"
     if flow_message.id:
         id.append(flow_message.id)
+    return True, ""
