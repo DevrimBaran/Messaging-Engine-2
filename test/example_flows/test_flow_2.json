@@ -1,0 +1,21 @@
+{
+    "name": "test_flow_2",
+    "ops": [
+      {
+        "name": "sensor_read",
+        "input": "sensor_hall",
+        "where": "me2_first"
+      },
+      {
+        "name": "log",
+        "process": "log",
+        "where": "me2_second"
+      },
+      {
+        "name": "beep_call",
+        "output": "actuator_speaker",
+        "where": "me2_third"
+      }
+    ]
+  }
+  

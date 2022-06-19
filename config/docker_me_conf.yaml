@@ -1,12 +1,12 @@
-instance_id: 123456678
+instance_id: 111111111
 loglevel: DEBUG
-is_debug: false
-host: 127.0.0.1
+database: me2.db
+is_debug: true
+host: 0.0.0.0
 port: 5683
 read_interval: 5.0
 sensors:
-  - name: "Button-Sensor"
-    type: button
-    pin1: 12
-    pin2: 13
+  - name: "Temperature-Sensor"
+    type: temperature
+    gpio1: 12
     is_test_mode: true

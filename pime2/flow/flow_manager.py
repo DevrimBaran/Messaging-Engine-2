@@ -1,14 +1,20 @@
 import asyncio
+import datetime
 import json
 import logging
-from typing import List
+from typing import List, Optional
 
-from pime2.coap_client import CoapClient
-from pime2.config import get_me_conf
+import aiocoap
+
+from pime2 import MESSAGE_SENDING_REMOTE_TIMEOUT
+from pime2.coap_client import coap_request_to_node
+from pime2.common import base64_decode
+from pime2.database import get_db_connection
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
-from pime2.flow.flow_validation_service import FlowValidationService
+from pime2.flow.flow_validation import is_flow_valid, is_flow_step_executable
 from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
+from pime2.repository.execution_repository import ExecutionRepository
 from pime2.sensor.sensor import SensorType
 from pime2.service.node_service import NodeService
 
@@ -19,18 +25,13 @@ class FlowManager:
     Flow step operations are executed by FlowOperationManager.
     """
 
-    def __init__(self, flow_validation_service: FlowValidationService, flow_operation_manager: FlowOperationManager,
-                 flow_message_builder: FlowMessageBuilder, node_service: NodeService, coap_client: CoapClient):
-        self.flow_validation_service = flow_validation_service
-        self.flow_operation_manager = flow_operation_manager
-        self.flow_message_builder = flow_message_builder
+    def __init__(self, node_service: NodeService):
         self.node_service = node_service
-        self.coap_client = coap_client
-        self.startup()
+        self.execution_repository = ExecutionRepository(get_db_connection())
 
     def get_nodes(self) -> List[NodeEntity]:
         """
-        This methods provides a list of currently known nodes.
+        This method provides a list of currently known nodes.
 
         :return:
         """
@@ -39,16 +40,48 @@ class FlowManager:
     def get_flows(self) -> List[FlowEntity]:
         """
         This methods provides a list of currently known nodes.
-        FIXME: This method will be replaced with a db access in a later step.
+        FIXME: This method will be replaced with a db access in a later step. (ME-46)
 
         :return:
         """
-        flow_ops = [FlowOperationEntity("op_name", "sensor_read_temperature", None, None, "*"),
-                    FlowOperationEntity("op_name2", None, "log", None, "*")]
-        flow = FlowEntity("test_flow", flow_ops)
-        return [
-            flow,
+        flows = [
+            FlowEntity("docker_flow_1", [
+                FlowOperationEntity(name="sensor_read", input="sensor_temperature", where="111111111"),
+                # FlowOperationEntity(name="cep_intercept", input=None, process="cep_intercept", output=None,
+                #                     where="222222222",
+                #                     args={"expression": "x > 25", "variables": {"x": "result"}}),
+                FlowOperationEntity(name="second_step", process="log", where="111111111"),
+                FlowOperationEntity(name="third_step", process="log", where="222222222"),
+                FlowOperationEntity(name="beep_call", input=None, process=None, output="actuator_speaker",
+                                    where="111111111"),
+            ]),
+            FlowEntity("test_flow_1", [
+                FlowOperationEntity("sensor_read", "sensor_temperature", None, None),
+                FlowOperationEntity("actuator_call", None, None, "actuator_speaker"),
+            ]),
+            FlowEntity("test_flow_2", [
+                FlowOperationEntity("sensor_read", "sensor_hall", None, None, "me2_first"),
+                FlowOperationEntity("log", None, "log", None, "me2_second"),
+                FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
+            ]),
+            FlowEntity("test_cep_flow_1", [
+                FlowOperationEntity("sensor_read", "sensor_temperature", None, None, "me2_first"),
+                FlowOperationEntity("cep_intercept", None, "cep_intercept", None, "me2_second", {
+                    "expression": "x > 30",
+                    "variables": {"x": "result"}
+                }),
+                FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
+            ]),
+            FlowEntity("test_cep_flow_2", [
+                FlowOperationEntity("sensor_read", "sensor_button", None, None, "me2_first"),
+                FlowOperationEntity("cep_intercepted", None, "cep_intercept", None, "me2_second", {
+                    "expression": "x=true and y=true",
+                    "variables": {"x": "gpio_1_result", "y": "gpio_2_result"}
+                }),
+                FlowOperationEntity("led_call", None, None, "actuator_led", "me2_third"),
+            ]),
         ]
+        return flows
 
     async def start_flow(self, flow: FlowEntity, result: dict):
         """
@@ -61,53 +94,57 @@ class FlowManager:
         neighbors = self.get_nodes()
 
         # validate
-        is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
+        is_valid = await self.validate_flow(flow, None)
         if not is_valid:
-            logging.error("Problem with flow '%s'", flow.name)
-            for i in validation_msgs:
-                logging.error("Validation message: %s", i)
+            return
+
+        # detect first step
+        first_step = flow.ops[0].name if len(flow.ops) >= 1 else None
+        if first_step is None:
+            logging.error("Problem: Cannot find first step in given flow. %s", flow)
             return
 
         # detect next step
-        step = self.flow_operation_manager.detect_second_step(flow)
-        if step is None:
+        step_name = FlowOperationManager.detect_second_step(flow)
+        if step_name is None:
             logging.error("Could not detect second step of flow: %s", flow.name)
             return
         # detect nodes of next step and send new flow message
-        nodes = self.flow_operation_manager.detect_nodes_of_step(flow, step, neighbors)
+        nodes = FlowOperationManager.detect_nodes_of_step(flow, step_name, neighbors)
 
         if nodes is None or len(nodes) == 0:
-            logging.error("No nodes can be found for the next flow operation. Cancelling flow.")
+            logging.error("No nodes can be found for the second flow operation '%s'. Cancelling flow.", step_name)
             return
+        logging.debug("Selected %d nodes for step '%s':'%s' (%s)", len(nodes), step_name, flow.name, nodes)
 
         # build flow message
-        msg = self.flow_message_builder.build_start_message(flow, step, result)
+        msg = FlowMessageBuilder.build_start_message(flow, first_step, result)
+
+        logging.info("START FLOW: %s:%s", msg.flow_name, msg.flow_id)
+
         # and send message to nodes
         await self.send_message_to_nodes(flow, msg, nodes)
 
-    async def execute_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity, neighbors: List[NodeEntity]):
+    async def execute_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity):
         """
         This method executes a single step. If the step is the last one of the flow, finish_flow() is called.
 
         :param flow:
         :param flow_message:
-        :param neighbors:
         :return:
         """
         # validate
-        is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
+        neighbors = self.get_nodes()
+        is_valid = await self.validate_flow(flow)
         if not is_valid:
-            logging.error("Problem with flow '%s'")
-            for i in validation_msgs:
-                logging.error("Validation message: '%s'", i)
             return
 
         # detect current step and execute
-        current_step = self.flow_operation_manager.detect_current_step(flow, flow_message)
+        current_step = FlowOperationManager.detect_current_step(flow, flow_message)
         if current_step is None:
             logging.error("Problem detecting current step of flow '%s'", flow.name)
             return
-        if self.flow_operation_manager.is_last_step(flow, current_step):
+        if FlowOperationManager.is_last_step(flow, current_step):
             return await self.finish_flow(flow, flow_message)
 
         is_done, result = await self.execute_step(flow, flow_message, current_step, neighbors)
@@ -116,20 +153,40 @@ class FlowManager:
             return
 
         # detect next step and delegate
-        next_step = self.flow_operation_manager.detect_next_step(flow, flow_message)
+        next_step = FlowOperationManager.detect_next_step(flow, current_step)
         if next_step is None:
-            logging.error("Could not detect second step of flow: %s", flow.name)
+            logging.error("Could not detect next step of flow: %s", flow.name)
             return
         # detect nodes of next step and send new flow message
-        nodes = self.flow_operation_manager.detect_nodes_of_step(flow, next_step, neighbors)
+        logging.info("Ready to execute step '%s' of flow '%s'.", next_step, flow.name)
+        nodes = FlowOperationManager.detect_nodes_of_step(flow, next_step, neighbors)
         if nodes is None or len(nodes) == 0:
-            logging.error("No nodes can be found for the next flow operation. Cancelling flow.")
+            logging.error("No nodes can be found for the next flow operation '%s'. Cancelling flow.", next_step)
             return
+        logging.debug("Selected %d nodes for step '%s':'%s' (%s)", len(nodes), next_step, flow.name, nodes)
 
         # build flow message
-        next_msg = self.flow_message_builder.build_next_message(flow, flow_message, result, current_step, next_step)
+        next_msg = FlowMessageBuilder.build_next_message(flow, flow_message,
+                                                         result if result is not None else "",
+                                                         current_step)
 
         await self.send_message_to_nodes(flow, next_msg, nodes)
+
+    async def validate_flow(self, flow: FlowEntity, flow_message: Optional[FlowMessageEntity] = None):
+        """
+        If this method returns False, the execution of this flow (message) can be stopped
+
+        :param flow_message:
+        :param flow:
+        :return:
+        """
+        is_valid, validation_msgs = is_flow_valid(flow)
+        if not is_valid:
+            logging.warning("INVALID FLOW '%s': %s", flow.name, validation_msgs)
+            self.cancel_flow(flow, flow_message)
+            return False
+
+        return True
 
     async def finish_flow(self, flow: FlowEntity, flow_message: FlowMessageEntity):
         """
@@ -140,23 +197,35 @@ class FlowManager:
         :return:
         """
         # validate
-        is_valid, validation_msgs = self.flow_validation_service.is_flow_valid(flow)
+        is_valid = await self.validate_flow(flow)
         if not is_valid:
-            logging.error("Problem with flow '%s'")
-            for i in validation_msgs:
-                logging.error("Validation message: '%s'", i)
             return
 
         # detect current step and execute
-        final_step = self.flow_operation_manager.detect_current_step(flow, flow_message)
+        final_step = FlowOperationManager.detect_current_step(flow, flow_message)
         if final_step is None:
             logging.error("Problem detecting current step of flow '%s'", flow.name)
             return
-        # TODO: Check if this is really the last step
+        # check if this is really the last step
+        if not FlowOperationManager.is_last_step(flow, final_step):
+            self.cancel_flow(flow, flow_message, "step is not final")
+            return
 
-        self.flow_operation_manager.execute_operation(flow, flow_message, final_step)
-        logging.info("Finished flow")
-        return
+        # check if the flow is executable
+        if not is_flow_step_executable(flow, final_step, self.node_service):
+            logging.warning("CANNOT EXECUTE FLOW '%s'. Neighbors or skills are missing in final step '%s'.",
+                            flow.name, final_step)
+            self.cancel_flow(flow, flow_message)
+            return False
+
+        result = None
+        if final_step == "exit":
+            pass
+        else:
+            result = await FlowOperationManager.execute_operation(flow, flow_message, final_step,
+                                                                  self.execution_repository)
+        logging.info("FINISHED FLOW %s:%s, result: %s", flow.name, flow_message.flow_id,
+                     base64_decode(result) if result is not None else "")
 
     async def send_flow_message(self, flow_message: FlowMessageEntity, node: NodeEntity):
         """
@@ -168,10 +237,28 @@ class FlowManager:
         """
         logging.info("Send FlowMessage to %s:%s", node.ip, node.port)
 
-        await self.coap_client.send_message(f"{node.ip}:{node.port}", "/flow_message",
-                                            json.dumps(flow_message.__dict__, default=str))
+        def default_encoder(obj):
+            if isinstance(obj, FlowMessageEntity):
+                tl_msg = obj.__dict__
+                history_list = []
+                for history_msg in obj.history:
+                    history_list.append(history_msg)
 
-        logging.info("Send FlowMessage finished")
+                tl_msg["history"] = history_list
+                return tl_msg
+            if isinstance(obj, datetime.datetime):
+                return str(obj)
+            return json.JSONEncoder().default(obj)
+
+        current_payload = json.dumps(flow_message.__dict__, default=default_encoder)
+        logging.debug("Flow-Message payload to send: %s", current_payload)
+        success = await coap_request_to_node(node, "flow-messages",
+                                             current_payload, aiocoap.Code.PUT)
+
+        if not success:
+            logging.error("PROBLEM Sending FlowMessage to %s:%s/flow-messages", node.ip, node.port)
+        else:
+            logging.info("SUCCESS Sending FlowMessage to %s:%s/flow-messages", node.ip, node.port)
 
     def get_available_flows_for_sensor(self, sensor_type: SensorType) -> List[FlowEntity]:
         """
@@ -180,44 +267,49 @@ class FlowManager:
         :param sensor_type:
         :return:
         """
-        # TODO implement
-        return self.get_flows()
-
-    def startup(self):
-        """
-        This method is called at the end of the constructor to do prepare the flow managers work.
-        :return:
-        """
-        node = self.node_service.get_own_node()
-        if node is None:
-            # Create own entry
-            logging.info("FlowManager: Creating self node")
-            me_conf = get_me_conf()
-            self.node_service.put_node(NodeEntity(me_conf.instance_id, me_conf.host, me_conf.port))
-        else:
-            logging.info("FlowManager: Self node exists")
+        flows = self.get_flows()
+        out = []
+        for f in flows:
+            is_affected = False
+            for operation in f.ops:
+                if operation.input is not None and operation.input == ("sensor_" + str(sensor_type).lower()):
+                    is_affected = True
+            if is_affected:
+                out.append(f)
+        return out
 
     async def execute_step(self, flow: FlowEntity, flow_message: FlowMessageEntity, step: str,
-                           nodes: List[NodeEntity]) -> (bool, dict):
+                           nodes: List[NodeEntity]) -> (bool, Optional[str]):
         """
-        Helper method to execute a single step locally and remote.
-        If the execution was also locally, the return value is true, else false.
+        Helper method to execute a single step (= flow operation) locally and remote.
+        If the execution was also locally, the first return value is true, else false.
+        Remote executions do not have a result.
+
         :param flow:
         :param flow_message:
         :param step:
         :param nodes:
         :return:
         """
-        nodes_of_step = self.flow_operation_manager.detect_nodes_of_step(flow, step, nodes)
+        nodes_of_step = FlowOperationManager.detect_nodes_of_step(flow, step, nodes)
 
-        message = self.flow_message_builder.build_redirection_message(flow_message)
+        message = FlowMessageBuilder.build_redirection_message(flow_message)
         await self.send_message_to_nodes(flow, message, nodes_of_step, False)
 
         is_executed_locally = len(list(filter(lambda x: not self.node_service.is_node_remote(x), nodes_of_step))) > 0
         if is_executed_locally:
-            result = self.flow_operation_manager.execute_operation(flow, flow_message, step)
+            # check if the flow is executable
+            if not is_flow_step_executable(flow, step, self.node_service):
+                logging.warning("CANNOT EXECUTE FLOW '%s'. Neighbors or skills are missing in step '%s'.",
+                                flow.name, step)
+                self.cancel_flow(flow, flow_message)
+                return False, None
+
+            result = await FlowOperationManager.execute_operation(flow, flow_message, step, self.execution_repository)
+            if result is None and FlowOperationManager.is_cep_operation(flow, step):
+                self.cancel_flow(flow, flow_message)
             return True, result
-        return False, {}
+        return False, None
 
     async def send_message_to_nodes(self, flow: FlowEntity, message: FlowMessageEntity, nodes: List[NodeEntity],
                                     execute_local=True):
@@ -231,5 +323,17 @@ class FlowManager:
                 node_tasks.append(asyncio.create_task(self.send_flow_message(message, neighbor)))
             else:
                 if execute_local:
-                    await self.execute_flow(flow, message, nodes)
-        await asyncio.wait(node_tasks, return_when=asyncio.ALL_COMPLETED, timeout=20)
+                    await self.execute_flow(flow, message)
+        if len(node_tasks) == 0:
+            return
+        await asyncio.wait(node_tasks, return_when=asyncio.ALL_COMPLETED, timeout=MESSAGE_SENDING_REMOTE_TIMEOUT)
+
+    def cancel_flow(self, flow: FlowEntity, flow_message: Optional[FlowMessageEntity] = None, additional_msg: str = ""):
+        """
+        Method to cancel a flow
+        :param additional_msg:
+        :param flow:
+        :param flow_message:
+        :return:
+        """
+        logging.info("Cancelled flow %s with message %s. %s", flow, flow_message, additional_msg)

@@ -1,14 +1,13 @@
-# pylint: disable=broad-except
+# pylint: disable=no-member
 import asyncio
 import logging
 
 import zmq
-from aiocoap import Context
 from zmq.asyncio import Poller
 
-from pime2.coap_client import CoapClient
-from pime2.flow import FlowManager, FlowValidationService, FlowOperationManager
-from pime2.flow.flow_message_builder import FlowMessageBuilder
+from pime2 import ROUTER_LOOP_TASK_TIMEOUT
+from pime2.config import get_me_conf
+from pime2.flow.flow_manager import FlowManager
 from pime2.router import router_loop
 from pime2.push_queue import get_push_queue
 from pime2.service.node_service import NodeService
@@ -31,7 +30,7 @@ async def startup_push_queue(context):
     receive_queue = get_push_queue()
     while True:
         result = await receive_queue.get()
-        logging.info("sent msg: %s", result)
+        logging.debug("sent msg: %s", result)
         await socket.send_multipart([str(result).encode('ascii')])
         receive_queue.task_done()
 
@@ -51,21 +50,25 @@ async def startup_pull_queue(context):
     poller.register(socket, zmq.POLLIN)
 
     # load and instantiate flow manager
-    flow_manager = FlowManager(FlowValidationService(), FlowOperationManager(),
-                               FlowMessageBuilder(), NodeService(), CoapClient(await Context.create_client_context()))
+    flow_manager = FlowManager(NodeService())
+    conf = get_me_conf()
 
     while True:
         try:
             events = await poller.poll()
             if socket in dict(events):
                 msg = await socket.recv_multipart()
-                future = asyncio.wait([asyncio.create_task(router_loop(msg, flow_manager))], timeout=30.0)
                 try:
-                    await future
+                    await asyncio.wait_for(router_loop(msg, flow_manager), timeout=ROUTER_LOOP_TASK_TIMEOUT)
                 except asyncio.exceptions.TimeoutError:
                     logging.warning("Message processing timeout reached!")
                 except Exception as ex:
-                    logging.error("Message processing inner exception: %s, %s", ex, future)
-
+                    logging.error("Message processing inner exception: %s", ex)
+                    if conf.is_debug:
+                        raise RuntimeError("Problem executing ME2") from ex
         except Exception as e:
-            logging.error("Message processing outer exception: %s", e)
+            logging.error("Message processing exception: %s", e)
+            if conf.is_debug:
+                raise RuntimeError("Problem during execution of ME2") from e
+        finally:
+            logging.debug("A single router loop has finished")

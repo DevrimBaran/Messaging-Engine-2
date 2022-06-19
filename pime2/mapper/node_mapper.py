@@ -12,19 +12,16 @@ class NodeMapper:
         """Converts json to entity"""
         json_obj = json.loads(json_str)
         name = json_obj['name']
-        ip = json_obj['ip']
+        ip_addr = json_obj['ip']
         port = json_obj['port']
-        sensor_skills = json_obj['sensor_skills']
-        actuator_skills = json_obj['actuator_skills']
-        node = NodeEntity(name, ip, port, sensor_skills, actuator_skills)
+        sensor_skills = [] if "sensor_skills" not in json_obj else json_obj["sensor_skills"]
+        actuator_skills = [] if "actuator_skills" not in json_obj else json_obj["actuator_skills"]
+        node = NodeEntity(name, ip_addr, port, sensor_skills, actuator_skills)
         logging.info("JSON to entity : <%s>", node)
         return node
 
-    def entity_list_to_json(self, node_list:List[NodeEntity]) -> str:
+    def entity_list_to_json(self, node_list: List[NodeEntity]) -> str:
         """Converts a list of entities to json"""
-        node_array = []
-        for node in node_list:
-            node_array.append(node.__dict__)
-        node_json_string = json.dumps(node_array)
+        node_json_string = json.dumps(node_list, default=lambda o: getattr(o, '__dict__', str(o)))
         logging.info("Entity list to json : <%s>", node_json_string)
         return node_json_string
