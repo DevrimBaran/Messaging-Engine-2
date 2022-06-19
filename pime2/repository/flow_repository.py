@@ -24,8 +24,7 @@ class FlowRepository:
         logging.debug('Values inserted: name:<%s> ops:<%s>',
                       flow.name, flow_operations)
         try:
-            cursor.execute(query, (
-               flow.name, flow_operations))
+            cursor.execute(query, (flow.name, flow_operations))
             self.commit()
         finally:
             cursor.close()
