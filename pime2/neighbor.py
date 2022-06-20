@@ -1,7 +1,6 @@
 import json
 import logging
 import time
-import socket
 from aiocoap import Code
 from pime2.service.node_service import NodeService
 from pime2.config import get_me_conf
@@ -15,7 +14,7 @@ async def find_neighbors():
     available_ip = []
 
     subnet = find_local_subnet()
-    for suffix in range(1, 255):
+    for suffix in range(104, 106):
         target = subnet + str(suffix)
         logging.info('Starting scan on host: %s', target)
         start = time.time()
@@ -39,20 +38,9 @@ async def find_neighbors():
 
 def find_local_subnet():
     """
-    Extracts the local subnet from the local ip of the host.
+    Extracts the local subnet from the ip of the host.
     """
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.settimeout(0)
-    try:
-        # doesn't even have to be reachable
-        sock.connect(('129.69.5.3', 80))
-        local_ip = sock.getsockname()[0]
-    except Exception:
-        local_ip = get_me_conf().host
-    finally:
-        sock.close()
-    local_subnet = ".".join(local_ip.split(".")[:-1]) + "."
-    return local_subnet
+    return ".".join(get_me_conf().host.split(".")[:-1]) + "."
 
 
 async def send_hello(available_ip):
