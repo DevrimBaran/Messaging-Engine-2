@@ -7,6 +7,7 @@ from typing import List, Optional
 from pime2.entity import NodeEntity
 from pime2.config import get_me_conf
 
+
 class NodeRepository:
     """Implements node repository class"""
 
@@ -37,16 +38,13 @@ class NodeRepository:
     def read_node_by_name(self, name: str) -> Optional[NodeEntity]:
         """Return a node with a specific name from database"""
         cursor = self.connection.cursor()
-        query = 'SELECT * FROM nodes WHERE name = ?;'
-        logging.debug('Executing SELECT SQL query: "%s" with name:<%s>', query, name)
 
         try:
-            cursor.execute(query, (name,))
+            cursor.execute('SELECT * FROM nodes WHERE name = ?;', (name,))
             node_in_database = cursor.fetchone()
             if node_in_database is None:
                 logging.debug('No node with name "%s" exists.', name)
                 return None
-            logging.debug('Query executed. Result: %s', node_in_database)
             result_node = NodeEntity(node_in_database[1], node_in_database[2], node_in_database[3],
                                      str(node_in_database[4]).split(","), str(node_in_database[5]).split(","))
 
@@ -58,7 +56,6 @@ class NodeRepository:
         """Return every node in the database as a list"""
         cursor = self.connection.cursor()
         query = 'SELECT * FROM nodes;'
-        logging.debug('Executing SELECT SQL query: "%s"', query)
 
         try:
             cursor.execute(query)
@@ -136,13 +133,12 @@ class NodeRepository:
         """Return every node except the own device node from the database as a list"""
         cursor = self.connection.cursor()
         query = 'SELECT * FROM nodes WHERE name != ?;'
-        logging.debug('Executing SELECT SQL query: "%s"', query)
         cursor.execute(query, (get_me_conf().instance_id,))
         try:
             neighbors = cursor.fetchall()
             if neighbors is None:
                 logging.debug('No nodes existing.')
-                return None
+                return []
             logging.debug('Query executed. Result: %s', neighbors)
         finally:
             cursor.close()

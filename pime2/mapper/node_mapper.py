@@ -22,10 +22,6 @@ class NodeMapper:
 
     def entity_list_to_json(self, node_list: List[NodeEntity]) -> str:
         """Converts a list of entities to json"""
-        node_array = []
-        for node in node_list:
-            node_array.append(node.__dict__)
-
-        node_json_string = json.dumps(node_array)
+        node_json_string = json.dumps(node_list, default=lambda o: getattr(o, '__dict__', str(o)))
         logging.info("Entity list to json : <%s>", node_json_string)
         return node_json_string

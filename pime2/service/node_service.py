@@ -7,7 +7,7 @@ from pime2.database import get_db_connection
 from pime2.entity import NodeEntity
 from pime2.repository.node_repository import NodeRepository
 from pime2.mapper.node_mapper import NodeMapper
-from pime2.config import get_me_conf, load_app_config, CONFIG_FILE
+from pime2.config import get_me_conf
 
 
 class NodeService:
@@ -89,7 +89,7 @@ class NodeService:
 
     def get_all_neighbor_nodes(self) -> List[NodeEntity]:
         """Get all nodes except the own node"""
-        return self.node_repository.read_all_nodes()
+        return list(filter(lambda x: x.name != get_me_conf().instance_id, self.node_repository.read_all_nodes()))
 
     def create_own_node(self):
         """
@@ -99,15 +99,15 @@ class NodeService:
         own_me_node = self.get_own_node()
         if own_me_node is None:
             logging.info("Own node not existing. Creating own node.")
-            conf = load_app_config(CONFIG_FILE)
+            conf = get_me_conf()
             sensor_skills = []
             actuator_skills = []
             try:
-                available_sensors = conf.load_sensors()
+                available_sensors = conf.available_sensors
                 for sensor in available_sensors:
                     if sensor.sensor_type.value not in sensor_skills:
                         sensor_skills.append("sensor_" + str(sensor.sensor_type.value).lower())
-                available_actuators = conf.load_actuators()
+                available_actuators = conf.available_actuators
                 for actuator in available_actuators:
                     if str(actuator.actuator_type.value) not in actuator_skills:
                         actuator_skills.append("actuator_" + str(actuator.actuator_type.value).lower())
