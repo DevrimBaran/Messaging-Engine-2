@@ -26,7 +26,6 @@ class Health(resource.Resource):
         :return:
         """
         own_node = self.node_service.get_own_node()
-        pime_version = "0.0.1"
         cpu_core_count = os.cpu_count()
         cpu_usage = psutil.cpu_percent()
         ram_total = psutil.virtual_memory().total
@@ -38,7 +37,6 @@ class Health(resource.Resource):
         actuator_count = len(own_node.actuator_skills)
 
         response_dict = {
-            "version": pime_version,
             "cpu_core_count": cpu_core_count,
             "cpu_usage": cpu_usage,
             "ram_total" : ram_total,
