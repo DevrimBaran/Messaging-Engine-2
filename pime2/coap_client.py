@@ -5,7 +5,7 @@ from aiocoap import Code, Context, Message
 # workaround for timeout
 # TODO: globals()["numbers"].REQUEST_TIMEOUT = 1.0
 # globals()["numbers"].MAX_RETRANSMIT = 0
-from pime2 import NEIGHBOR_DISCOVER_PING_TIMEOUT
+from pime2 import PING_TIMEOUT
 
 
 async def ping(destination):
@@ -21,7 +21,7 @@ async def ping(destination):
     logging.debug("Request: code= %s \turi=  %s", code, uri)
     try:
         response = await asyncio.wait_for(client_context.request(request).response,
-                                          timeout=NEIGHBOR_DISCOVER_PING_TIMEOUT)
+                                          timeout=PING_TIMEOUT)
         logging.debug("Response: %s", response)
     except Exception as exception:
         logging.error('Ping failed! Exception: %s', exception)

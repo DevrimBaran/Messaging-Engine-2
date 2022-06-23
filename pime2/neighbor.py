@@ -1,38 +1,42 @@
 import json
 import logging
 import time
+import ipaddress
+from socket import socket, AF_INET, SOCK_STREAM, timeout
 from aiocoap import Code
 from pime2.service.node_service import NodeService
 from pime2.config import get_me_conf
-from pime2.coap_client import ping, send_message
+from pime2.coap_client import send_message
+from pime2 import NEIGHBOR_DISCOVER_TIMEOUT
 
 
 async def find_neighbors():
     """
     Finds all available hosts
     """
+    port = get_me_conf().port
     available_ip = []
 
-    subnet = find_local_subnet()
-    for suffix in range(1, 255):
-        target = subnet + str(suffix)
-        logging.info('Starting scan on host: %s', target)
+    ip_list = find_local_subnet()
+
+    for target in ip_list:
         start = time.time()
         try:
-            is_ping_successful = await ping(target)
-            if is_ping_successful:
-                available_ip.append(target)
-            else:
-                logging.info("No device on: %s", target)
+            with socket(AF_INET, SOCK_STREAM) as s:
+                s.settimeout(NEIGHBOR_DISCOVER_TIMEOUT)
+                logging.info('Starting scan on host: %s', target)
+                s.connect((target, port))
 
+                available_ip.append(target)
+                logging.info("Instance found!")
+        except timeout:
+            logging.info("No instance!")
         except Exception as exception:
             logging.error("Error while searching for neighbors: %s", exception)
         finally:
             end = time.time()
             logging.info("Time taken: %s seconds", round(end - start, 2))
-
     logging.info("All neighbors found: %s", available_ip)
-
     await send_hello(available_ip)
 
 
@@ -40,7 +44,14 @@ def find_local_subnet():
     """
     Extracts the local subnet from the ip of the host.
     """
-    return ".".join(get_me_conf().host.split(".")[:-1]) + "."
+    host_addr = get_me_conf().host
+    ip = ipaddress.ip_address(host_addr)
+    ip_list = []
+    if isinstance(ip, ipaddress.IPv4Address):
+        host_net = ipaddress.ip_network("%d.%d.%d.0/24" % (ip.packed[0], ip.packed[1], ip.packed[2]))
+        ip_list = [str(ip) for ip in host_net][1:-1]
+        return ip_list
+    return ip_list
 
 
 async def send_hello(available_ip):
@@ -71,3 +82,5 @@ async def send_goodbye():
     for neighbor in all_neighbors:
         logging.info("Sending goodbye to: %s ", neighbor.name)
         await send_message(neighbor.ip, "goodbye", own_node_json.encode(), Code.DELETE, timeout=1)
+
+
