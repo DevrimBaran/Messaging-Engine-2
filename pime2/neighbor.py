@@ -80,12 +80,5 @@ async def send_goodbye():
     own_node_json = json.dumps(own_node.__dict__)
     all_neighbors = service.get_all_neighbor_nodes()
     for neighbor in all_neighbors:
-<<<<<<< pime2/neighbor.py
-        logging.info("Sending goodbye to: %s ", neighbor.name)
-        await send_message(neighbor.ip, "goodbye", own_node_json.encode(), Code.DELETE, timeout=1)
-
-
-=======
         logging.info("Sending goodbye to: %s:%s", neighbor.name, neighbor.port)
         await coap_request_to_node(neighbor, "goodbye", own_node_json.encode(), Code.DELETE, timeout=1)
->>>>>>> pime2/neighbor.py
