@@ -1,32 +1,22 @@
-import os
 import unittest
 
 from pime2 import NAME_REGEX, database
-from pime2.config import load_app_config
 from pime2.database import create_connection
 from pime2.entity import FlowOperationEntity, FlowEntity
 from pime2.flow.flow_validation import is_flow_valid, is_flow_step_executable
 from pime2.repository.node_repository import NodeRepository
 from pime2.service.node_service import NodeService
+from test.generic import GenericDatabaseTest, TEST_DATABASE_FILE
 
 
-class FlowValidationTest(unittest.TestCase):
-    connection: None = create_connection("testDatabase.db")
+class FlowValidationTest(GenericDatabaseTest):
+    connection: None = create_connection(TEST_DATABASE_FILE)
 
     @classmethod
     def setUp(cls):
-        if os.path.exists("testDatabase.db"):
-            database.disconnect(cls.connection)
-            os.remove("testDatabase.db")
-        load_app_config("me.yaml")
-        cls.connection = database.create_connection("testDatabase.db")
-        cls.node_repo = NodeRepository(cls.connection)
-        database.create_default_tables(cls.connection, NodeService())
+        super().setUp()
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        database.disconnect(cls.connection)
-        os.remove("testDatabase.db")
+        cls.node_repo = NodeRepository(cls.connection)
 
     def test_valid_flow_validation(self):
         self.node_repo.delete_all()
@@ -66,7 +56,8 @@ class FlowValidationTest(unittest.TestCase):
         node_service = NodeService()
         flow_ops = [FlowOperationEntity(test_name, input=test_op_name, process=None, output=None, where="*"),
                     FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
-                    FlowOperationEntity(test_name3, input=None, process=None, output="actuator_speaker_test", where="*")]
+                    FlowOperationEntity(test_name3, input=None, process=None, output="actuator_speaker_test",
+                                        where="*")]
         flow = FlowEntity("test_flow", flow_ops)
         self.assertEqual((False, "Wrong input for output-operation!"), is_flow_valid(flow))
         flow_ops2 = [FlowOperationEntity(test_name, input=test_op_name2, process=None, output=None, where="*"),
@@ -122,15 +113,17 @@ class FlowValidationTest(unittest.TestCase):
         flow12 = FlowEntity("test_flow", flow_ops12)
         self.assertEqual((False, f"Operation Name should match following regex: {NAME_REGEX}"),
                          is_flow_valid(flow12))
-        flow_ops13 = [FlowOperationEntity(test_name, input=test_op_name, process=None, output=test_output_op, where="*"),
-                      FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
-                      FlowOperationEntity(test_name3, input=None, process=test_process_op2, output=test_output_op2)]
+        flow_ops13 = [
+            FlowOperationEntity(test_name, input=test_op_name, process=None, output=test_output_op, where="*"),
+            FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
+            FlowOperationEntity(test_name3, input=None, process=test_process_op2, output=test_output_op2)]
         flow13 = FlowEntity("@", flow_ops13)
         self.assertEqual((False, f"Flow Name should match following regex: {NAME_REGEX}"),
                          is_flow_valid(flow13))
-        flow_ops14 = [FlowOperationEntity(test_name, input=test_op_name, process=None, output=test_output_op, where="*"),
-                      FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
-                      FlowOperationEntity(name=test_name3, input=None, process=test_process_op2, output=None)]
+        flow_ops14 = [
+            FlowOperationEntity(test_name, input=test_op_name, process=None, output=test_output_op, where="*"),
+            FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
+            FlowOperationEntity(name=test_name3, input=None, process=test_process_op2, output=None)]
         flow14 = FlowEntity("test_flow", flow_ops14)
         self.assertEqual((False, "Only one of the following types are allowed per flow: 'input', 'process', 'output'!"),
                          is_flow_valid(flow14))

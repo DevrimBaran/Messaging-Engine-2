@@ -5,7 +5,10 @@ from aiocoap import Code, Context, Message
 # workaround for timeout
 # TODO: globals()["numbers"].REQUEST_TIMEOUT = 1.0
 # globals()["numbers"].MAX_RETRANSMIT = 0
+
 from pime2 import PING_TIMEOUT
+from pime2.config import get_me_conf
+from pime2.entity import NodeEntity
 
 
 async def ping(destination):
@@ -31,6 +34,14 @@ async def ping(destination):
         return True
 
 
+async def coap_request_to_node(node: NodeEntity, endpoint, payload, code, timeout=30):
+    """wrapper for send_message"""
+    if get_me_conf().host == node.ip and get_me_conf().port == node.port:
+        logging.error("PROBLEM: CoAp message to self is not allowed!")
+        return
+    return await send_message(f"{node.ip}:{node.port}", endpoint, payload, code, timeout)
+
+
 async def send_message(destination, endpoint, payload, code, timeout=30):
     """
     Send message with an arbitrary payload to a specific destination and endpoint.
@@ -43,7 +54,7 @@ async def send_message(destination, endpoint, payload, code, timeout=30):
     logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
     try:
         response = await asyncio.wait_for(client_context.request(request).response,
-                                                timeout=timeout)
+                                          timeout=timeout)
         logging.debug("Response: %s", response)
     except Exception as ex:
         logging.error('Sending Message to %s/%s failed! Exception: %s', destination, endpoint, ex)

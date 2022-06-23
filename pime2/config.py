@@ -90,16 +90,23 @@ class MEConfiguration:
         self.available_sensors: List[Sensor] = []
         self.available_actuators: List[Actuator] = []
 
-    def load_operators(self):
+    async def load_operators(self):
         """load available operators"""
-        self.available_sensors = self.load_sensors()
-        self.available_actuators = self.load_actuators()
+        self.available_sensors.clear()
+        self.available_actuators.clear()
 
-    def load_sensors(self) -> List[Sensor]:
+        for sensor in await self.load_sensors():
+            self.available_sensors.append(sensor)
+
+        for actuator in await self.load_actuators():
+            self.available_actuators.append(actuator)
+
+    async def load_sensors(self) -> List[Sensor]:
         """
         This method maps the textual configuration of available sensors to internal classes.
         This is called during application bootstrap process. If there are problem with the configuration the user
         provided, this method should raise RuntimeErrors with detailed error information for the user.
+        This method should not be called from the outside of this class.
         :param config:
         :return:
         """
@@ -130,13 +137,15 @@ class MEConfiguration:
                     TemperatureSensor(sensor.name, SingleGpioOperatorArguments(sensor.gpio1, sensor.is_test_mode)))
             else:
                 raise RuntimeError("Unknown sensor type '{]'", sensor_type)
+        logging.debug("Active sensors: %s", active_sensors)
         return active_sensors
 
-    def load_actuators(self) -> List[Actuator]:
+    async def load_actuators(self) -> List[Actuator]:
         """
         This method maps the textual configuration of available actuators to internal classes.
         This is called during application bootstrap process. If there are problem with the configuration the user
         provided, this method should raise RuntimeErrors with detailed error information for the user.
+        This method should not be called from the outside of this class.
         :return:
         """
         active_actuators: List[Actuator] = []
@@ -159,6 +168,7 @@ class MEConfiguration:
                     Speaker(actuator.name, SingleGpioOperatorArguments(actuator.gpio1, actuator.is_test_mode)))
             else:
                 raise RuntimeError("Unknown sensor type '{]'", actuator_type)
+        logging.debug("Active actuators: %s", active_actuators)
         return active_actuators
 
 

@@ -32,7 +32,7 @@ class FlowMessage(resource.Resource):
 
     async def handle_incoming_flow_message(self, request) -> Message:
         """Handles incoming node request and saves it to the database if everything is valid"""
-        if len(request.payload) > 2048:
+        if len(request.payload) > 10240:
             return Message(payload=b"INVALID REQUEST", code=Code.BAD_REQUEST)
 
         try:
