@@ -57,7 +57,7 @@ class FlowMessage(resource.Resource):
         :return:
         """
         if isinstance(message, str):
-            logging.debug("Invalid json received!")
+            logging.debug("Invalid node content received")
             return False
         required_fields = [
             "id",
