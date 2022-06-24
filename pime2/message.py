@@ -2,7 +2,6 @@ from dataclasses import dataclass
 
 from abc import ABC
 from enum import Enum
-import json
 
 from pime2.entity import NodeEntity, FlowMessageEntity, FlowEntity
 from pime2.mapper.flow_mapper import FlowMapper
