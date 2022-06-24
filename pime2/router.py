@@ -38,7 +38,9 @@ async def router_loop(msg, manager: FlowManager):
             NodeService().put_node(json.dumps(received_object["message_content"]))
             logging.debug("detected node create event with node: %s", received_object["message_content"])
         elif message_type == MessageType.FLOW_CREATE.value:
-            FlowService().put_flow(FlowMapper().json_to_flow_entity(json.dumps(received_object["message_content"])))
+            flow_json = json.dumps(received_object["message_content"])
+            flow_entity = FlowMapper().json_to_flow_entity(flow_json)
+            FlowService().put_flow(flow_entity)
             logging.debug("detected flow create event with flow: %s", received_object["message_content"])
         elif message_type == MessageType.FLOW_MESSAGE.value:
             flow_message = received_object["message_content"]
