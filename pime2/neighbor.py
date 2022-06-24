@@ -6,7 +6,7 @@ from socket import socket, AF_INET, SOCK_STREAM, timeout
 from aiocoap import Code
 from pime2.service.node_service import NodeService
 from pime2.config import get_me_conf
-from pime2.coap_client import ping, send_message, coap_request_to_node
+from pime2.coap_client import send_message, coap_request_to_node
 from pime2 import NEIGHBOR_DISCOVER_TIMEOUT
 
 
@@ -39,7 +39,6 @@ async def find_neighbors():
     logging.info("All neighbors found: %s", available_ip)
     await send_hello(available_ip)
 
-
 def find_local_subnet():
     """
     Extracts the local subnet from the ip of the host.
@@ -48,6 +47,7 @@ def find_local_subnet():
     ip = ipaddress.ip_address(host_addr)
     ip_list = []
     if isinstance(ip, ipaddress.IPv4Address):
+        # pylint: disable=consider-using-f-string
         host_net = ipaddress.ip_network("%d.%d.%d.0/24" % (ip.packed[0], ip.packed[1], ip.packed[2]))
         ip_list = [str(ip) for ip in host_net][1:-1]
         return ip_list
