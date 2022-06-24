@@ -4,11 +4,19 @@ import aiocoap
 import psutil
 from aiocoap import resource
 
+from pime2.service.node_service import NodeService
+
 
 class Health(resource.Resource):
     """
     Health Resource
     """
+
+    def __init__(self) -> None:
+        """
+        Constructor method, initialize node service
+        """
+        self.node_service = NodeService()
 
     async def render_get(self, request):
         """
@@ -17,20 +25,18 @@ class Health(resource.Resource):
         :param request:
         :return:
         """
-
-        pime_version = "0.0.1"
+        own_node = self.node_service.get_own_node()
         cpu_core_count = os.cpu_count()
         cpu_usage = psutil.cpu_percent()
         ram_total = psutil.virtual_memory().total
         ram_availabe = psutil.virtual_memory().available
         ram_used = psutil.virtual_memory().used
         ram_used_percentage = psutil.virtual_memory().percent
-        neighbor_count = 0
-        sensor_count = 0
-        actuator_count = 0
+        neighbor_count = len(self.node_service.get_all_neighbor_nodes())
+        sensor_count = len(own_node.sensor_skills)
+        actuator_count = len(own_node.actuator_skills)
 
         response_dict = {
-            "version": pime_version,
             "cpu_core_count": cpu_core_count,
             "cpu_usage": cpu_usage,
             "ram_total" : ram_total,
