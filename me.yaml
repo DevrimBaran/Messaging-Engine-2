@@ -1,18 +1,35 @@
-instance_id: "raspberrypi2"
+instance_id: 123456678
 loglevel: DEBUG
-is_debug: true
-is_neighbor_discovery_enabled: true
-host: 192.168.171.55
+is_debug: false
+is_neighbor_discovery_enabled: false
+host: 127.0.0.1
 port: 5683
 database: "pime_database.db"
 read_interval: 3.0
 sensors:
+  - name: "sensor_button"
+    type: button
+    gpio1: 12
+    gpio2: 13
+    is_test_mode: true
+  - name: "sensor_hall"
+    type: hall
+    gpio1: 14
+    is_test_mode: true
   - name: "sensor_temperature"
     type: temperature
-    gpio1: 27
-    is_test_mode: false
+    gpio1: 18
+    is_test_mode: true
 actuators:
-  - name: "actuator_speaker"
+  - name: "LED-Actuator"
+    type: led
+    gpio1: 15
+    is_test_mode: true
+  - name: "Speaker2"
     type: speaker
-    gpio1: 12
-    is_test_mode: false
+    gpio1: 15
+    is_test_mode: true
+  - name: "Speaker-Actuator"
+    type: speaker
+    gpio1: 17
+    is_test_mode: true

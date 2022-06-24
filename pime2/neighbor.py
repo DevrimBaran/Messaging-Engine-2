@@ -14,8 +14,8 @@ async def find_neighbors():
     """
     available_ip = []
 
-    subnet = "192.168.171."
-    for suffix in range(54, 107):
+    subnet = find_local_subnet()
+    for suffix in range(1, 255):
         target = subnet + str(suffix)
         logging.info('Starting scan on host: %s', target)
         start = time.time()
