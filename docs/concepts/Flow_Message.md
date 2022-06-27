@@ -27,7 +27,6 @@
 - Check if date-like fields have correct date format
 - Check if `payload` is a valid base64 string (ascii chars + strlen == 0 mod 4)
 - Check if decoded `payload` is a valid JSON
-- Check if `last-operation` exists
 
 ## Messaging concept
 
