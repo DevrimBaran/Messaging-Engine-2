@@ -60,11 +60,19 @@ def create_default_tables(connection, node_service):
                                 flow_id varchar(255) NOT NULL,
                                 message_id varchar(255) NOT NULL UNIQUE,
                                 created_at DATETIME DEFAULT 'now');"""
+    sql_create_table_push_queue = """CREATE TABLE IF NOT EXISTS push_queue (
+                                id integer PRIMARY KEY,
+                                message text(65535) NOT NULL);"""
+    sql_create_table_pull_queue = """CREATE TABLE IF NOT EXISTS pull_queue (
+                                id integer PRIMARY KEY,
+                                message text(65535) NOT NULL);"""
     try:
         cursor = connection.cursor()
         cursor.execute(sql_create_table_nodes)
         cursor.execute(sql_create_table_flows)
         cursor.execute(sql_create_table_executions)
+        cursor.execute(sql_create_table_push_queue)
+        cursor.execute(sql_create_table_pull_queue)
         connection.commit()
         logging.info("Successfully created all default tables")
         node_service.create_own_node()

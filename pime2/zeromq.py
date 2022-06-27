@@ -11,6 +11,8 @@ from pime2.flow.flow_manager import FlowManager
 from pime2.router import router_loop
 from pime2.push_queue import get_push_queue
 from pime2.service.node_service import NodeService
+from pime2.database import get_db_connection
+from pime2.repository.queue_repository import QueueRepository
 
 
 async def startup_push_queue(context):
@@ -28,8 +30,13 @@ async def startup_push_queue(context):
     poller.register(socket, zmq.POLLOUT)
 
     receive_queue = get_push_queue()
+    queue_repository = QueueRepository(get_db_connection())
+    old_queue = queue_repository.get_all_from_push_queue()
+    for msg in old_queue:
+        await receive_queue.put(msg, True)
     while True:
         result = await receive_queue.get()
+        
         logging.debug("sent msg: %s", result)
         await socket.send_multipart([str(result).encode('ascii')])
         receive_queue.task_done()
