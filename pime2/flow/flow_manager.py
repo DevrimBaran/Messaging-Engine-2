@@ -12,7 +12,7 @@ from pime2.common import base64_decode
 from pime2.database import get_db_connection
 from pime2.flow.flow_message_builder import FlowMessageBuilder
 from pime2.flow.flow_operation_manager import FlowOperationManager
-from pime2.flow.flow_validation import is_flow_valid, is_flow_step_executable
+from pime2.flow.flow_validation import is_flow_valid, is_flow_step_executable, is_flow_message_valid
 from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
 from pime2.repository.execution_repository import ExecutionRepository
 from pime2.sensor.sensor import SensorType
@@ -135,7 +135,7 @@ class FlowManager:
         """
         # validate
         neighbors = self.get_nodes()
-        is_valid = await self.validate_flow(flow)
+        is_valid = await self.validate_flow(flow, flow_message)
         if not is_valid:
             return
 
@@ -185,6 +185,11 @@ class FlowManager:
             logging.warning("INVALID FLOW '%s': %s", flow.name, validation_msgs)
             self.cancel_flow(flow, flow_message)
             return False
+        if flow_message is not None:
+            is_message_valid, message_validation_msg = is_flow_message_valid(flow_message, flow)
+            if not is_message_valid:
+                logging.warning("INVALID FLOW MESSAGE '%s': %s", flow_message.id, message_validation_msg)
+                return False
 
         return True
 
@@ -197,7 +202,7 @@ class FlowManager:
         :return:
         """
         # validate
-        is_valid = await self.validate_flow(flow)
+        is_valid = await self.validate_flow(flow, flow_message)
         if not is_valid:
             return
 
