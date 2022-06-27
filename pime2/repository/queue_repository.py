@@ -44,11 +44,10 @@ class QueueRepository:
         try:
             cursor.execute(query)
             msg_in_database = cursor.fetchall()
+            logging.debug('Query executed. Result: %s', msg_in_database)
             result_list = []
             if len(msg_in_database) == 0 or msg_in_database is None:
                 logging.debug('No messages existing.')
-                return result_list
-            logging.debug('Query executed. Result: %s', msg_in_database)
             for msg in msg_in_database:
                 result_list.append(msg)
             return result_list
