@@ -36,7 +36,6 @@ async def startup_push_queue(context):
         await receive_queue.put(msg, True)
     while True:
         result = await receive_queue.get()
-        
         logging.debug("sent msg: %s", result)
         await socket.send_multipart([str(result).encode('ascii')])
         receive_queue.task_done()

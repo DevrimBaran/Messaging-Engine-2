@@ -4,15 +4,17 @@ from pime2.database import get_db_connection
 from pime2.repository.queue_repository import QueueRepository
 
 class PersistentQueue(asyncio.Queue):
+    """Overrides the put and get methods of the queue to make it persistent"""
+
     async def put(self, item, startup = False):
-        if (not startup):
+        if not startup:
             queue_repository = QueueRepository(get_db_connection())
             queue_repository.put_into_push_queue(item)
         return await super().put(item)
-    
+
     async def get(self):
         queue_repository = QueueRepository(get_db_connection())
-        queue_repository.pull_from_push_queue()
+        queue_repository.delete_from_push_queue()
         return await super().get()
 
 # do not use this variable outside this class
@@ -35,5 +37,3 @@ def get_push_queue() -> PersistentQueue:
     :return:
     """
     return RECEIVE_QUEUE
-
-
