@@ -2,6 +2,7 @@
 # pylint: disable=eval-used
 import logging
 import re
+import json
 
 expression_regex = "([0-9<>=!()+\-*/. ]|(and)|(or)|(True)|(False))*"
 variable_regex = "^[uvwxyz]{1}$"
@@ -9,7 +10,7 @@ variable_regex = "^[uvwxyz]{1}$"
 # TODO: maybe only the keyword sensor_result_x with x = number of the result
 keywords = ["result", "gpio_1_result", "gpio_2_result"]
 
-def cep_executer(expression, variables, payload) :
+def cep_executer(expression, variables, payload):
     """
     Checks if the cep result is True or False
     """
@@ -43,7 +44,7 @@ def substitute_variables(expression, variables, payload):
     """
     for key, value in variables.items():
         if is_keyword(value):
-            value = payload[value]
+            value = json.loads(payload)[value]
         elif not is_allowed_variable(key):
             raise ValueError("Invalid CEP variable!")
 

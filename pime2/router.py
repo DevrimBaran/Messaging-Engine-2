@@ -5,6 +5,7 @@ from pime2.flow.flow_manager import FlowManager
 from pime2.mapper.flow_mapper import FlowMapper
 from pime2.message import MessageType
 from pime2.sensor.sensor import SensorType
+from pime2.service.flow_service import FlowService
 from pime2.service.node_service import NodeService
 
 
@@ -37,8 +38,9 @@ async def router_loop(msg, manager: FlowManager):
             NodeService().put_node(json.dumps(received_object["message_content"]))
             logging.debug("detected node create event with node: %s", received_object["message_content"])
         elif message_type == MessageType.FLOW_CREATE.value:
-            #TODO: Put flow in database
-            #FlowService().put_flow(FlowMapper().json_to_flow_entity(received_object["message_content"]))
+            flow_json = json.dumps(received_object["message_content"])
+            flow_entity = FlowMapper().json_to_flow_entity(flow_json)
+            FlowService().put_flow(flow_entity)
             logging.debug("detected flow create event with flow: %s", received_object["message_content"])
         elif message_type == MessageType.FLOW_MESSAGE.value:
             flow_message = received_object["message_content"]
@@ -56,8 +58,8 @@ async def router_loop(msg, manager: FlowManager):
             if len(selected_flow) > 1:
                 logging.error("PROBLEM: Multiple flows with the same name found! FlowMessage is skipped")
                 return
-            await manager.execute_flow(selected_flow[0], FlowMapper().json_to_message_entity(flow_message),
-                                       manager.get_nodes())
+            logging.debug("Start of executing external FlowMessage")
+            await manager.execute_flow(selected_flow[0], FlowMapper().json_to_message_entity(flow_message))
 
     else:
         logging.error("Problem with received message: %s", received_object)

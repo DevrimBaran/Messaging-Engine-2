@@ -1,33 +1,27 @@
 import unittest
-import os
-import pime2.database as db
 from typing import List
-from pime2.config import load_app_config
 from pime2.repository.flow_repository import FlowRepository
 from pime2.entity import FlowEntity
 from pime2.entity import FlowOperationEntity
-from sqlite3 import Error, IntegrityError
+from sqlite3 import Error
 
 from pime2.service.node_service import NodeService
+from test.generic import GenericDatabaseTest
 
 
-class FlowRepositoryTest(unittest.TestCase):
+class FlowRepositoryTest(GenericDatabaseTest):
     connection = None
     flow_repo = None
+    node_service = None
 
     @classmethod
     def setUp(cls):
-        if os.path.exists("testDatabase.db"):
-            db.disconnect(cls.connection)
-            os.remove("testDatabase.db")
-        cls.connection = db.create_connection("testDatabase.db")
-        load_app_config("me.yaml")
+        super().setUp()
+
         cls.flow_repo = FlowRepository(cls.connection)
         cls.node_service = NodeService()
-        db.create_default_tables(cls.connection, cls.node_service)
         cls.flow_repo.delete_all()
         cls.node_service.delete_all_nodes()
-
 
     def get_flow_list(self) -> List[FlowEntity]:
         return [
@@ -36,11 +30,13 @@ class FlowRepositoryTest(unittest.TestCase):
             FlowEntity("flow2", [
                 FlowOperationEntity(name='Flow_op_one', input='Input', where='*', args='Args'),
                 FlowOperationEntity(name='Flow_op_two', output='Output', where='*', args='Args')]),
-            FlowEntity("flow3", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*'), FlowOperationEntity(name='Flow_op_two', join='Join', where='*')]),
-            FlowEntity("flow4", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*'), FlowOperationEntity(name='Flow_op_two', join='Join', where='*', args="Args")]),
+            FlowEntity("flow3", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*'),
+                                 FlowOperationEntity(name='Flow_op_two', join='Join', where='*')]),
+            FlowEntity("flow4", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*'),
+                                 FlowOperationEntity(name='Flow_op_two', join='Join', where='*', args="Args")]),
             FlowEntity("flow5", [FlowOperationEntity(name='Flow_op_one', input='Input', where='*')]),
             FlowEntity("flow6", [
-                FlowOperationEntity(name='Flow_op_one', input='Input', where='*',),
+                FlowOperationEntity(name='Flow_op_one', input='Input', where='*', ),
                 FlowOperationEntity(name='Flow_op_two', process='Process', where='*'),
                 FlowOperationEntity(name='Flow_op_three', output='Output', where='*')]),
             FlowEntity("flow7", [
@@ -66,9 +62,10 @@ class FlowRepositoryTest(unittest.TestCase):
                 FlowOperationEntity(name='Flow_op_two', process='Process', where='*', args='x > 5'),
                 FlowOperationEntity(name='Flow_op_three', output='Output', where='*')])]
 
-
     def get_simple_flow(self):
-        return FlowEntity("simple_flow", [FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',join="join", args='Args')])
+        return FlowEntity("simple_flow", [
+            FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',
+                                join="join", args='Args')])
 
     def test_read_flow_by_name(self):
         simple_flow = self.get_simple_flow()
@@ -138,13 +135,9 @@ class FlowRepositoryTest(unittest.TestCase):
             self.flow_repo.update_flow(flow_update)
         self.assertEqual(flow_list_update, self.flow_repo.read_all_flows())
         with self.assertRaises(Error):
-            self.flow_repo.update_flow(FlowEntity("Test", [FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',
+            self.flow_repo.update_flow(FlowEntity("Test", [
+                FlowOperationEntity(name='Flow_op_one', input='Input', process='Process', output='Output', where='*',
                                     join="join", args='Args')]))
-
-    @classmethod
-    def tearDownClass(cls):
-        db.disconnect(cls.connection)
-        os.remove("testDatabase.db")
 
 
 if __name__ == '__main__':

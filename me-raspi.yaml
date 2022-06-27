@@ -1,0 +1,18 @@
+instance_id: "raspberrypi2"
+loglevel: DEBUG
+is_debug: true
+is_neighbor_discovery_enabled: true
+host: 192.168.171.55
+port: 5683
+database: "pime_database.db"
+read_interval: 3.0
+sensors:
+  - name: "sensor_temperature"
+    type: temperature
+    gpio1: 27
+    is_test_mode: false
+actuators:
+  - name: "actuator_speaker"
+    type: speaker
+    gpio1: 12
+    is_test_mode: false

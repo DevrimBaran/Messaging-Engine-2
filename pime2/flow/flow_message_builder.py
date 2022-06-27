@@ -38,7 +38,7 @@ class FlowMessageBuilder:
         old_history = list(flow_message.history)
         old_history.append(flow_message)
 
-        return FlowMessageEntity(uuid.uuid4().hex, flow_message.flow_name, flow_message.flow_id,
+        return FlowMessageEntity(flow_message.id, flow_message.flow_name, flow_message.flow_id,
                                  flow_message.src_created_at, datetime.now(),
                                  flow_message.last_operation,
                                  flow_message.payload, flow_message.original_payload, old_history)

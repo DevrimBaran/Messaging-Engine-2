@@ -1,34 +1,24 @@
-import os
 import unittest
 
 from pime2 import NAME_REGEX, database
-from pime2.config import load_app_config
 from pime2.database import create_connection
-from pime2.entity import FlowOperationEntity, FlowEntity
-from pime2.flow.flow_validation import is_flow_valid, is_flow_step_executable
+from pime2.entity import FlowOperationEntity, FlowEntity, FlowMessageEntity
+from pime2.flow.flow_validation import is_flow_valid, is_flow_step_executable, is_flow_message_valid
 from pime2.repository.node_repository import NodeRepository
 from pime2.service.node_service import NodeService
+from test.generic import GenericDatabaseTest, TEST_DATABASE_FILE
+from datetime import datetime
 
-
-class FlowValidationTest(unittest.TestCase):
-    connection: None = create_connection("testDatabase.db")
+class FlowValidationTest(GenericDatabaseTest):
+    connection: None = create_connection(TEST_DATABASE_FILE)
 
     @classmethod
     def setUp(cls):
-        if os.path.exists("testDatabase.db"):
-            database.disconnect(cls.connection)
-            os.remove("testDatabase.db")
-        load_app_config("me.yaml")
-        cls.connection = database.create_connection("testDatabase.db")
+        super().setUp()
+
         cls.node_repo = NodeRepository(cls.connection)
-        database.create_default_tables(cls.connection, NodeService())
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        database.disconnect(cls.connection)
-        os.remove("testDatabase.db")
-
-    def test_valid_flow_validation(self):
+    def test_valid_flow_valid_flow_message_validation(self):
         self.node_repo.delete_all()
 
         database.create_default_tables(self.connection, NodeService())
@@ -51,8 +41,12 @@ class FlowValidationTest(unittest.TestCase):
         flow = FlowEntity("test_flow", flow_ops)
         self.assertEqual(True, is_flow_valid(flow)[0])
         self.assertEqual(True, is_flow_step_executable(flow, "op_name3", NodeService()))
+        datetime_object = datetime.strptime('Jun 1 2005  1:33PM', '%b %d %Y %I:%M%p')
+        flow_message = FlowMessageEntity("test", "test_flow", "sensor_temperature", datetime_object, datetime_object,
+                                         "op_name2", "dGVzdA==", "test", [])
+        self.assertEqual((True, ""), is_flow_message_valid(flow_message, flow))
 
-    def test_invalid_flow_validation(self):
+    def test_invalid_flow_invalid_flow_message_validation(self):
         test_name = "op_name"
         test_name2 = "op_name2"
         test_name3 = "op_name3"
@@ -66,7 +60,8 @@ class FlowValidationTest(unittest.TestCase):
         node_service = NodeService()
         flow_ops = [FlowOperationEntity(test_name, input=test_op_name, process=None, output=None, where="*"),
                     FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
-                    FlowOperationEntity(test_name3, input=None, process=None, output="actuator_speaker_test", where="*")]
+                    FlowOperationEntity(test_name3, input=None, process=None, output="actuator_speaker_test",
+                                        where="*")]
         flow = FlowEntity("test_flow", flow_ops)
         self.assertEqual((False, "Wrong input for output-operation!"), is_flow_valid(flow))
         flow_ops2 = [FlowOperationEntity(test_name, input=test_op_name2, process=None, output=None, where="*"),
@@ -122,18 +117,29 @@ class FlowValidationTest(unittest.TestCase):
         flow12 = FlowEntity("test_flow", flow_ops12)
         self.assertEqual((False, f"Operation Name should match following regex: {NAME_REGEX}"),
                          is_flow_valid(flow12))
-        flow_ops13 = [FlowOperationEntity(test_name, input=test_op_name, process=None, output=test_output_op, where="*"),
-                      FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
-                      FlowOperationEntity(test_name3, input=None, process=test_process_op2, output=test_output_op2)]
+        flow_ops13 = [
+            FlowOperationEntity(test_name, input=test_op_name, process=None, output=test_output_op, where="*"),
+            FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
+            FlowOperationEntity(test_name3, input=None, process=test_process_op2, output=test_output_op2)]
         flow13 = FlowEntity("@", flow_ops13)
         self.assertEqual((False, f"Flow Name should match following regex: {NAME_REGEX}"),
                          is_flow_valid(flow13))
-        flow_ops14 = [FlowOperationEntity(test_name, input=test_op_name, process=None, output=test_output_op, where="*"),
-                      FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
-                      FlowOperationEntity(name=test_name3, input=None, process=test_process_op2, output=None)]
+        flow_ops14 = [
+            FlowOperationEntity(test_name, input=test_op_name, process=None, output=test_output_op, where="*"),
+            FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
+            FlowOperationEntity(name=test_name3, input=None, process=test_process_op2, output=None)]
         flow14 = FlowEntity("test_flow", flow_ops14)
         self.assertEqual((False, "Only one of the following types are allowed per flow: 'input', 'process', 'output'!"),
                          is_flow_valid(flow14))
+        datetime_object = datetime.strptime('Jun 1 2005  1:33PM', '%b %d %Y %I:%M%p')
+        flow_message = FlowMessageEntity("test", "test_flow1", "sensor_temperature", datetime_object, datetime_object,
+                                         "op_name2", "dGVzdA==", "test", [])
+        self.assertEqual((False, "Flow name from flow message does not match flow name from flow!"),
+                         is_flow_message_valid(flow_message, flow14))
+        flow_message2 = FlowMessageEntity("test", "test_flow", "sensor_temperature", datetime_object, datetime_object,
+                                         "op", "dGVzdA==", "test", [])
+        self.assertEqual((False, "Last operation does not exist!"),
+                         is_flow_message_valid(flow_message2, flow14))
 
     def test_is_flow_executable(self):
         node_service = NodeService()

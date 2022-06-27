@@ -57,21 +57,21 @@ class TestCEPFlow(unittest.TestCase):
         self.assertFalse(cep_executer(expression="0.0 > 10 and x + 3 < y and 50 - 10 == 40", variables={"x": 7, "y": 9}, payload={}))
 
     def test_expression_with_variables_and_payload(self):
-        self.assertTrue(cep_executer(expression="x + 7 == 25", variables={"x": "result"}, payload={"result": 18}))
-        self.assertTrue(cep_executer(expression="x + 4 == 28.7", variables={"x": "gpio_1_result"}, payload={"gpio_1_result": 24.7}))
-        self.assertTrue(cep_executer(expression="x + y == 48", variables={"x": "gpio_1_result", "y": "gpio_2_result"}, payload={"gpio_1_result": 0, "gpio_2_result": 48}))
-        self.assertTrue(cep_executer(expression="y - x == -24", variables={"x": 24, "y": 0}, payload={"u": 3, "y": 2}))
+        self.assertTrue(cep_executer(expression="x + 7 == 25", variables={"x": "result"}, payload='{"result": 18}'))
+        self.assertTrue(cep_executer(expression="x + 4 == 28.7", variables={"x": "gpio_1_result"}, payload='{"gpio_1_result": 24.7}'))
+        self.assertTrue(cep_executer(expression="x + y == 48", variables={"x": "gpio_1_result", "y": "gpio_2_result"}, payload='{"gpio_1_result": 0, "gpio_2_result": 48}'))
+        self.assertTrue(cep_executer(expression="y - x == -24", variables={"x": 24, "y": 0}, payload='{"u": 3, "y": 2}'))
 
     def test_complex_expression(self):
-        self.assertTrue(cep_executer(expression="(x > 20 and x > y) or (y > 20 and x == 24 + 4)", variables={"x": "gpio_1_result", "y": "gpio_2_result"}, payload={"gpio_1_result": 23, "gpio_2_result": 11}))
-        self.assertFalse(cep_executer(expression="(x > 20 and x < y) or (y > 20 and x == 24 + 4)", variables={"x": "gpio_1_result", "y": "gpio_2_result"}, payload={"gpio_1_result": 23, "gpio_2_result": 11}))
-        self.assertFalse(cep_executer(expression="(x > 20 and x < y) or (y > 20 and x == 24 + 4)", variables={"x": "gpio_1_result", "y": "gpio_2_result"}, payload={"gpio_1_result": 23, "gpio_2_result": 11}))
+        self.assertTrue(cep_executer(expression="(x > 20 and x > y) or (y > 20 and x == 24 + 4)", variables={"x": "gpio_1_result", "y": "gpio_2_result"}, payload='{"gpio_1_result": 23, "gpio_2_result": 11}'))
+        self.assertFalse(cep_executer(expression="(x > 20 and x < y) or (y > 20 and x == 24 + 4)", variables={"x": "gpio_1_result", "y": "gpio_2_result"}, payload='{"gpio_1_result": 23, "gpio_2_result": 11}'))
+        self.assertFalse(cep_executer(expression="(x > 20 and x < y) or (y > 20 and x == 24 + 4)", variables={"x": "gpio_1_result", "y": "gpio_2_result"}, payload='{"gpio_1_result": 23, "gpio_2_result": 11}'))
 
     def test_invalid_input(self):
         self.assertFalse(cep_executer(expression="6 + 4 == 10-", variables={}, payload={}))
         self.assertFalse(cep_executer(expression="0 - 53 =!= -53", variables={}, payload={}))
-        self.assertFalse(cep_executer(expression="x + 7 == 25", variables={"x": "reult"}, payload={"result": 18}))
-        self.assertFalse(cep_executer(expression="x + 4 == 28.7", variables={"x": "gpio_3_result"}, payload={"gpio_1_result": 24.7}))
+        self.assertFalse(cep_executer(expression="x + 7 == 25", variables={"x": "reult"}, payload='{"result": 18}'))
+        self.assertFalse(cep_executer(expression="x + 4 == 28.7", variables={"x": "gpio_3_result"}, payload='{"gpio_1_result": 24.7}'))
 
 
 if __name__ == '__main__':

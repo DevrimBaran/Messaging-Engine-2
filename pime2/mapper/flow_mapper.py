@@ -18,13 +18,15 @@ class FlowMapper:
         :param flow:
         :return:
         """
-        serializable_flow_dict = flow.__dict__
-        flow_operations_array = serializable_flow_dict['ops']
-        serializable_flow_operation_array = []
-        for flow_op in flow_operations_array:
-            serializable_flow_operation_array.append(flow_op.__dict__)
-        serializable_flow_dict['ops'] = serializable_flow_operation_array
-        return json.dumps(serializable_flow_dict)
+        return json.dumps(flow.__dict__, default=lambda o: getattr(o, '__dict__', str(o)))
+
+    def flow_entity_to_dict(self, flow: FlowEntity) -> str:
+        """
+        Method which converts a flow entity to a python dictionary
+        :param flow:
+        :return:
+        """
+        return json.loads(self.flow_entity_to_json(flow))
 
     def json_to_flow_entity(self, json_str: str) -> FlowEntity:
         """
@@ -34,8 +36,8 @@ class FlowMapper:
         """
         json_obj = json.loads(json_str)
         flow_name = json_obj['name']
-        json_flow_ops_array = json_obj['ops']
-        flow_ops_list = self.json_to_flow_operation(json.dumps(json_flow_ops_array))
+        json_flow_ops_list = json_obj['ops']
+        flow_ops_list = self.json_to_flow_operation(json.dumps(json_flow_ops_list))
         flow = FlowEntity(flow_name, flow_ops_list)
         return flow
 
