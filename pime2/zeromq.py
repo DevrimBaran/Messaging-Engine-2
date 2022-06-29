@@ -58,14 +58,20 @@ async def startup_pull_queue(context):
     # load and instantiate flow manager
     flow_manager = FlowManager(NodeService())
     conf = get_me_conf()
-
+    queue_repo = QueueRepository(get_db_connection())
+    old_queue = queue_repo.get_all_from_pull_queue()
+    for msg in old_queue:
+        await asyncio.wait_for(router_loop([msg[0]], flow_manager), timeout=ROUTER_LOOP_TASK_TIMEOUT)
+        queue_repo.delete_from_pull_queue()
     while True:
         try:
             events = await poller.poll()
             if socket in dict(events):
                 msg = await socket.recv_multipart()
                 try:
+                    queue_repo.put_into_pull_queue(msg[0])
                     await asyncio.wait_for(router_loop(msg, flow_manager), timeout=ROUTER_LOOP_TASK_TIMEOUT)
+                    queue_repo.delete_from_pull_queue()
                 except asyncio.exceptions.TimeoutError:
                     logging.warning("Message processing timeout reached!")
                 except Exception as ex:
