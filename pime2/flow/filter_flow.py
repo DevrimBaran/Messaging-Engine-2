@@ -14,7 +14,7 @@ def filter_executer(expression, variables, payload):
     """
     Checks if the cep result is True or False
     """
-    final_expression = cep_validator(expression=expression, variables=variables, payload=payload)
+    final_expression = filter_validator(expression=expression, variables=variables, payload=payload)
     if final_expression:
         try:
             return eval(final_expression)
@@ -23,7 +23,7 @@ def filter_executer(expression, variables, payload):
     return False
 
 
-def cep_validator(expression, variables, payload):
+def filter_validator(expression, variables, payload):
     """
     Makes sure that eval evaluates only allowed expressions
     """
