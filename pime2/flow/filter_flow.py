@@ -10,7 +10,7 @@ variable_regex = "^[uvwxyz]{1}$"
 # TODO: maybe only the keyword sensor_result_x with x = number of the result
 keywords = ["result", "gpio_1_result", "gpio_2_result"]
 
-def cep_executer(expression, variables, payload):
+def filter_executer(expression, variables, payload):
     """
     Checks if the cep result is True or False
     """

@@ -6,7 +6,7 @@ from pime2.actuator.actuator import ActuatorType
 from pime2.actuator.actuator_manager import ActuatorManager
 from pime2.common import base64_decode
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
-from pime2.flow.filter_flow import cep_executer
+from pime2.flow.filter_flow import filter_executer
 from pime2.repository.execution_repository import ExecutionRepository
 
 
@@ -144,7 +144,7 @@ class FlowOperationManager:
                                 logging.error("Stopping flow: expression or variables are not defined")
                                 return None
                             logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
-                            if not cep_executer(f.args["expression"], f.args["variables"], payload):
+                            if not filter_executer(f.args["expression"], f.args["variables"], payload):
                                 logging.info("Stopping flow: CEP evaluation returned false")
                                 return None
                         if f.process == "log":
