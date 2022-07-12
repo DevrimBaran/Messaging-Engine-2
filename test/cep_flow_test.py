@@ -1,7 +1,7 @@
 import unittest
 from pime2.flow.filter_flow import filter_executer
 
-class TestCEPFlow(unittest.TestCase):
+class TestFilterFlow(unittest.TestCase):
 
 
     def test_simple_operators(self):

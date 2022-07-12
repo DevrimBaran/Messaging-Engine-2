@@ -1,5 +1,5 @@
 {
-  "name": "test_cep_flow_2",
+  "name": "test_filter_flow_2",
   "ops": [
     {
       "name": "sensor_read",

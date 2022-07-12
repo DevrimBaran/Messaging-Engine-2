@@ -179,7 +179,7 @@ class FlowOperationManager:
         return False
 
     @staticmethod
-    def is_cep_operation(flow: FlowEntity, step: str) -> bool:
+    def is_filter_operation(flow: FlowEntity, step: str) -> bool:
         """method to check if a single flow operation is the filter operation or not"""
         for op in flow.ops:
             if op.name.lower() == step.lower():

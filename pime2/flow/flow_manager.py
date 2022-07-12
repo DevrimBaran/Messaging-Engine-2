@@ -64,7 +64,7 @@ class FlowManager:
                 FlowOperationEntity("log", None, "log", None, "me2_second"),
                 FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
             ]),
-            FlowEntity("test_cep_flow_1", [
+            FlowEntity("test_filter_flow_1", [
                 FlowOperationEntity("sensor_read", "sensor_temperature", None, None, "me2_first"),
                 FlowOperationEntity("filter_intercept", None, "filter_intercept", None, "me2_second", {
                     "expression": "x > 30",
@@ -72,7 +72,7 @@ class FlowManager:
                 }),
                 FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
             ]),
-            FlowEntity("test_cep_flow_2", [
+            FlowEntity("test_filter_flow_2", [
                 FlowOperationEntity("sensor_read", "sensor_button", None, None, "me2_first"),
                 FlowOperationEntity("filter_intercepted", None, "filter_intercept", None, "me2_second", {
                     "expression": "x=true and y=true",
@@ -311,7 +311,7 @@ class FlowManager:
                 return False, None
 
             result = await FlowOperationManager.execute_operation(flow, flow_message, step, self.execution_repository)
-            if result is None and FlowOperationManager.is_cep_operation(flow, step):
+            if result is None and FlowOperationManager.is_filter_operation(flow, step):
                 self.cancel_flow(flow, flow_message)
             return True, result
         return False, None
