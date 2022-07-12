@@ -143,9 +143,9 @@ class FlowOperationManager:
                                "variables" not in f.args or f.args["variables"] is None:
                                 logging.error("Stopping flow: expression or variables are not defined")
                                 return None
-                            logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
+                            logging.info("Executing filter evaluation in flow %s with step %s", flow.name, step)
                             if not filter_executer(f.args["expression"], f.args["variables"], payload):
-                                logging.info("Stopping flow: CEP evaluation returned false")
+                                logging.info("Stopping flow: filter evaluation returned false")
                                 return None
                         if f.process == "log":
                             logging.info("LOG OPERATION: %s", json.loads(payload))
@@ -180,7 +180,7 @@ class FlowOperationManager:
 
     @staticmethod
     def is_cep_operation(flow: FlowEntity, step: str) -> bool:
-        """method to check if a single flow operation is the cep operation or not"""
+        """method to check if a single flow operation is the filter operation or not"""
         for op in flow.ops:
             if op.name.lower() == step.lower():
                 if op.process.lower() == "cep_intercept":
