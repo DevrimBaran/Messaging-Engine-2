@@ -137,7 +137,7 @@ class FlowOperationManager:
                     execution_repository.register_execution(flow_message.flow_id, flow_message.id)
 
                     if f.is_process():
-                        if f.process == "cep_intercept":
+                        if f.process == "filter_intercept":
                             if not isinstance(f.args, dict) or \
                                "expression" not in f.args or f.args["expression"] is None or \
                                "variables" not in f.args or f.args["variables"] is None:
@@ -183,6 +183,6 @@ class FlowOperationManager:
         """method to check if a single flow operation is the filter operation or not"""
         for op in flow.ops:
             if op.name.lower() == step.lower():
-                if op.process.lower() == "cep_intercept":
+                if op.process.lower() == "filter_intercept":
                     return True
         return False

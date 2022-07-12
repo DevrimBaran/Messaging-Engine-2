@@ -37,7 +37,7 @@ class FlowValidationTest(GenericDatabaseTest):
 
         flow_ops = [FlowOperationEntity("op_name", "sensor_temperature", None, None, "*"),
                     FlowOperationEntity("op_name2", None, None, "actuator_led", "node1, node2"),
-                    FlowOperationEntity("op_name3", None, "cep_intercept", None, "node1")]
+                    FlowOperationEntity("op_name3", None, "filter_intercept", None, "node1")]
         flow = FlowEntity("test_flow", flow_ops)
         self.assertEqual(True, is_flow_valid(flow)[0])
         self.assertEqual(True, is_flow_step_executable(flow, "op_name3", NodeService()))
@@ -54,7 +54,7 @@ class FlowValidationTest(GenericDatabaseTest):
         test_op_name2 = "sensor_button"
         test_op_name3 = "sensor_hall"
         test_process_op = "log"
-        test_process_op2 = "cep_intercept"
+        test_process_op2 = "filter_intercept"
         test_output_op = "actuator_led"
         test_output_op2 = "actuator_speaker"
         node_service = NodeService()
@@ -66,7 +66,7 @@ class FlowValidationTest(GenericDatabaseTest):
         self.assertEqual((False, "Wrong input for output-operation!"), is_flow_valid(flow))
         flow_ops2 = [FlowOperationEntity(test_name, input=test_op_name2, process=None, output=None, where="*"),
                      FlowOperationEntity(test_name2, input=None, process=None, output=test_output_op, where="*"),
-                     FlowOperationEntity(test_name3, input=None, process="cep_intercept_test", output=None, where="*")]
+                     FlowOperationEntity(test_name3, input=None, process="filter_intercept_test", output=None, where="*")]
         flow2 = FlowEntity("test_flow", flow_ops2)
         self.assertEqual((False, "Wrong input for process-operation!"), is_flow_valid(flow2))
         flow_ops3 = [FlowOperationEntity(test_name, input="test_op_name", process=None, output=None, where="*"),
@@ -87,7 +87,7 @@ class FlowValidationTest(GenericDatabaseTest):
         self.assertEqual((False, "Only one input is allowed in a flow!"), is_flow_valid(flow6))
         flow_ops7 = [FlowOperationEntity(test_name, test_op_name3, None, None, where="*"),
                      FlowOperationEntity(test_name2, input=None, process=test_process_op, output=None, where="*"),
-                     FlowOperationEntity(test_name3, input=None, process="cep_intercept_test", output=None)]
+                     FlowOperationEntity(test_name3, input=None, process="filter_intercept_test", output=None)]
         flow7 = FlowEntity("test_flow", flow_ops7)
         self.assertEqual((False, "Wrong input for process-operation!"), is_flow_valid(flow7))
         flow_ops8 = [FlowOperationEntity(test_name, input=test_op_name, process=None, output=None, where="*"),

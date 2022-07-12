@@ -47,7 +47,7 @@ class FlowManager:
         flows = [
             FlowEntity("docker_flow_1", [
                 FlowOperationEntity(name="sensor_read", input="sensor_temperature", where="111111111"),
-                # FlowOperationEntity(name="cep_intercept", input=None, process="cep_intercept", output=None,
+                # FlowOperationEntity(name="filter_intercept", input=None, process="filter_intercept", output=None,
                 #                     where="222222222",
                 #                     args={"expression": "x > 25", "variables": {"x": "result"}}),
                 FlowOperationEntity(name="second_step", process="log", where="111111111"),
@@ -66,7 +66,7 @@ class FlowManager:
             ]),
             FlowEntity("test_cep_flow_1", [
                 FlowOperationEntity("sensor_read", "sensor_temperature", None, None, "me2_first"),
-                FlowOperationEntity("cep_intercept", None, "cep_intercept", None, "me2_second", {
+                FlowOperationEntity("filter_intercept", None, "filter_intercept", None, "me2_second", {
                     "expression": "x > 30",
                     "variables": {"x": "result"}
                 }),
@@ -74,7 +74,7 @@ class FlowManager:
             ]),
             FlowEntity("test_cep_flow_2", [
                 FlowOperationEntity("sensor_read", "sensor_button", None, None, "me2_first"),
-                FlowOperationEntity("cep_intercepted", None, "cep_intercept", None, "me2_second", {
+                FlowOperationEntity("filter_intercepted", None, "filter_intercept", None, "me2_second", {
                     "expression": "x=true and y=true",
                     "variables": {"x": "gpio_1_result", "y": "gpio_2_result"}
                 }),
