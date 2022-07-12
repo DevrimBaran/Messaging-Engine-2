@@ -6,7 +6,7 @@ from pime2.actuator.actuator import ActuatorType
 from pime2.actuator.actuator_manager import ActuatorManager
 from pime2.common import base64_decode
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
-from pime2.flow.cep_flow import cep_executer
+from pime2.flow.filter_flow import cep_executer
 from pime2.repository.execution_repository import ExecutionRepository
 
 
