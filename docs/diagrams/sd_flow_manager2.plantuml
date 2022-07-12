@@ -1,0 +1,65 @@
+@startuml
+
+' this is a comment
+' read here for syntax: https://plantuml.com/sequence-diagram
+
+title ME2: FlowManager class
+footer Forschungsprojekt 2022, IPVS
+scale 2
+
+actor System #blue
+participant "FlowManager" as FM
+participant "F.StateManager" as FSM
+participant "F.MessageBuilder" as FMB
+participant "F.OperationManager" as FOM
+participant "F.ValidationService" as FVS
+
+
+== 1.2 execute_flow(FlowMessage) ==
+note right FM: Only "process" and "output" operations are allowed here
+System -> FM: execute_flow(Flow,\nSensorReadResult)
+activate FM
+
+FM -> FVS: is_flow_valid()
+activate FVS
+FVS -> FM: true|false
+FM --> System: conditional finish
+deactivate FVS
+
+FM -> FOM: Detect current flow step/operation
+activate FOM
+FOM -> FM: Flow step operation info
+deactivate FOM
+
+FM -> FM: If operation is last one in a flow \n-> finish_flow(FlowMessage)\n     and leave
+FM --> System: conditional finish
+
+FM -> FOM: Execute current flow operation\n- if possible ("process" operation\n  or "output" operation)
+activate FOM
+FOM -> FM: Flow step operation info
+deactivate FOM
+
+FM -> FMB: Build FlowMessage
+activate FMB
+FMB -> FM: Flow Message
+deactivate FMB
+
+FM -> FSM: update(FlowMessage)
+activate FSM
+FSM -> FSM: update flow\nexecution info
+FSM -> FM:
+deactivate FSM
+
+FM -> FOM: Detect next step and nodes
+activate FOM
+FOM -> FM: (step, nodes[])
+deactivate FOM
+
+FM -> FM: Check if these nodes are remote.\nIf yes: send_flow_message(msg, node).\nIf no: call execute_flow(FlowMessage)\n         or finish_flow(FlowMessage)
+FM -> System: finish
+deactivate FM
+deactivate FM
+
+
+
+@enduml

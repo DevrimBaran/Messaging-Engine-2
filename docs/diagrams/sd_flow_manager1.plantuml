@@ -1,0 +1,51 @@
+@startuml
+
+' this is a comment
+' read here for syntax: https://plantuml.com/sequence-diagram
+
+title ME2: FlowManager class
+footer Forschungsprojekt 2022, IPVS
+scale 2
+
+actor System #blue
+participant "FlowManager" as FM
+participant "F.StateManager" as FSM
+participant "F.MessageBuilder" as FMB
+participant "F.OperationManager" as FOM
+participant "F.ValidationService" as FVS
+
+== 1.1 start_flow(Flow, SensorReadResult) ==
+note right FM: Only "input" operations are allowed here
+note right FM: Assumption: The first flow operation (SensorReadResult) is already done
+
+System -> FM: start_flow(Flow,\nSensorReadResult,\nOperationName)
+activate FM
+FM -> FVS: is_flow_valid()
+activate FVS
+FVS -> FM: true|false
+FM --> System: conditional finish
+deactivate FVS
+FM -> FMB: Build first FlowMessage
+
+activate FMB
+FMB -> FM: FlowMessage
+deactivate FMB
+
+FM -> FSM: start(FlowMessage)
+activate FSM
+FSM -> FSM: store flow start\ninfo
+FSM -> FM:
+deactivate FSM
+
+FM -> FOM: Detect next/second step and nodes
+activate FOM
+FOM -> FM: (step, nodes[])
+deactivate FOM
+
+FM -> FM: Check if these nodes are remote.\nIf yes: send_flow_message(msg, node).\nIf no: call execute_flow(FlowMessage)
+FM -> System: finish
+deactivate FM
+
+
+
+@enduml
