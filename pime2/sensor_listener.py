@@ -42,6 +42,7 @@ async def startup_operator_listener():
     """
     start asyncio tasks and wait for them to complete.
     Should be called in main asyncio run().
+    Runs forever.
 
     :param sensors:
     :return:
@@ -66,6 +67,7 @@ async def startup_operator_listener():
         # normally wait forever here
         for task in task_list:
             await task
+
     finally:
         # close sensors "finally"
         for sensor in sensors:

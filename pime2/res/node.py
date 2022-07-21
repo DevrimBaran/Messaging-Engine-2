@@ -6,7 +6,7 @@ from json import JSONDecodeError
 import re
 from aiocoap import resource, Message, Code
 
-from pime2 import NAME_REGEX, CHAINED_NAME_REGEX
+from pime2 import NAME_REGEX
 from pime2.mapper.node_mapper import NodeMapper
 from pime2.message import NodeCreateResultMessage
 from pime2.push_queue import get_push_queue
@@ -57,6 +57,7 @@ class Node(resource.Resource):
 
     async def handle_incoming_node(self, request) -> Message:
         """Handles incoming node request and saves it to the database if everything is valid"""
+        logging.debug("received node: %s", request.payload.decode())
         try:
             is_valid = await self.is_request_valid(request)
             if not is_valid:
@@ -102,7 +103,11 @@ class Node(resource.Resource):
         if not is_ip_valid:
             return False
 
-        for i in ["sensor_skills", "actuator_skills"]:
-            if i in node and len(node[i]) > 0 and not re.match(CHAINED_NAME_REGEX, node[i]):
+        if "sensor_skills" in node and node["sensor_skills"] is not None:
+            if not isinstance(node["sensor_skills"], list):
                 return False
+        if "actuator_skills" in node and node["actuator_skills"] is not None:
+            if not isinstance(node["actuator_skills"], list):
+                return False
+
         return True
