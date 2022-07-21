@@ -11,15 +11,16 @@ from pime2.config import get_me_conf
 from pime2.entity import NodeEntity
 
 
-async def ping(destination):
+async def ping(destination) -> bool:
     """
     Ping Implementation
     takes an IP as destination and sends a get request to its hello endpoint
     """
+
     client_context = await Context.create_client_context()
     logging.info("Sending Ping request")
     code = Code.GET
-    uri = 'coap://' + destination + '/hello'
+    uri = 'coap://' + f"{destination}" + '/hello'
     request = Message(code=code, uri=uri)
     logging.debug("Request: code= %s \turi=  %s", code, uri)
     try:
@@ -50,15 +51,15 @@ async def send_message(destination, endpoint, payload, code, timeout=30):
     client_context = await Context.create_client_context()
     logging.info("Sending Message request")
     uri = 'coap://' + destination + '/' + endpoint
-    request = Message(code=code, uri=uri, payload=bytes(str(payload).encode("utf-8")))
+    request = Message(code=code, uri=uri, payload=bytes(payload))
     logging.debug("Request: payload= %s \tcode= %s \turi=  %s", payload, code, uri)
     try:
         response = await asyncio.wait_for(client_context.request(request).response,
                                           timeout=timeout)
         logging.debug("Response: %s", response)
     except Exception as ex:
-        logging.error('Sending Message to %s/%s failed! Exception: %s', destination, endpoint, ex)
+        logging.error('Sending message to %s/%s failed! Exception: %s', destination, endpoint, ex)
         return False
     else:
-        logging.info('Message Request successful: %s\n%r', response.code, response.payload)
+        logging.info('Message response: %s\n%r', response.code, response.payload)
         return response or True
