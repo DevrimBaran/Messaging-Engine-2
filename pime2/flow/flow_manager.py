@@ -56,29 +56,29 @@ class FlowManager:
                                     where="111111111"),
             ]),
             FlowEntity("test_flow_1", [
-                FlowOperationEntity("sensor_read", "sensor_temperature", None, None),
-                FlowOperationEntity("actuator_call", None, None, "actuator_speaker"),
+                FlowOperationEntity(name="sensor_read", input="sensor_temperature"),
+                FlowOperationEntity(name="actuator_call", output="actuator_speaker"),
             ]),
             FlowEntity("test_flow_2", [
-                FlowOperationEntity("sensor_read", "sensor_hall", None, None, "me2_first"),
-                FlowOperationEntity("log", None, "log", None, "me2_second"),
-                FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
+                FlowOperationEntity(name="sensor_read", input="sensor_hall", where="me2_first"),
+                FlowOperationEntity(name="log", process="log", where="me2_second"),
+                FlowOperationEntity(name="beep_call", output="actuator_speaker", where="me2_third"),
             ]),
             FlowEntity("test_cep_flow_1", [
-                FlowOperationEntity("sensor_read", "sensor_temperature", None, None, "me2_first"),
-                FlowOperationEntity("cep_intercept", None, "cep_intercept", None, "me2_second", {
+                FlowOperationEntity(name="sensor_read", input="sensor_temperature", where="me2_first"),
+                FlowOperationEntity(name="cep_intercept", process="cep_intercept", where="me2_second", args={
                     "expression": "x > 30",
                     "variables": {"x": "result"}
                 }),
-                FlowOperationEntity("beep_call", None, None, "actuator_speaker", "me2_third"),
+                FlowOperationEntity(name="beep_call", output="actuator_speaker", where="me2_third"),
             ]),
             FlowEntity("test_cep_flow_2", [
-                FlowOperationEntity("sensor_read", "sensor_button", None, None, "me2_first"),
-                FlowOperationEntity("cep_intercepted", None, "cep_intercept", None, "me2_second", {
+                FlowOperationEntity(name="sensor_read", input="sensor_button", where="me2_first"),
+                FlowOperationEntity(name="cep_intercepted", process="cep_intercept", where="me2_second", args={
                     "expression": "x=true and y=true",
                     "variables": {"x": "gpio_1_result", "y": "gpio_2_result"}
                 }),
-                FlowOperationEntity("led_call", None, None, "actuator_led", "me2_third"),
+                FlowOperationEntity(name="led_call", output="actuator_led", where="me2_third"),
             ]),
         ]
         return flows
