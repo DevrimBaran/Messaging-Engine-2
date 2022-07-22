@@ -65,6 +65,5 @@ class FlowCreateResultMessage(InternalMessage):
     """
     class to represent a flow create event - if one flow is received via the endpoint
     """
-    #TODO: Needs to be implented correctly
     def __init__(self, flow: FlowEntity):
-        super().__init__(MessageType.FLOW_CREATE.value, FlowMapper().flow_entity_to_json(flow))
+        super().__init__(MessageType.FLOW_CREATE.value, FlowMapper().flow_entity_to_dict(flow))

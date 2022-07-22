@@ -1,0 +1,46 @@
+@startuml
+
+' this is a comment
+' read here for syntax: https://plantuml.com/sequence-diagram
+
+title ME2: FlowManager class
+footer Forschungsprojekt 2022, IPVS
+scale 2
+
+actor System #blue
+participant "FlowManager" as FM
+participant "F.StateManager" as FSM
+participant "F.OperationManager" as FOM
+participant "F.ValidationService" as FVS
+
+
+== 1.3 finish_flow(FlowMessage) ==
+note right FM: Only finishing/last "output" operations\nof a flow are allowed here
+
+System -> FM: finish_flow(FlowMessage)
+activate FM
+
+FM -> FVS: is_flow_valid()
+activate FVS
+FVS -> FM: true|false
+FM --> System: conditional finish
+deactivate FVS
+
+FM -> FOM: Execute operation
+activate FOM
+FOM -> FM: Flow step operation info
+deactivate FOM
+
+FM -> FSM: finish(FlowMessage)
+activate FSM
+FSM -> FSM: update flow\nexecution info
+FSM -> FM:
+deactivate FSM
+
+FM -> FM: Store finish state of flow in db.
+
+FM -> System: finish
+deactivate FM
+
+
+@enduml

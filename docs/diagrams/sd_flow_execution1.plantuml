@@ -1,0 +1,30 @@
+@startuml
+
+' this is a comment
+' read here for syntax: https://plantuml.com/sequence-diagram
+
+title ME2: Flow Execution
+footer Forschungsprojekt 2022, IPVS
+scale 2
+
+
+actor System #blue
+
+participant "router_loop()" as RL
+participant "FlowManager" as FM
+== 1.1 New Sensor-Read-Message  ==
+activate RL
+
+
+System -> RL: New message arrives
+activate RL
+RL -> FM: Pass to FlowManager:\nhandle_read_event()
+activate FM
+FM -> FM: Handle executable flow operations\nmatching this event.\nCheck if input operation name\n"sensor_<type>" is being used by an\n executable flow operation.
+FM -> FM: If yes: start_flow()
+FM -> RL
+deactivate FM
+deactivate RL
+RL -> System: finish
+
+@enduml

@@ -22,12 +22,12 @@ class Speaker(SingleGpioActuator):
         # First input is the duration for how long the speaker is active, the second and third one are for the pitch
         # of the speaker.
         if len(input_args) == 0:
-            sleep_time_for_pitch = 0.0005
+            sleep_time_for_pitch = 0.02
             sleep_time2_for_pitch = sleep_time_for_pitch
             duration = 2.0
         elif len(input_args) == 1:
             duration = float(input_args[0])
-            sleep_time_for_pitch = 0.0005
+            sleep_time_for_pitch = 0.02
             sleep_time2_for_pitch = sleep_time_for_pitch
         elif len(input_args) == 2:
             # When no duration will be set but pitch will be set.

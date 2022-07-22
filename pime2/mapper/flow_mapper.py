@@ -20,6 +20,14 @@ class FlowMapper:
         """
         return json.dumps(flow.__dict__, default=lambda o: getattr(o, '__dict__', str(o)))
 
+    def flow_entity_to_dict(self, flow: FlowEntity) -> str:
+        """
+        Method which converts a flow entity to a python dictionary
+        :param flow:
+        :return:
+        """
+        return json.loads(self.flow_entity_to_json(flow))
+
     def json_to_flow_entity(self, json_str: str) -> FlowEntity:
         """
         Method which converts a json string to a flow entity

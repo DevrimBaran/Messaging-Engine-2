@@ -50,14 +50,14 @@ class FlowMessage(resource.Resource):
             logging.warning("Problem encoding request: %s", ex)
         return Message(payload=b"INVALID REQUEST", code=Code.BAD_REQUEST)
 
-    async def is_request_valid(self, node: dict) -> bool:
+    async def is_request_valid(self, message: dict) -> bool:
         """
         Method to check if a given dictionary is a valid flow_message
-        :param node:
+        :param message:
         :return:
         """
-        if isinstance(node, str):
-            logging.debug("Invalid json received!")
+        if isinstance(message, str):
+            logging.debug("Invalid node content received")
             return False
         required_fields = [
             "id",
@@ -70,7 +70,7 @@ class FlowMessage(resource.Resource):
             "original_payload",
         ]
         for i in required_fields:
-            if i not in node or node[i] is None:
+            if i not in message or message[i] is None:
                 logging.debug("Missing field in flow message: '%s'", i)
                 return False
         name_regex_fields = [
@@ -79,30 +79,31 @@ class FlowMessage(resource.Resource):
             "flow_id",
             "last_operation",
         ]
+
         for namelike_field in name_regex_fields:
-            if not re.match(NAME_REGEX, node[namelike_field]):
+            if not re.match(NAME_REGEX, message[namelike_field]):
                 logging.debug("Invalid name like field '%s'", namelike_field)
                 return False
 
         for datetimelike_field in ["src_created_at", "sent_at"]:
             try:
-                datetime.datetime.fromisoformat(str(node[datetimelike_field]))
+                datetime.datetime.fromisoformat(str(message[datetimelike_field]))
             except ValueError:
                 logging.debug("Invalid date in field %s", datetimelike_field)
                 return False
 
-        if "history" in node and node["history"] is not None and isinstance(node["history"], List):
-            for i in node["history"]:
+        if "history" in message and message["history"] is not None and isinstance(message["history"], List):
+            for i in message["history"]:
                 return await self.is_request_valid(i)
 
         # check if the payload is a valid base64 string (ascii chars + strlen == 0 mod 4)
-        s = str(node["payload"])
+        s = str(message["payload"])
         match = re.match(BASE64_REGEX, s)
         if not match:
             logging.debug("Invalid base64 payload received")
             return False
 
-        payload_content = base64_decode(node["payload"])
+        payload_content = base64_decode(message["payload"])
         try:
             json.loads(payload_content)
         except JSONDecodeError:

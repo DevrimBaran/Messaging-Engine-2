@@ -16,13 +16,17 @@
 }
 ```
 
-- `id` is unique per message
-- `flow_name` is the name of a [Flow](./Flows.md)
-- `flow_id` is unique per flow instance (set once in the `input` operation of the flow)
-- `last_operation` gives the receiver the information what to do next, must be validated by the receiver
-- `history` is optional and only required in the top level `FlowMessage` object in the payload
-- `payload` usually contains the result of the latest step, while 
-- `original_payload` always contains the original sensor result
+### Validation
+
+- Check if message is a valid JSON
+- Check if `flow_name` is the name of a [Flow](./Flows.md)
+- Check if `last_operation` exists
+- Check if `id` already exists
+- Check if all necessary fields are given
+- Check if name-like fields match following regex: `r"^[a-zA-Z0-9_.-]{3,128}$"`
+- Check if date-like fields have correct date format
+- Check if `payload` is a valid base64 string (ascii chars + strlen == 0 mod 4)
+- Check if decoded `payload` is a valid JSON
 
 ## Messaging concept
 

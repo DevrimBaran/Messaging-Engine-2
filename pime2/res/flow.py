@@ -1,7 +1,10 @@
+import json
 import logging
 from json import JSONDecodeError
 import aiocoap
 from aiocoap import resource, Message, Code
+from pime2.message import FlowCreateResultMessage
+from pime2.push_queue import get_push_queue
 from pime2.service.flow_service import FlowService
 from pime2.mapper.flow_mapper import FlowMapper
 
@@ -47,9 +50,7 @@ class Flow(resource.Resource):
                 return Message(payload=b"INVALID REQUEST, MISSING OR INVALID PROPERTY", code=Code.BAD_REQUEST)
             flow_json = request.payload.decode()
             flow_entity = self.flow_mapper.json_to_flow_entity(flow_json)
-            self.flow_service.put_flow(flow_entity)
-            #TODO FlowCreateResultMessage in push queue
-            #await get_push_queue().put(FlowCreateResultMessage(flow_entity))
+            await get_push_queue().put(json.dumps(FlowCreateResultMessage(flow_entity).__dict__))
             return Message(payload=b"OK", code=Code.CREATED)
         except JSONDecodeError as ex:
             logging.warning("Problem encoding request: %s", ex)
