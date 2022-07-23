@@ -75,7 +75,7 @@ class FlowManager:
             FlowEntity("test_cep_flow_2", [
                 FlowOperationEntity(name="sensor_read", input="sensor_button", where="me2_first"),
                 FlowOperationEntity(name="cep_intercepted", process="cep_intercept", where="me2_second", args={
-                    "expression": "x=true and y=true",
+                    "expression": "x==true and y==true",
                     "variables": {"x": "gpio_1_result", "y": "gpio_2_result"}
                 }),
                 FlowOperationEntity(name="led_call", output="actuator_led", where="me2_third"),
