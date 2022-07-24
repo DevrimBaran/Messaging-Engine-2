@@ -13,7 +13,6 @@ async def find_neighbors():
     Finds all available hosts
     """
     available_ip = []
-
     subnet = find_local_subnet()
     for suffix in range(1, 255):
         target = subnet + str(suffix)
@@ -83,3 +82,19 @@ async def send_goodbye():
     for neighbor in all_neighbors:
         logging.info("Sending goodbye to: %s:%s", neighbor.name, neighbor.port)
         await coap_request_to_node(neighbor, "goodbye", own_node_json.encode(), Code.DELETE, timeout=1)
+
+
+def removeAllNeighborsOnStartUp():
+    """
+    Retrieves all known neighbors and removes them if they are not available anymore
+    """
+    service = NodeService
+    all_neighbors = service.get_all_neighbor_nodes()
+    for neighbor in all_neighbors:
+        service.remove_node(neighbor)
+    if all_neighbors is None:
+        logging.info("Found no neighbors to clean up.")
+    else:
+        logging.info("Cleaned all neighbors.")
+
+    
