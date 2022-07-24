@@ -252,7 +252,6 @@ class FlowMapperTest(unittest.TestCase):
             "src_created_at" : "2020-03-20T14:28:23", 
             "sent_at" : "2020-03-20T14:28:23", 
             "last_operation" : "last", 
-            "next_operation": "next", 
             "payload" : "payload123", 
             "original_payload" : "original", 
             "count" : 2123, 
