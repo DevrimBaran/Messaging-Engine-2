@@ -156,7 +156,7 @@ class FlowOperationManager:
                             manager.one_time_trigger(ActuatorType.LED)
                         if f.output == "actuator_speaker":
                             manager.one_time_trigger(ActuatorType.SPEAKER)
-            return flow_message.payload
+                return flow_message.payload
 
         logging.error("No operation executed in flow %s with step %s", flow.name, step)
         return flow_message.payload

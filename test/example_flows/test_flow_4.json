@@ -11,7 +11,7 @@
       "process": "cep_intercept",
       "where": "me2_second",
       "args": {
-        "expression": "x=true and y=true",
+        "expression": "x==true and y==true",
         "variables":  { 
           "x": "gpio_1_result",
           "y": "gpio_2_result"
