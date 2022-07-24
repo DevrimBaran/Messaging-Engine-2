@@ -1,3 +1,4 @@
+# pylint: disable=inconsistent-return-statements
 import logging
 import sqlite3
 from sqlite3 import IntegrityError
@@ -48,7 +49,6 @@ class QueueRepository:
             result_list = []
             if len(msg_in_database) == 0 or msg_in_database is None:
                 logging.debug('No messages existing.')
-                return []
             for msg in msg_in_database:
                 result_list.append(msg[0])
             return result_list
