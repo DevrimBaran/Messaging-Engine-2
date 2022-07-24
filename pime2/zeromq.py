@@ -1,7 +1,6 @@
 # pylint: disable=no-member
 import asyncio
 import logging
-import json
 
 import zmq
 from zmq.asyncio import Poller
@@ -34,7 +33,7 @@ async def startup_push_queue(context):
     queue_repository = QueueRepository(get_db_connection())
     old_messages = queue_repository.get_all_from_push_queue()
     for msg in old_messages:
-       receive_queue.put_nowait(msg, True)
+        receive_queue.put_nowait(msg, True)
     while True:
         result = await receive_queue.get()
         logging.debug("sent msg: %s", result)

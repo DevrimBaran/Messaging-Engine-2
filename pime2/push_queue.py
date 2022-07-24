@@ -13,7 +13,7 @@ class PersistentQueue(asyncio.Queue):
         if not startup:
             self.queue_repository.put_into_push_queue(item)
         return super().put_nowait(item)
-    
+
 
 # do not use this variable outside this class
 RECEIVE_QUEUE: PersistentQueue
