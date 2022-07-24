@@ -5,17 +5,15 @@ from pime2.repository.queue_repository import QueueRepository
 
 class PersistentQueue(asyncio.Queue):
     """Overrides the put and get methods of the queue to make it persistent"""
+    def __init__(self):
+        super().__init__()
+        self.queue_repository = QueueRepository(get_db_connection())
 
-    async def put(self, item, startup = False):
+    def put_nowait(self, item, startup = False):
         if not startup:
-            queue_repository = QueueRepository(get_db_connection())
-            queue_repository.put_into_push_queue(item)
-        return await super().put(item)
-
-    async def get(self):
-        queue_repository = QueueRepository(get_db_connection())
-        queue_repository.delete_from_push_queue()
-        return await super().get()
+            self.queue_repository.put_into_push_queue(item)
+        return super().put_nowait(item)
+    
 
 # do not use this variable outside this class
 RECEIVE_QUEUE: PersistentQueue

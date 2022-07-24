@@ -1,6 +1,7 @@
 # pylint: disable=no-member
 import asyncio
 import logging
+import json
 
 import zmq
 from zmq.asyncio import Poller
@@ -31,9 +32,9 @@ async def startup_push_queue(context):
 
     receive_queue = get_push_queue()
     queue_repository = QueueRepository(get_db_connection())
-    old_queue = queue_repository.get_all_from_push_queue()
-    for msg in old_queue:
-        await receive_queue.put(msg, True)
+    old_messages = queue_repository.get_all_from_push_queue()
+    for msg in old_messages:
+       receive_queue.put_nowait(msg, True)
     while True:
         result = await receive_queue.get()
         logging.debug("sent msg: %s", result)
@@ -59,19 +60,14 @@ async def startup_pull_queue(context):
     flow_manager = FlowManager(NodeService())
     conf = get_me_conf()
     queue_repo = QueueRepository(get_db_connection())
-    old_queue = queue_repo.get_all_from_pull_queue()
-    for msg in old_queue:
-        await asyncio.wait_for(router_loop([msg[0]], flow_manager), timeout=ROUTER_LOOP_TASK_TIMEOUT)
-        queue_repo.delete_from_pull_queue()
     while True:
         try:
             events = await poller.poll()
             if socket in dict(events):
                 msg = await socket.recv_multipart()
                 try:
-                    queue_repo.put_into_pull_queue(msg[0])
                     await asyncio.wait_for(router_loop(msg, flow_manager), timeout=ROUTER_LOOP_TASK_TIMEOUT)
-                    queue_repo.delete_from_pull_queue()
+                    queue_repo.delete_from_push_queue()
                 except asyncio.exceptions.TimeoutError:
                     logging.warning("Message processing timeout reached!")
                 except Exception as ex:

@@ -10,7 +10,7 @@ class QueueRepository:
         self.connection = connection
 
     def put_into_push_queue(self, message: str):
-        """Saves a message from the queue in the database"""
+        """Saves a message from the queue in the push_queue table"""
         cursor = self.connection.cursor()
         query = 'INSERT INTO push_queue (message) VALUES(?);'
         logging.debug('Executing SQL query: "%s"', query)
@@ -23,22 +23,8 @@ class QueueRepository:
         finally:
             cursor.close()
 
-    def put_into_pull_queue(self, message: str):
-        """Saves a message from the queue in the database"""
-        cursor = self.connection.cursor()
-        query = 'INSERT INTO pull_queue (message) VALUES(?);'
-        logging.debug('Executing SQL query: "%s"', query)
-        try:
-            cursor.execute(query, (message,))
-            self.connection.commit()
-            logging.debug('Values inserted: message:<%s>', message)
-        except IntegrityError:
-            logging.debug("Integrity error during insert detected")
-        finally:
-            cursor.close()
-
     def delete_from_push_queue(self):
-        """Deletes a message from the database"""
+        """Deletes the first entry from the push_queue table"""
         cursor = self.connection.cursor()
         query = 'DELETE FROM push_queue WHERE (SELECT id FROM push_queue LIMIT 1);'
         logging.debug('Executing SQL query: "%s"', query)
@@ -50,21 +36,8 @@ class QueueRepository:
         finally:
             cursor.close()
 
-    def delete_from_pull_queue(self):
-        """Deletes a message from the database"""
-        cursor = self.connection.cursor()
-        query = 'DELETE FROM pull_queue WHERE (SELECT id FROM pull_queue LIMIT 1);'
-        logging.debug('Executing SQL query: "%s"', query)
-        try:
-            cursor.execute(query)
-            self.connection.commit()
-        except IntegrityError:
-            logging.debug("Integrity error during insert detected")
-        finally:
-            cursor.close()
-
     def get_all_from_push_queue(self):
-        """Returns all messages from the database"""
+        """Returns all messages from the push_queue table"""
         cursor = self.connection.cursor()
         query = 'SELECT message FROM push_queue;'
         logging.debug('Executing SQL query: "%s"', query)
@@ -76,27 +49,7 @@ class QueueRepository:
             if len(msg_in_database) == 0 or msg_in_database is None:
                 logging.debug('No messages existing.')
             for msg in msg_in_database:
-                result_list.append(msg)
-            return result_list
-        except IntegrityError:
-            logging.debug("Integrity error during insert detected")
-        finally:
-            cursor.close()
-
-    def get_all_from_pull_queue(self):
-        """Returns all messages from the database"""
-        cursor = self.connection.cursor()
-        query = 'SELECT message FROM pull_queue;'
-        logging.debug('Executing SQL query: "%s"', query)
-        try:
-            cursor.execute(query)
-            msg_in_database = cursor.fetchall()
-            logging.debug('Query executed. Result: %s', msg_in_database)
-            result_list = []
-            if len(msg_in_database) == 0 or msg_in_database is None:
-                logging.debug('No messages existing.')
-            for msg in msg_in_database:
-                result_list.append(msg)
+                result_list.append(msg[0])
             return result_list
         except IntegrityError:
             logging.debug("Integrity error during insert detected")
