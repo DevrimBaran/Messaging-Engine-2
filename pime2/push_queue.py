@@ -14,6 +14,10 @@ class PersistentQueue(asyncio.Queue):
             self.queue_repository.put_into_push_queue(item)
         return super().put_nowait(item)
 
+    def put(self, item):
+        self.queue_repository.put_into_push_queue(item)
+        return super().put(item)
+
 
 # do not use this variable outside this class
 RECEIVE_QUEUE: PersistentQueue
