@@ -44,7 +44,7 @@ class FlowMessage(resource.Resource):
 
             flow_message = FlowMapper().json_to_message_entity(node)
 
-            await get_push_queue().put(json.dumps(FlowMessageResultMessage(flow_message).__dict__, default=str))
+            get_push_queue().put_nowait(json.dumps(FlowMessageResultMessage(flow_message).__dict__, default=str))
             return Message(payload=b"OK", code=Code.CREATED)
         except JSONDecodeError as ex:
             logging.warning("Problem encoding request: %s", ex)

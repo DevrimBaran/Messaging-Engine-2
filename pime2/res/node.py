@@ -65,7 +65,7 @@ class Node(resource.Resource):
 
             node_json = request.payload.decode()
             node_entity = NodeMapper().json_to_entity(node_json)
-            await get_push_queue().put(json.dumps(NodeCreateResultMessage(node_entity).__dict__))
+            get_push_queue().put_nowait(json.dumps(NodeCreateResultMessage(node_entity).__dict__))
             return Message(payload=b"OK", code=Code.CREATED)
         except JSONDecodeError as ex:
             logging.warning("Problem encoding request: %s", ex)

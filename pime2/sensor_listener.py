@@ -19,7 +19,7 @@ async def single_sensor_read(sensor: Sensor):
     """
     sensor_result = sensor.read()
     logging.info("Read sensor data: %s", sensor_result.__dict__)
-    await get_push_queue().put(
+    get_push_queue().put_nowait(
         json.dumps(SensorResultMessage(sensor.sensor_type.value, sensor_result.__dict__).__dict__))
 
 
