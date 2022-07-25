@@ -16,6 +16,8 @@ For Raspberry Pi:
 ```console
 make setup-venv-raspi
 make setup
+sudo apt-get install gpiod
+sudo apt-get install libgpiod-dev
 ```
 
 For other devices:
