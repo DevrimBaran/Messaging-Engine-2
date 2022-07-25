@@ -27,7 +27,7 @@ class QueueRepository:
     def delete_from_push_queue(self):
         """Deletes the first entry from the push_queue table"""
         cursor = self.connection.cursor()
-        query = 'DELETE FROM push_queue WHERE (SELECT id FROM push_queue LIMIT 1);'
+        query = 'DELETE FROM push_queue WHERE id = (SELECT id FROM push_queue LIMIT 1);'
         logging.debug('Executing SQL query: "%s"', query)
         try:
             cursor.execute(query)
