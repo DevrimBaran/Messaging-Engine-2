@@ -47,11 +47,11 @@ diagrams: ## generate plantuml diagrams
 
 .PHONY: lint
 lint: ## lint the source code - (without tests)
-	$(PYLINT) $(PYLINTFLAGS) main.py pime2
+	$(PYLINT) $(PYLINTFLAGS) main.py me2
 
 .PHONY: format
 format: ## auto-format the code
-	autopep8 --in-place --aggressive -r main.py pime2
+	autopep8 --in-place --aggressive -r main.py me2
 
 .PHONY: test
 test: ## run unit tests

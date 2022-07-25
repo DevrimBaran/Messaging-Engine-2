@@ -56,6 +56,6 @@ actuators:
 ## Python
 
 ```python
-pime2.config.get_me_conf()
+me2.config.get_me_conf()
 ```
 

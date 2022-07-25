@@ -2,8 +2,8 @@ import datetime
 import unittest
 import uuid
 
-from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
-from pime2.flow.flow_operation_manager import FlowOperationManager
+from me2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity, NodeEntity
+from me2.flow.flow_operation_manager import FlowOperationManager
 
 
 class FlowOperationManagerTest(unittest.TestCase):

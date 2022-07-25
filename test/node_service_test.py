@@ -1,7 +1,7 @@
 import unittest
 
-from pime2.config import get_me_conf
-from pime2.service.node_service import NodeService
+from me2.config import get_me_conf
+from me2.service.node_service import NodeService
 from test.generic import GenericDatabaseTest
 
 

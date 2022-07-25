@@ -1,8 +1,8 @@
 import json
 import unittest
 
-from pime2.entity import NodeEntity
-from pime2.mapper.node_mapper import NodeMapper
+from me2.entity import NodeEntity
+from me2.mapper.node_mapper import NodeMapper
 
 
 class NodeMapperTest(unittest.TestCase):

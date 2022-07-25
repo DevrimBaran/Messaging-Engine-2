@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from pime2.repository.execution_repository import ExecutionRepository
+from me2.repository.execution_repository import ExecutionRepository
 
 from test.generic import GenericDatabaseTest
 

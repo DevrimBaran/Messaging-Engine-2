@@ -1,12 +1,12 @@
 """
-Entry point of the PIME2 application
+Entry point of the ME2 application
 """
 import logging
 import asyncio
 import sys
 
-from pime2.config import load_app_config, CONFIG_FILE
-from pime2.main import pime_run
+from me2.config import load_app_config, CONFIG_FILE
+from me2.main import me_run
 
 if __name__ == "__main__":
     if sys.platform == "win32":
@@ -28,6 +28,6 @@ if __name__ == "__main__":
 
     # start application
     try:
-        asyncio.run(pime_run(config))
+        asyncio.run(me_run(config))
     except Exception:
         logging.error("ME2 exited.")

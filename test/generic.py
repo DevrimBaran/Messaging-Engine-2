@@ -1,9 +1,9 @@
 import os
 import unittest
 
-from pime2 import database
-from pime2.config import load_app_config
-from pime2.service.node_service import NodeService
+from me2 import database
+from me2.config import load_app_config
+from me2.service.node_service import NodeService
 
 TEST_DATABASE_FILE = "testDatabase.db"
 

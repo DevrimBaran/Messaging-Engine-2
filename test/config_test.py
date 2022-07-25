@@ -1,6 +1,6 @@
 import unittest
 
-import pime2.config
+import me2.config
 
 
 class TestAppConfiguration(unittest.TestCase):
@@ -43,7 +43,7 @@ class TestAppConfiguration(unittest.TestCase):
         for i in self.valid_config_files:
             is_exceptional = False
             try:
-                config = pime2.config.load_app_config(i)
+                config = me2.config.load_app_config(i)
             except RuntimeError:
                 is_exceptional = True
             self.assertFalse(is_exceptional)
@@ -61,7 +61,7 @@ class TestAppConfiguration(unittest.TestCase):
         for i in self.valid_config_files_with_operators:
             is_exceptional = False
             try:
-                config = pime2.config.load_app_config(i)
+                config = me2.config.load_app_config(i)
             except RuntimeError:
                 is_exceptional = True
             self.assertFalse(is_exceptional)
@@ -79,7 +79,7 @@ class TestAppConfiguration(unittest.TestCase):
         for i in self.invalid_config_files:
             is_exceptional = False
             try:
-                pime2.config.load_app_config(i)
+                me2.config.load_app_config(i)
             except RuntimeError:
                 is_exceptional = True
             self.assertTrue(is_exceptional)
@@ -99,7 +99,7 @@ class TestAppConfiguration(unittest.TestCase):
         for i in invalid_operators:
             is_exceptional = False
             try:
-                configuration = pime2.config.OperatorConfiguration(i)
+                configuration = me2.config.OperatorConfiguration(i)
             except RuntimeError:
                 is_exceptional = True
             self.assertTrue(is_exceptional)

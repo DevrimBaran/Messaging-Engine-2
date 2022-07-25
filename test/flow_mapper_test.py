@@ -4,8 +4,8 @@ import unittest
 
 from typing import List
 
-from pime2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity
-from pime2.mapper.flow_mapper import FlowMapper
+from me2.entity import FlowEntity, FlowOperationEntity, FlowMessageEntity
+from me2.mapper.flow_mapper import FlowMapper
 
 
 class FlowMapperTest(unittest.TestCase):

@@ -1,8 +1,8 @@
 import unittest
 
-from pime2.flow.flow_manager import FlowManager
-from pime2.flow.flow_validation import is_flow_valid
-from pime2.service.node_service import NodeService
+from me2.flow.flow_manager import FlowManager
+from me2.flow.flow_validation import is_flow_valid
+from me2.service.node_service import NodeService
 from test.generic import GenericDatabaseTest
 
 

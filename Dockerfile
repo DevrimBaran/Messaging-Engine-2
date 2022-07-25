@@ -1,7 +1,7 @@
 FROM python:3.9-slim-buster
 
 RUN mkdir -p /usr/src/app
-RUN mkdir -p /usr/src/app/pime2
+RUN mkdir -p /usr/src/app/me2
 
 RUN groupadd --system me2 && useradd --system --create-home --gid me2 me2
 
@@ -14,7 +14,7 @@ USER me2
 RUN python -m pip install --no-cache-dir --user -r /usr/src/app/requirements.txt
 USER root
 RUN apt-get purge -y gcc autoconf libc6-dev ; apt autoremove -y; apt-get clean
-COPY pime2 /usr/src/app/pime2
+COPY me2 /usr/src/app/me2
 COPY main.py /usr/src/app/main.py
 COPY me.yaml /usr/src/app/me.yaml
 RUN chown -R me2:me2 /usr/src/app

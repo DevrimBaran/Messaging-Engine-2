@@ -1,5 +1,5 @@
 import unittest
-from pime2.flow.cep_flow import cep_executer
+from me2.flow.cep_flow import cep_executer
 
 class TestCEPFlow(unittest.TestCase):
 

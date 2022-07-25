@@ -1,11 +1,11 @@
 import unittest
 
-from pime2 import NAME_REGEX, database
-from pime2.database import create_connection
-from pime2.entity import FlowOperationEntity, FlowEntity, FlowMessageEntity
-from pime2.flow.flow_validation import is_flow_valid, is_flow_step_executable, is_flow_message_valid
-from pime2.repository.node_repository import NodeRepository
-from pime2.service.node_service import NodeService
+from me2 import NAME_REGEX, database
+from me2.database import create_connection
+from me2.entity import FlowOperationEntity, FlowEntity, FlowMessageEntity
+from me2.flow.flow_validation import is_flow_valid, is_flow_step_executable, is_flow_message_valid
+from me2.repository.node_repository import NodeRepository
+from me2.service.node_service import NodeService
 from test.generic import GenericDatabaseTest, TEST_DATABASE_FILE
 from datetime import datetime
 

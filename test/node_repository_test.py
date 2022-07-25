@@ -1,8 +1,8 @@
 import unittest
-from pime2.entity import NodeEntity as Node
+from me2.entity import NodeEntity as Node
 from sqlite3 import Error
 
-from pime2.repository.node_repository import NodeRepository
+from me2.repository.node_repository import NodeRepository
 from test.generic import GenericDatabaseTest
 
 

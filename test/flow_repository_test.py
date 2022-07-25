@@ -1,11 +1,11 @@
 import unittest
 from typing import List
-from pime2.repository.flow_repository import FlowRepository
-from pime2.entity import FlowEntity
-from pime2.entity import FlowOperationEntity
+from me2.repository.flow_repository import FlowRepository
+from me2.entity import FlowEntity
+from me2.entity import FlowOperationEntity
 from sqlite3 import Error
 
-from pime2.service.node_service import NodeService
+from me2.service.node_service import NodeService
 from test.generic import GenericDatabaseTest
 
 
