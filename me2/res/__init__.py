@@ -1,3 +1,3 @@
 """
-pime 2 resource module
+me 2 resource module
 """

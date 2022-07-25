@@ -13,7 +13,7 @@ build
 .classpath
 .settings
 Thumbs.db
-pime_database.db
+me2_database.db
 me2.log
 
 

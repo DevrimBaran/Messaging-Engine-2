@@ -20,7 +20,7 @@ def create_connection(db_file):
         connection = DB_CONNECTION
         logging.info("Successfully connected to database: %s", db_file)
     except Error:
-        logging.exception("An error occurred while connecting to the database. \n Pime will now shutdown safely.")
+        logging.exception("An error occurred while connecting to the database. \n Me2 will now shutdown safely.")
         sys.exit(1)
     return connection
 

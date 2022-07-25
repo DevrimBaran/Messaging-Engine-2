@@ -1,4 +1,4 @@
 """
-pime 2 repository module
+me 2 repository module
 
 """

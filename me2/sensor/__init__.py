@@ -1,4 +1,4 @@
 """
-pime 2 sensor module
+me 2 sensor module
 
 """

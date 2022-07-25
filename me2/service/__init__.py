@@ -1,4 +1,4 @@
 """
-pime 2 service module
+me 2 service module
 
 """

@@ -1,4 +1,4 @@
-# PIME 2 Documentation
+# ME2 2 Documentation
 
 This is a technical documentation about Messaging Engine 2 (ME 2).
 This repository is an artifact of a Forschungsprojekt during summer 2022.
@@ -19,7 +19,7 @@ for this project.
 
 ## Processes
 
-- **PIME Deployment:** The whole software is getting rolled out
+- **ME2 Deployment:** The whole software is getting rolled out
 - **Data Flow Model Deployment:** A Data Flow Model is rolled out
 - **Ping Request:** Connecting to "Hello" endpoint
 - **Neighbor Provisioning:** The system gets information about a (new) ME2-neighbor-instance

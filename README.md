@@ -40,23 +40,23 @@ This project uses a custom image to run the CI jobs in. The [Dockerfile](Dockerf
 
 ### Git guidelines
 
-- **Branch name**: Use `feature/PIME-[Issue number] [optional: very short description]` for features
-  and `fix/PIME-[Issue number]` for bugfixes
+- **Branch name**: Use `feature/ME2-[Issue number] [optional: very short description]` for features
+  and `fix/ME2-[Issue number]` for bugfixes
 
   ```
-  git checkout -b feature/PIME-23 database
+  git checkout -b feature/ME2-23 database
   
-  git checkout -b fix/PIME-25
+  git checkout -b fix/ME2-25
   ```
 
-- **Commit message**: Use `PIME-[Issue number] [your message]`. <br>
+- **Commit message**: Use `ME2-[Issue number] [your message]`. <br>
   Message length should be up to 50 characters. <br>
   Each commit must belong to an issue number. If there is none, create a new issue!
 
   ```
-  git commit -m "PIME-23 add new database"
+  git commit -m "ME2-23 add new database"
   
-  git commit -m "PIME-25 fix wrong button color"
+  git commit -m "ME2-25 fix wrong button color"
   ```
 
 ### GitLab guidelines
