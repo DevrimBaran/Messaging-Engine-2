@@ -16,7 +16,7 @@ async def router_loop(msg, manager: FlowManager):
     It basically decides which method needs to be called for which incoming message (type).
 
     :param manager:
-    :param msg:
+    :param msg: list of messages
     :return:
     """
     received_object = json.loads(msg[0])

@@ -1,0 +1,27 @@
+@startuml
+
+' this is a comment
+' read here for syntax: https://plantuml.com/sequence-diagram
+
+title ME2: FlowManager class
+footer Forschungsprojekt 2022, IPVS
+scale 2
+
+actor System #blue
+participant "FlowManager" as FM
+
+participant "CoApClient" as CAC
+
+
+== 1.4 send_flow_message(Node, FlowMessage) ==
+System -> FM: send_flow_message(FlowMessage)
+activate FM
+FM -> CAC: Send flow message to node.\nIf successful: leave\nelse: Retry n times
+activate CAC
+CAC -> FM:
+deactivate CAC
+
+FM -> System: finish
+deactivate FM
+
+@enduml

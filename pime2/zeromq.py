@@ -11,6 +11,8 @@ from pime2.flow.flow_manager import FlowManager
 from pime2.router import router_loop
 from pime2.push_queue import get_push_queue
 from pime2.service.node_service import NodeService
+from pime2.database import get_db_connection
+from pime2.repository.queue_repository import QueueRepository
 
 
 async def startup_push_queue(context):
@@ -28,6 +30,10 @@ async def startup_push_queue(context):
     poller.register(socket, zmq.POLLOUT)
 
     receive_queue = get_push_queue()
+    queue_repository = QueueRepository(get_db_connection())
+    old_messages = queue_repository.get_all_from_push_queue()
+    for msg in old_messages:
+        receive_queue.put_nowait(msg, True)
     while True:
         result = await receive_queue.get()
         logging.debug("sent msg: %s", result)
@@ -52,7 +58,7 @@ async def startup_pull_queue(context):
     # load and instantiate flow manager
     flow_manager = FlowManager(NodeService())
     conf = get_me_conf()
-
+    queue_repo = QueueRepository(get_db_connection())
     while True:
         try:
             events = await poller.poll()
@@ -60,6 +66,7 @@ async def startup_pull_queue(context):
                 msg = await socket.recv_multipart()
                 try:
                     await asyncio.wait_for(router_loop(msg, flow_manager), timeout=ROUTER_LOOP_TASK_TIMEOUT)
+                    queue_repo.delete_from_push_queue()
                 except asyncio.exceptions.TimeoutError:
                     logging.warning("Message processing timeout reached!")
                 except Exception as ex:

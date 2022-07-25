@@ -50,7 +50,7 @@ class Flow(resource.Resource):
                 return Message(payload=b"INVALID REQUEST, MISSING OR INVALID PROPERTY", code=Code.BAD_REQUEST)
             flow_json = request.payload.decode()
             flow_entity = self.flow_mapper.json_to_flow_entity(flow_json)
-            await get_push_queue().put(json.dumps(FlowCreateResultMessage(flow_entity).__dict__))
+            get_push_queue().put_nowait(json.dumps(FlowCreateResultMessage(flow_entity).__dict__))
             return Message(payload=b"OK", code=Code.CREATED)
         except JSONDecodeError as ex:
             logging.warning("Problem encoding request: %s", ex)
