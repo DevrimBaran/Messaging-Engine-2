@@ -70,13 +70,13 @@ async def send_hello(available_ip):
         ip_address = str(neighbor)
 
         logging.info("Sending hello to %s:5683", ip_address)
-        neighbor_response = await send_message(ip_address, "hello", "Hello, I'm online!".encode(), Code.GET)
+        neighbor_response = await send_message(ip_address, "hello", "Hello, I'm online!", Code.GET)
         if neighbor_response is False:
             logging.error("Problem receiving node from ip %s", ip_address)
             return
         neighbor_entity = service.json_to_entity(neighbor_response.payload.decode())
         service.put_node(neighbor_entity)
-        await send_message(ip_address, "nodes", own_node_json.encode(), Code.PUT)
+        await send_message(ip_address, "nodes", own_node_json, Code.PUT)
 
 
 async def send_goodbye():
