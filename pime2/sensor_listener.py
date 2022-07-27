@@ -19,7 +19,7 @@ async def single_sensor_read(sensor: Sensor):
     """
     sensor_result = sensor.read()
     logging.info("Read sensor data: %s", sensor_result.__dict__)
-    await get_push_queue().put(
+    get_push_queue().put_nowait(
         json.dumps(SensorResultMessage(sensor.sensor_type.value, sensor_result.__dict__).__dict__))
 
 
@@ -42,6 +42,7 @@ async def startup_operator_listener():
     """
     start asyncio tasks and wait for them to complete.
     Should be called in main asyncio run().
+    Runs forever.
 
     :param sensors:
     :return:
@@ -66,6 +67,7 @@ async def startup_operator_listener():
         # normally wait forever here
         for task in task_list:
             await task
+
     finally:
         # close sensors "finally"
         for sensor in sensors:

@@ -6,7 +6,7 @@ the [PIME (Python IoT Messaging Engine) Proof-of-Concept implementation](https:/
 
 ## Build & Run
 
-This project uses Python's `venv` feature and Python 3.8+. Read more about it
+This project uses Python's `venv` feature and Python 3.10+. Read more about it
 [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
 or [here](https://docs.python.org/3/library/venv.html).
 
@@ -16,6 +16,8 @@ For Raspberry Pi:
 ```console
 make setup-venv-raspi
 make setup
+sudo apt-get install gpiod
+sudo apt-get install libgpiod-dev
 ```
 
 For other devices:

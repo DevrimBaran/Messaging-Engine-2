@@ -1,57 +1,60 @@
+import asyncio
 import json
 import logging
 import time
-import socket
+import ipaddress
 from aiocoap import Code
 from pime2.service.node_service import NodeService
 from pime2.config import get_me_conf
-from pime2.coap_client import ping, send_message, coap_request_to_node
+from pime2.coap_client import send_message, coap_request_to_node, ping
 
 
 async def find_neighbors():
     """
     Finds all available hosts
     """
-    available_ip = []
-    subnet = find_local_subnet()
-    for suffix in range(1, 255):
-        target = subnet + str(suffix)
-        logging.info('Starting scan on host: %s', target)
-        start = time.time()
-        try:
-            is_ping_successful = await ping(target)
-            if is_ping_successful:
-                available_ip.append(target)
-            else:
-                logging.info("No device on: %s", target)
+    task_list = []
 
+    ip_list = find_local_subnet()
+
+    start = time.time()
+    for target in ip_list:
+        try:
+            task_list.append(asyncio.create_task(run_ping(target)))
+            # wait a short time, before firing another request
+            await asyncio.sleep(0.05)
         except Exception as exception:
             logging.error("Error while searching for neighbors: %s", exception)
-        finally:
-            end = time.time()
-            logging.info("Time taken: %s seconds", round(end - start, 2))
 
-    logging.info("All neighbors found: %s", available_ip)
+    success_ip_list = []
+    for task in task_list:
+        result, ip = await task
+        if result:
+            success_ip_list.append(ip)
 
-    await send_hello(available_ip)
+    logging.info("%s neighbors found: %s. Took %s seconds", len(success_ip_list), success_ip_list,
+                 round(time.time() - start, 2))
+    await send_hello(success_ip_list)
 
 
 def find_local_subnet():
     """
-    Extracts the local subnet from the local ip of the host.
+    Extracts the local subnet from the ip of the host.
     """
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.settimeout(0)
-    try:
-        # doesn't even have to be reachable
-        sock.connect(('129.69.5.3', 80))
-        local_ip = sock.getsockname()[0]
-    except Exception:
-        local_ip = get_me_conf().host
-    finally:
-        sock.close()
-    local_subnet = ".".join(local_ip.split(".")[:-1]) + "."
-    return local_subnet
+    host_addr = get_me_conf().host
+    ip = ipaddress.ip_address(host_addr)
+    ip_list = []
+    if isinstance(ip, ipaddress.IPv4Address) and not ip.is_global:
+        # pylint: disable=consider-using-f-string
+        host_net = ipaddress.ip_network("%d.%d.%d.0/24" % (ip.packed[0], ip.packed[1], ip.packed[2]))
+        ip_list = [str(ip) for ip in host_net][1:-1]
+        return ip_list
+    return ip_list
+
+
+async def run_ping(target) -> (bool, str):
+    """Run ping"""
+    return await ping(target), target
 
 
 async def send_hello(available_ip):
@@ -63,12 +66,17 @@ async def send_hello(available_ip):
     service = NodeService()
     own_node = service.get_own_node()
     own_node_json = service.entity_to_json(own_node)
-    for neighbor_ip in available_ip:
-        logging.info("Sending hello to %s:5683", neighbor_ip)
-        neighbor_response = await send_message(neighbor_ip, "hello", "Hello, I'm online!".encode(), Code.GET)
+    for neighbor in available_ip:
+        ip_address = str(neighbor)
+
+        logging.info("Sending hello to %s:5683", ip_address)
+        neighbor_response = await send_message(ip_address, "hello", "Hello, I'm online!".encode(), Code.GET)
+        if neighbor_response is False:
+            logging.error("Problem receiving node from ip %s", ip_address)
+            return
         neighbor_entity = service.json_to_entity(neighbor_response.payload.decode())
         service.put_node(neighbor_entity)
-        await send_message(neighbor_ip, "nodes", own_node_json.encode(), Code.PUT)
+        await send_message(ip_address, "nodes", own_node_json.encode(), Code.PUT)
 
 
 async def send_goodbye():

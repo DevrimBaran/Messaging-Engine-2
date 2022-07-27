@@ -49,6 +49,8 @@ async def pime_run(config: MEConfiguration):
                      startup_operator_listener(),
                      startup_silent_task()])
         await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+    except Exception as ex:
+        logging.error("Exception: %s", ex)
     finally:
         await send_goodbye()
         db.disconnect(connection)

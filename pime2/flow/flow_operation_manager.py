@@ -6,7 +6,7 @@ from pime2.actuator.actuator import ActuatorType
 from pime2.actuator.actuator_manager import ActuatorManager
 from pime2.common import base64_decode
 from pime2.entity import FlowEntity, NodeEntity, FlowMessageEntity
-from pime2.flow.cep_flow import cep_executer
+from pime2.flow.filter_flow import filter_executer
 from pime2.repository.execution_repository import ExecutionRepository
 
 
@@ -137,15 +137,15 @@ class FlowOperationManager:
                     execution_repository.register_execution(flow_message.flow_id, flow_message.id)
 
                     if f.is_process():
-                        if f.process == "cep_intercept":
+                        if f.process == "filter_intercept":
                             if not isinstance(f.args, dict) or \
                                "expression" not in f.args or f.args["expression"] is None or \
                                "variables" not in f.args or f.args["variables"] is None:
                                 logging.error("Stopping flow: expression or variables are not defined")
                                 return None
-                            logging.info("Executing CEP evaluation in flow %s with step %s", flow.name, step)
-                            if not cep_executer(f.args["expression"], f.args["variables"], payload):
-                                logging.info("Stopping flow: CEP evaluation returned false")
+                            logging.info("Executing filter evaluation in flow %s with step %s", flow.name, step)
+                            if not filter_executer(f.args["expression"], f.args["variables"], payload):
+                                logging.info("Stopping flow: filter evaluation returned false")
                                 return None
                         if f.process == "log":
                             logging.info("LOG OPERATION: %s", json.loads(payload))
@@ -179,10 +179,10 @@ class FlowOperationManager:
         return False
 
     @staticmethod
-    def is_cep_operation(flow: FlowEntity, step: str) -> bool:
-        """method to check if a single flow operation is the cep operation or not"""
+    def is_filter_operation(flow: FlowEntity, step: str) -> bool:
+        """method to check if a single flow operation is the filter operation or not"""
         for op in flow.ops:
             if op.name.lower() == step.lower():
-                if op.process.lower() == "cep_intercept":
+                if op.process.lower() == "filter_intercept":
                     return True
         return False
