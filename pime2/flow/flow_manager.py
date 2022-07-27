@@ -66,7 +66,7 @@ class FlowManager:
             ]),
             FlowEntity("test_filter_flow_1", [
                 FlowOperationEntity(name="sensor_read", input="sensor_temperature", where="me2_first"),
-                FlowOperationEntity(name="cep_intercept", process="cep_intercept", where="me2_second", args={
+                FlowOperationEntity(name="filter_intercept", process="filter_intercept", where="me2_second", args={
                     "expression": "x > 30",
                     "variables": {"x": "result"}
                 }),
@@ -74,7 +74,7 @@ class FlowManager:
             ]),
             FlowEntity("test_filter_flow_2", [
                 FlowOperationEntity(name="sensor_read", input="sensor_button", where="me2_first"),
-                FlowOperationEntity(name="cep_intercepted", process="cep_intercept", where="me2_second", args={
+                FlowOperationEntity(name="filter_intercepted", process="filter_intercept", where="me2_second", args={
                     "expression": "x==true and y==true",
                     "variables": {"x": "gpio_1_result", "y": "gpio_2_result"}
                 }),
