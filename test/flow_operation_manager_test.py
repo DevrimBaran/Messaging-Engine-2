@@ -168,7 +168,7 @@ class FlowOperationManagerTest(unittest.TestCase):
     def simple_test_flow2(self):
         return FlowEntity("test_flow2", [
             FlowOperationEntity("first_step", "sensor_temperature", None, None, "instance1,instance2"),
-            FlowOperationEntity("second_step", None, "cep_flow", None, "*", "x < 10"),
+            FlowOperationEntity("second_step", None, "filter_flow", None, "*", "x < 10"),
             FlowOperationEntity("third_step", None, "log", None),
             FlowOperationEntity("last_step", None, None, "actuator_speaker", "*", "1"),
         ])

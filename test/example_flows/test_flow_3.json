@@ -1,5 +1,5 @@
 {
-  "name": "test_cep_flow_2",
+  "name": "test_filter_flow_2",
   "ops": [
     {
       "name": "sensor_read",
@@ -7,8 +7,8 @@
       "where": "me2_first"
     },
     {
-      "name": "cep_intercept",
-      "process": "cep_intercept",
+      "name": "filter_intercept",
+      "process": "filter_intercept",
       "where": "me2_second",
       "args": {
         "expression": "x > 30",

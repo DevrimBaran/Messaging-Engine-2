@@ -47,7 +47,7 @@ class FlowManager:
         flows = [
             FlowEntity("docker_flow_1", [
                 FlowOperationEntity(name="sensor_read", input="sensor_temperature", where="111111111"),
-                # FlowOperationEntity(name="cep_intercept", input=None, process="cep_intercept", output=None,
+                # FlowOperationEntity(name="filter_intercept", input=None, process="filter_intercept", output=None,
                 #                     where="222222222",
                 #                     args={"expression": "x > 25", "variables": {"x": "result"}}),
                 FlowOperationEntity(name="second_step", process="log", where="111111111"),
@@ -64,7 +64,7 @@ class FlowManager:
                 FlowOperationEntity(name="log", process="log", where="me2_second"),
                 FlowOperationEntity(name="beep_call", output="actuator_speaker", where="me2_third"),
             ]),
-            FlowEntity("test_cep_flow_1", [
+            FlowEntity("test_filter_flow_1", [
                 FlowOperationEntity(name="sensor_read", input="sensor_temperature", where="me2_first"),
                 FlowOperationEntity(name="cep_intercept", process="cep_intercept", where="me2_second", args={
                     "expression": "x > 30",
@@ -72,7 +72,7 @@ class FlowManager:
                 }),
                 FlowOperationEntity(name="beep_call", output="actuator_speaker", where="me2_third"),
             ]),
-            FlowEntity("test_cep_flow_2", [
+            FlowEntity("test_filter_flow_2", [
                 FlowOperationEntity(name="sensor_read", input="sensor_button", where="me2_first"),
                 FlowOperationEntity(name="cep_intercepted", process="cep_intercept", where="me2_second", args={
                     "expression": "x==true and y==true",
@@ -311,7 +311,7 @@ class FlowManager:
                 return False, None
 
             result = await FlowOperationManager.execute_operation(flow, flow_message, step, self.execution_repository)
-            if result is None and FlowOperationManager.is_cep_operation(flow, step):
+            if result is None and FlowOperationManager.is_filter_operation(flow, step):
                 self.cancel_flow(flow, flow_message)
             return True, result
         return False, None

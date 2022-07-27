@@ -10,20 +10,20 @@ variable_regex = "^[uvwxyz]{1}$"
 # TODO: maybe only the keyword sensor_result_x with x = number of the result
 keywords = ["result", "gpio_1_result", "gpio_2_result"]
 
-def cep_executer(expression, variables, payload):
+def filter_executer(expression, variables, payload):
     """
-    Checks if the cep result is True or False
+    Checks if the filter result is True or False
     """
-    final_expression = cep_validator(expression=expression, variables=variables, payload=payload)
+    final_expression = filter_validator(expression=expression, variables=variables, payload=payload)
     if final_expression:
         try:
             return eval(final_expression)
         except Exception as ex:
-            logging.error("Invalid CEP expression!: %s", ex)
+            logging.error("Invalid filter expression!: %s", ex)
     return False
 
 
-def cep_validator(expression, variables, payload):
+def filter_validator(expression, variables, payload):
     """
     Makes sure that eval evaluates only allowed expressions
     """
@@ -32,10 +32,10 @@ def cep_validator(expression, variables, payload):
         # substitute variables
         expression = substitute_variables(expression, variables, payload)
         if not re.fullmatch(expression_regex, expression):
-            raise ValueError("Invalid CEP expression!")
+            raise ValueError("Invalid filter expression!")
         return expression
     except (ValueError, SyntaxError):
-        logging.debug("Invalid CEP expression!: %s", expression)
+        logging.debug("Invalid filter expression!: %s", expression)
         return False
 
 def substitute_variables(expression, variables, payload):
@@ -46,7 +46,7 @@ def substitute_variables(expression, variables, payload):
         if is_keyword(value):
             value = json.loads(payload)[value]
         elif not is_allowed_variable(key):
-            raise ValueError("Invalid CEP variable!")
+            raise ValueError("Invalid filter variable!")
 
         expression = re.sub(key, str(value), expression)
 

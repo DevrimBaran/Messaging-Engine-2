@@ -117,8 +117,8 @@ instance.
 ## Available Process Operation Names
 
 - `log`: Log the current message, useful for debugging and testing
-- `cep_intercept`: Log the current message, useful for debugging and testing
-    - `args`: CEP Flow expression
+- `filter_intercept`: Log the current message, useful for debugging and testing
+    - `args`: Filter Flow expression
 
 ## Available Output Operation Names
 

@@ -21,7 +21,7 @@ def is_flow_valid(flow: FlowEntity) -> (bool, str):
     if_input_defined = 0
     if_output_defined = 0
     input_ops = ["sensor_temperature", "sensor_hall", "sensor_button"]
-    process_ops = ["log", "cep_intercept"]
+    process_ops = ["log", "filter_intercept"]
     output_ops = ["exit", "actuator_led", "actuator_speaker"]
     op_names = []
     if len(flow.ops) == 0:
