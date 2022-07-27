@@ -94,7 +94,7 @@ async def send_goodbye():
 
 def cleanUpAllNodes():
     """
-    Retrieves all known neighbors and removes them
+    Removes all known neighbors and recreates own node
     """
     service = NodeService()
     service.delete_all_nodes()
