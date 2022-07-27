@@ -99,5 +99,5 @@ def cleanUpAllNodes():
     service = NodeService()
     service.delete_all_nodes()
     service.create_own_node()
-    logging.info("Cleaned all neighbors.")
+    logging.info("Cleaned all neighbors and recreated own node.")
     
