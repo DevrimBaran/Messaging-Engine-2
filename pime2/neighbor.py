@@ -92,17 +92,12 @@ async def send_goodbye():
         await coap_request_to_node(neighbor, "goodbye", own_node_json.encode(), Code.DELETE, timeout=1)
 
 
-def removeAllNeighborsOnStartUp():
+def cleanUpAllNodes():
     """
-    Retrieves all known neighbors and removes them if they are not available anymore
+    Retrieves all known neighbors and removes them
     """
-    service = NodeService
-    all_neighbors = service.get_all_neighbor_nodes()
-    for neighbor in all_neighbors:
-        service.remove_node(neighbor)
-    if all_neighbors is None:
-        logging.info("Found no neighbors to clean up.")
-    else:
-        logging.info("Cleaned all neighbors.")
-
+    service = NodeService()
+    service.delete_all_nodes()
+    service.create_own_node()
+    logging.info("Cleaned all neighbors.")
     

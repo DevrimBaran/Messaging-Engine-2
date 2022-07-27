@@ -5,7 +5,7 @@ import sys
 from zmq.asyncio import Context
 
 import pime2.database as db
-from pime2.neighbor import find_neighbors, send_goodbye, removeAllNeighborsOnStartUp
+from pime2.neighbor import find_neighbors, send_goodbye, cleanUpAllNodes
 from pime2.coap_server import startup_server
 from pime2.config import MEConfiguration
 from pime2.database import create_default_tables
@@ -40,7 +40,7 @@ async def pime_run(config: MEConfiguration):
             sys.exit(1)
 
         if config.is_neighbor_discovery_enabled:
-            removeAllNeighborsOnStartUp()
+            cleanUpAllNodes()
             await find_neighbors()
 
         tasks = map(asyncio.create_task,
