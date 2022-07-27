@@ -90,3 +90,13 @@ async def send_goodbye():
     for neighbor in all_neighbors:
         logging.info("Sending goodbye to: %s:%s", neighbor.name, neighbor.port)
         await coap_request_to_node(neighbor, "goodbye", own_node_json.encode(), Code.DELETE, timeout=1)
+
+
+def cleanUpAllNodes():
+    """
+    Removes all known neighbors and recreates own node
+    """
+    service = NodeService()
+    service.delete_all_nodes()
+    service.create_own_node()
+    logging.info("Cleaned all neighbors and recreated own node.")
