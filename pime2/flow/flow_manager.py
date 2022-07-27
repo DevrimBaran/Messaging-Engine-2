@@ -151,6 +151,8 @@ class FlowManager:
         if not is_done:
             logging.info("Flow is not executed locally.")
             return
+        if result is None and FlowOperationManager.is_filter_operation(flow, current_step):
+            return
 
         # detect next step and delegate
         next_step = FlowOperationManager.detect_next_step(flow, current_step)
